@@ -255,8 +255,8 @@ class NewTokenScanner:
                 age_min = p["age_minutes"]
                 pc5m = p["price_change_5m"]
 
-                # STRICT FILTER: Discard any token > 30 minutes old!
-                if age_min > config.MAX_NEW_TOKEN_AGE_MINUTES:
+                # STRICT FILTER: Discard any token > 30 minutes old or with invalid/missing data ("No data here")
+                if age_min > config.MAX_NEW_TOKEN_AGE_MINUTES or p["name"] == "No data here" or p["symbol"] == "No data here" or (p["market_cap"] <= 0 and p["liquidity_usd"] <= 0):
                     if token_key in self.known_tokens:
                         del self.known_tokens[token_key]
                     continue

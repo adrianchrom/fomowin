@@ -109,13 +109,23 @@ class FOMOApiClient:
                         symbol = parts[1]
                     else:
                         symbol = parts[0]
-                else:
-                    symbol = raw_name
+                pc_dict = attr.get("price_change_percentage") or {}
+                pc5m = 0.0
+                if isinstance(pc_dict, dict):
+                    val = pc_dict.get("m5") or pc_dict.get("h1") or pc_dict.get("5m") or 0.0
+                    try:
+                        pc5m = float(val)
+                    except (ValueError, TypeError):
+                        pc5m = 0.0
+
+                if not symbol or symbol in ["No data here", "Unknown Pool", "UNKNOWN"]:
+                    symbol = f"TKN-{target_token_addr[:4].upper()}"
+
+                name = f"{symbol} Token" if not symbol.endswith("Token") else symbol
 
                 price_usd = float(attr.get("base_token_price_usd", 0) or 0)
                 mc = float(attr.get("fdv_usd", 0) or attr.get("market_cap_usd", 0) or 0)
                 liq = float(attr.get("reserve_in_usd", 0) or 0)
-                pc5m = float(attr.get("price_change_percentage", {}).get("m5", 0) or 0)
 
                 # Fallback Market Cap calculation if FDV is not reported
                 if mc == 0 and price_usd > 0:
@@ -126,7 +136,7 @@ class FOMOApiClient:
                 parsed_pools.append({
                     "token_address": target_token_addr,
                     "symbol": symbol,
-                    "name": f"{symbol} Token",
+                    "name": name,
                     "chain": chain_id,
                     "pair_address": p.get("id", ""),
                     "price_usd": price_usd,
