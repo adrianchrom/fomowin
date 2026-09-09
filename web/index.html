@@ -358,7 +358,7 @@
       </div>
 
       <!-- INSIDER MANAGER CONTAINER -->
-      <div id="insider-manager-box" class="hidden glass-card p-6 rounded-3xl border border-purple-500/30 space-y-4 animate-emerge">
+      <div id="insider-manager-box" class="glass-card p-6 rounded-3xl border border-purple-500/30 space-y-4 animate-emerge">
         <h4 class="text-sm font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
           <i data-lucide="user-plus" class="w-4 h-4 text-purple-400"></i>
           Dodaj Nowego Insidera (Link z X / Twitter, fomo.family lub @handle)
@@ -1320,6 +1320,8 @@
     recoverConnection(); // Immediate REST Token Fetch
     connectWebSocket();  // Real-time WebSocket Stream
     loadUserFomoPositions();
+    loadTrackedInsidersList(); // Immediate Tracked Insiders Fetch
+    loadInsiderSignalsFeed();   // Immediate Insider Signals Feed Fetch
     
     // Initial Render call to display seed tokens immediately
     renderAll();
