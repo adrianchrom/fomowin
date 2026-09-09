@@ -12,6 +12,7 @@ from monitors.new_token_scanner import token_scanner, TokenListing
 from monitors.whale_tracker import whale_tracker
 from monitors.risk_analysis_engine import risk_engine
 from monitors.auth_manager import auth_manager
+from monitors.alerts_manager import alerts_manager
 from notifiers.telegram_notifier import telegram_notifier
 from notifiers.discord_notifier import discord_notifier
 from notifiers.console_notifier import console_notifier
@@ -268,6 +269,35 @@ async def scan_token_route(data: Dict[str, Any] = Body(...)):
     """API endpoint to scan token CA or URL for honeypot & contract safety."""
     input_text = data.get("input", "")
     return risk_engine.scan_token_ca(input_text)
+
+@app.get("/api/alerts")
+async def get_alerts_route():
+    """Get all active market cap alerts."""
+    return alerts_manager.get_all_alerts()
+
+@app.post("/api/alerts")
+async def create_alert_route(data: Dict[str, Any] = Body(...)):
+    """Create a new market cap alert."""
+    token_name = data.get("token_name", "Token")
+    ca = data.get("ca", "")
+    alert_type = data.get("alert_type", "BUY_UNDER")
+    target_mcap = float(data.get("target_mcap_usd", 0.0))
+    ticker = data.get("ticker", token_name.split()[0] if token_name else "TKN")
+    
+    alert = alerts_manager.add_alert(
+        token_name=token_name,
+        ticker=ticker,
+        ca=ca,
+        alert_type=alert_type,
+        target_mcap_usd=target_mcap
+    )
+    return {"success": True, "alert": alert}
+
+@app.delete("/api/alerts/{alert_id}")
+async def delete_alert_route(alert_id: str):
+    """Delete an active market cap alert."""
+    success = alerts_manager.remove_alert(alert_id)
+    return {"success": success}
 
 @app.post("/api/risk-analysis")
 async def analyze_risk_post(data: Dict[str, Any] = Body(...)):
