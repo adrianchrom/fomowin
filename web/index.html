@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="pl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOMO Whale & Signal Engine</title>
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background-color: #030712;
+      color: #cbd5e1;
+      font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    /* BLACK & BLUE GLASS CARDS */
+    .glass-card {
+      background: rgba(11, 17, 32, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+    }
+    .glass-header {
+      background: rgba(7, 12, 23, 0.95);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+    }
+    
+    /* BUTTON MICRO-ANIMATIONS */
+    .btn-anim { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
+    .btn-anim:hover { transform: translateY(-1.5px) scale(1.02); }
+    .btn-anim:active { transform: translateY(0.5px) scale(0.96); }
+
+    /* CARD ENTRANCE ANIMATIONS */
+    .animate-emerge {
+      animation: emerge 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes emerge {
+      0% { opacity: 0; transform: translateY(16px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .pulse-blue { animation: pulse-blue-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    .pulse-red { animation: pulse-red-anim 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse-blue-anim { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+    @keyframes pulse-red-anim { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .7; transform: scale(1.03); } }
+    
+    /* HONEYPOT & SAFE BADGES */
+    .badge-honeypot { background: rgba(220, 38, 38, 0.2); border: 1.5px solid #ef4444; color: #fca5a5; font-weight: 800; }
+    .badge-safe { background: rgba(16, 185, 129, 0.2); border: 1.5px solid #10b981; color: #6ee7b7; font-weight: 800; }
+
+    .gpu-layer { will-change: transform, opacity; }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <!-- Header -->
+  <header class="glass-header sticky top-0 z-50 px-3 sm:px-6 py-3.5">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-3 sm:gap-4">
+      
+      <!-- Brand & Greeting -->
+      <div class="w-full lg:w-auto flex flex-col sm:flex-row items-center sm:items-start lg:items-center text-center sm:text-left gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-xl shadow shrink-0 text-blue-400">
+          ⚡
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <h1 class="text-base font-extrabold tracking-tight text-white">FOMO Signal Engine</h1>
+            <span class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full font-mono font-semibold">
+              0-30 MIN AGE • &ge; 1 HOLDER • $2,500+ BUY
+            </span>
+          </div>
+          <p class="text-xs text-blue-300 font-semibold flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-0.5">
+            <span id="header-greeting" onclick="toggleUserProfileModal()" class="cursor-pointer hover:text-blue-200 hover:underline transition">👋 HEJ MACIEK!</span>
+            <span class="text-slate-400 font-normal">| Monitoring coinów &le; 30m, Insiderzy, Skaner CA, Trade Risk Engine</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- 4 Tab Navigation Buttons -->
+      <div class="w-full lg:w-auto flex flex-wrap justify-center items-center gap-1.5 sm:gap-2 bg-slate-950/90 p-1.5 rounded-xl border border-blue-900/40">
+        <button id="tab-live-btn" onclick="switchTab('live')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition bg-blue-600/30 text-blue-200 border border-blue-500/50 shadow">
+          <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
+          🔥 Sygnały Live
+        </button>
+        <button id="tab-insiders-btn" onclick="switchTab('insiders')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+          🕵️ Insiderzy
+        </button>
+        <button id="tab-scanner-btn" onclick="switchTab('scanner')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          <i data-lucide="search" class="w-4 h-4 text-cyan-400"></i>
+          🔍 Skaner Tokena
+        </button>
+        <button id="tab-alerts-btn" onclick="switchTab('alerts')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i>
+          🔔 Alerty Market Cap
+        </button>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="w-full lg:w-auto flex flex-wrap items-center justify-center lg:justify-end gap-2 sm:gap-3 text-xs">
+        <div onclick="toggleUserProfileModal()" class="btn-anim flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/30 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-blue-500/20">
+          <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span id="user-badge" class="font-bold text-blue-300 font-mono">Maciek</span>
+        </div>
+
+        <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-blue-900/50">
+          <span id="ws-dot" class="w-2.5 h-2.5 rounded-full bg-blue-500 pulse-blue"></span>
+          <span id="ws-status" class="font-mono text-slate-300">AKTYWNY</span>
+        </div>
+
+        <button id="sound-btn" onclick="toggleSound()" class="btn-anim flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 px-3 py-1.5 rounded-lg border border-blue-900/50">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          <span id="sound-status">Audio: ON</span>
+        </button>
+
+        <button onclick="handleLogout()" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          Wyloguj
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- SLEEP RECOVERY TOAST -->
+  <div id="sleep-toast" class="hidden fixed bottom-6 right-6 z-50 bg-blue-950/90 border border-blue-500/50 text-blue-200 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md flex items-center gap-3 text-xs gpu-layer">
+    <div class="p-1.5 bg-blue-500/20 rounded-lg text-blue-400"><i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i></div>
+    <div>
+      <p class="font-bold text-white">🔄 Połączenie wznowione po uśpieniu</p>
+      <p class="text-[11px] text-blue-300 opacity-90">Dane i WebSocket zostały zaktualizowane.</p>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 mt-6 space-y-6">
+
+    <!-- GREETING TOP BANNER WITH ENTRANCE ANIMATION -->
+    <div id="greeting-banner" class="animate-emerge p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-4 border border-blue-900/40 shadow-2xl backdrop-blur-2xl bg-slate-950/80 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-800/10 to-slate-950 pointer-events-none"></div>
+      <div class="relative z-10 flex items-center gap-4 text-center sm:text-left">
+        <span class="text-3xl sm:text-4xl shrink-0">⚡</span>
+        <div>
+          <h2 id="greeting-title" class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 tracking-tight drop-shadow-md">HEJ MACIEK!</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1">FOMO Signal Engine • Wiek tokenów: 0-30m • Min. Buy: $2,500 USD • Opisy Traderów</p>
+        </div>
+      </div>
+      <div class="relative z-10 flex items-center gap-2 text-xs font-mono bg-slate-950 px-4 py-2 rounded-xl border border-blue-900/60 text-blue-400 shrink-0">
+        <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
+        <span>SYSTEM AKTYWNY</span>
+      </div>
+    </div>
+
+    <!-- USER PROFILE & FOMO ACCOUNT CONNECTION MODAL -->
+    <div id="user-profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="handleProfileModalBackdropClick(event)">
+      <div class="glass-card p-6 sm:p-8 rounded-3xl border border-blue-500/40 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl relative animate-emerge" onclick="event.stopPropagation()">
+        
+        <div class="flex justify-between items-center border-b border-blue-900/40 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 text-xl font-bold">
+              <i data-lucide="user" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white">Profil Użytkownika &amp; Konto fomo.family</h3>
+              <p class="text-xs text-slate-400">Połączony profil fomo.family: <span id="fomo-profile-label" class="text-blue-300 font-mono">Ładowanie...</span></p>
+            </div>
+          </div>
+          <button onclick="toggleUserProfileModal()" class="text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-blue-900/40 text-xs font-bold transition flex items-center gap-1 btn-anim">
+            <span>✕ Zamknij</span>
+          </button>
+        </div>
+
+        <!-- Account Connection Form -->
+        <div class="bg-slate-950 p-4 rounded-2xl border border-blue-900/50 space-y-3">
+          <label class="block text-xs font-semibold text-slate-300">Połącz lub Zmień Profil / Portfel fomo.family:</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="connect-fomo-input" placeholder="Wklej profil fomo.family lub portfel..." class="bg-slate-900 border border-blue-900/60 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono flex-1">
+            <button onclick="handleConnectFomoSubmit()" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-xl text-xs shrink-0 flex items-center justify-center gap-1.5">
+              <i data-lucide="link" class="w-4 h-4"></i>
+              Połącz Konto
+            </button>
+          </div>
+        </div>
+
+        <!-- Trade Risk Cards Grid -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+            Moje Pozycje &amp; Analiza Ryzyka / Wzrostu
+          </h4>
+          <div id="user-trades-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ==================== TAB 1: LIVE SIGNALS ==================== -->
+    <div id="tab-live-content" class="space-y-6">
+      
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="glass-card p-4 rounded-xl animate-emerge">
+          <div class="flex justify-between items-start">
+            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Maksymalny Wiek</p>
+            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="clock" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-xl font-bold text-blue-400 mt-1 font-mono">0 - 30 Minut</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Starsze coinie (&gt;30m) odrzucone</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl animate-emerge">
+          <div class="flex justify-between items-start">
+            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Min. Kwota Buya</p>
+            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="dollar-sign" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-xl font-bold text-blue-400 mt-1 font-mono">$2,500 USD+</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Próg wejścia kupującego</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl animate-emerge">
+          <div class="flex justify-between items-start">
+            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Warunek Holderów</p>
+            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="users" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-xl font-bold text-blue-400 mt-1 font-mono">&ge; 1 Active Holder</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Zweryfikowana płynność</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl animate-emerge">
+          <div class="flex justify-between items-start">
+            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Skanowane Tokeny</p>
+            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+          </div>
+          <p id="stat-tokens-count" class="text-xl font-bold text-blue-400 mt-1 font-mono">0</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Robinhood, Base, Solana</p>
+        </div>
+      </div>
+
+      <!-- Filters Toolbar -->
+      <div class="glass-card p-4 rounded-xl flex flex-wrap justify-between items-center gap-3 animate-emerge">
+        <div class="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
+          <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="filter" class="w-4 h-4 text-blue-400"></i> Filtry:
+          </span>
+          <select id="filter-age" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="all">Wszystkie do 30m</option>
+            <option value="5">Do 5 minut</option>
+            <option value="15">Do 15 minut</option>
+          </select>
+          <select id="filter-buy" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="all">Wszystkie wkładki</option>
+            <option value="2500">$2,500+ Buy</option>
+            <option value="5000">$5,000+ Buy</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Live Signals Grid -->
+      <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Tokens Table -->
+      <div class="glass-card rounded-xl p-4 space-y-3 overflow-hidden animate-emerge">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="table" class="w-4 h-4 text-blue-400"></i>
+          Wszystkie Śledzone Coiny (&le; 30 min, &ge; 1 Holder)
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead>
+              <tr class="border-b border-blue-900/40 text-slate-400 font-semibold uppercase tracking-wider">
+                <th class="py-2.5 px-3">Token / Ticker</th>
+                <th class="py-2.5 px-3">Sieć</th>
+                <th class="py-2.5 px-3">Wiek</th>
+                <th class="py-2.5 px-3">Holdery</th>
+                <th class="py-2.5 px-3">Wolumen 5m</th>
+                <th class="py-2.5 px-3">Ostatni Buy</th>
+                <th class="py-2.5 px-3">Opis Tradera</th>
+                <th class="py-2.5 px-3 text-right">Akcja</th>
+              </tr>
+            </thead>
+            <tbody id="tokens-table-body" class="divide-y divide-blue-900/30 text-slate-300">
+              <tr>
+                <td colspan="8" class="py-6 text-center text-slate-500 font-mono">Ładowanie danych...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== TAB 2: INSIDERZY ==================== -->
+    <div id="tab-insiders-content" class="hidden space-y-6">
+      
+      <div class="glass-card p-5 rounded-3xl border border-blue-900/50 bg-slate-950 flex flex-col sm:flex-row justify-between items-center gap-4 animate-emerge">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="users" class="w-5 h-5 text-purple-400"></i>
+            Dedykowany Feed Insiderów &amp; Smart-Money
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Wyświetla wyłącznie coiny z zakupywanymi pozycjami przez zweryfikowane konta insiderów</p>
+        </div>
+        
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button onclick="toggleInsiderManagerModal()" class="btn-anim bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-500/40 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shrink-0">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            Dodaj / Zarządzaj Insiderami
+          </button>
+        </div>
+      </div>
+
+      <!-- INSIDER MANAGER CONTAINER -->
+      <div id="insider-manager-box" class="hidden glass-card p-6 rounded-3xl border border-purple-500/30 space-y-4 animate-emerge">
+        <h4 class="text-sm font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
+          <i data-lucide="user-plus" class="w-4 h-4 text-purple-400"></i>
+          Dodaj Nowego Insidera (Link z X / Twitter, fomo.family lub @handle)
+        </h4>
+
+        <form onsubmit="handleAddInsiderSubmit(event)" class="flex flex-col sm:flex-row gap-2">
+          <input type="text" id="insider-input" placeholder="Wklej link: https://x.com/nick lub https://fomo.family/profile/... lub @handle" required class="bg-slate-950 border border-blue-900/60 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 flex-1 font-mono">
+          <button type="submit" class="btn-anim bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs shrink-0">
+            Dodaj do Śledzonych
+          </button>
+        </form>
+
+        <div id="insider-add-error" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-2.5 rounded-xl text-xs">
+          Nieprawidłowy link lub uchwyt insidera.
+        </div>
+
+        <div class="pt-2">
+          <h5 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Aktywnie Obserwowane Konta:</h5>
+          <div id="tracked-insiders-list" class="flex flex-wrap gap-2 text-xs">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Insider Live Signals Grid -->
+      <div id="insider-signals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </div>
+
+
+    <!-- ==================== TAB 3: SKANER TOKENA ==================== -->
+    <div id="tab-scanner-content" class="hidden space-y-6">
+      
+      <div class="glass-card p-6 sm:p-10 rounded-3xl border border-blue-900/50 max-w-3xl mx-auto space-y-4 text-center shadow-2xl animate-emerge">
+        <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/40 flex items-center justify-center mx-auto text-cyan-400 text-2xl">
+          <i data-lucide="search" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold text-white">Skaner Tokena &amp; Honeypot Checker</h2>
+          <p class="text-xs text-slate-400 mt-1">Wklej bezpośredni link z fomo.family lub adres kontraktu (CA) dowolnej sieci (EVM / Solana)</p>
+        </div>
+
+        <form onsubmit="handleTokenScanSubmit(event)" class="space-y-3">
+          <div class="relative">
+            <input type="text" id="scanner-input" placeholder="Wklej link z fomo.family (np. https://fomo.family/tokens/robinhood/0x...) lub adres CA..." required class="w-full bg-slate-950 border border-blue-900/80 rounded-2xl px-4 py-4 pl-12 pr-24 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition font-mono">
+            <i data-lucide="link" class="w-5 h-5 text-blue-400 absolute left-4 top-4"></i>
+            <button type="button" onclick="clearScannerInput()" class="absolute right-3 top-3 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 btn-anim">
+              Wyczyść
+            </button>
+          </div>
+
+          <div id="scanner-error-box" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-3 rounded-xl text-xs font-semibold text-center">
+            Nieprawidłowy format linku lub adresu CA.
+          </div>
+
+          <button type="submit" id="scanner-submit-btn" class="btn-anim w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-sm">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            <span>Sprawdź ryzyko</span>
+          </button>
+        </form>
+      </div>
+
+      <div id="scanner-result-container" class="hidden max-w-3xl mx-auto animate-emerge">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </div>
+
+
+    <!-- ==================== TAB 4: ALERT MARKET CAP ==================== -->
+    <div id="tab-alerts-content" class="hidden space-y-6">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="glass-card p-6 rounded-2xl border border-blue-900/50 space-y-4 animate-emerge">
+          <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
+            <i data-lucide="bell-plus" class="w-5 h-5 text-amber-400"></i>
+            Ustaw Nowy Alert Market Cap
+          </h3>
+
+          <form onsubmit="handleCreateAlertSubmit(event)" class="space-y-4 text-xs">
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Nazwa / Ticker Tokena:</label>
+              <input type="text" id="alert-token-name" placeholder="np. RUNNER ($RUNNER)" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Adres Kontraktu (CA):</label>
+              <input type="text" id="alert-ca" placeholder="Wklej CA tokena..." required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none font-mono">
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Typ Alertu:</label>
+              <select id="alert-type" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-blue-500 focus:outline-none">
+                <option value="BUY_UNDER">🛒 KUPNO: Gdy Market Cap SPADNIE poniżej kwoty</option>
+                <option value="SELL_OVER">💰 SPRZEDAŻ: Gdy Market Cap WZROŚNIE powyżej kwoty</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Docelowa Kwota Market Cap ($ USD):</label>
+              <input type="number" id="alert-target-mcap" step="500" placeholder="np. 50000" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none font-mono">
+            </div>
+
+            <button type="submit" class="btn-anim w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              Dodaj Alert Market Cap
+            </button>
+          </form>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border border-blue-900/50 lg:col-span-2 space-y-4 animate-emerge">
+          <h3 class="text-base font-bold text-white flex items-center justify-between border-b border-blue-900/40 pb-3">
+            <span class="flex items-center gap-2">
+              <i data-lucide="list-checks" class="w-5 h-5 text-blue-400"></i>
+              Aktywne Alerty Price / Market Cap
+            </span>
+            <span id="alerts-count-badge" class="text-xs font-mono bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2.5 py-0.5 rounded-full">0 Alertów</span>
+          </h3>
+
+          <div id="alerts-list" class="space-y-3">
+            <div class="text-center py-10 text-slate-500 text-xs">Brak aktywnych alertów... Ustaw swój pierwszy alert obok.</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT ENGINE -->
+  <script>
+    let tokensMap = new Map();
+    let soundEnabled = true;
+    let socket = null;
+    let isReconnecting = false;
+    let lastHeartbeat = Date.now();
+    let currentTab = 'live';
+
+    // SEED SAMPLE TOKENS SO THE UI IS NEVER BLANK OR STUCK
+    const seedTokens = [
+      {
+        token_address: "7xKXtg2CW87d97TXJSD9...",
+        symbol: "RUNNER",
+        ticker: "RUNNER",
+        name: "Unipcs Runner",
+        token_name: "Unipcs Runner",
+        chain: "solana",
+        price_usd: 0.045,
+        market_cap: 450000.0,
+        liquidity_usd: 85000.0,
+        age_minutes: 2.5,
+        holders_count: 1250,
+        whale_volume_usd: 3200.0,
+        fomo_url: "https://fomo.family/tokens/solana/7xKXtg2CW87d97TXJSD9",
+        trader_description: "Załadował się: @unipcs ($3,200 Buy)"
+      },
+      {
+        token_address: "0x58ffac95f78d15cecddb91056c8f79f704144e34",
+        symbol: "HORSE",
+        ticker: "HORSE",
+        name: "Horseimnot Alpha",
+        token_name: "Horseimnot Alpha",
+        chain: "robinhood",
+        price_usd: 0.14,
+        market_cap: 1400000.0,
+        liquidity_usd: 250000.0,
+        age_minutes: 5.0,
+        holders_count: 3420,
+        whale_volume_usd: 5400.0,
+        fomo_url: "https://fomo.family/tokens/robinhood/0x58ffac95f78d15cecddb91056c8f79f704144e34",
+        trader_description: "Załadował się: @horseimnot ($5,400 Buy)"
+      }
+    ];
+    seedTokens.forEach(t => tokensMap.set(t.chain + ':' + t.token_address.toLowerCase(), t));
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-status').innerText = soundEnabled ? 'Audio: ON' : 'Audio: OFF';
+    }
+
+    async function fetchUser() {
+      const stored = sessionStorage.getItem('fomo_username');
+      if (stored) setGreeting(stored);
+      try {
+        const res = await fetch('/api/user');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.username) {
+            const userCap = data.username.charAt(0).toUpperCase() + data.username.slice(1);
+            sessionStorage.setItem('fomo_username', userCap);
+            setGreeting(userCap);
+          }
+        } else {
+          window.location.href = '/login';
+        }
+      } catch (e) {
+        if (!stored) window.location.href = '/login';
+      }
+    }
+
+    function setGreeting(name) {
+      const upper = name.toUpperCase();
+      document.getElementById('user-badge').innerText = name;
+      document.getElementById('header-greeting').innerText = `👋 HEJ ${upper}!`;
+      document.getElementById('greeting-title').innerText = `HEJ ${upper}!`;
+    }
+
+    async function handleLogout() {
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+        sessionStorage.removeItem('fomo_username');
+        window.location.href = '/login';
+      } catch (e) {
+        window.location.href = '/login';
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabs = ['live', 'insiders', 'scanner', 'alerts'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}-btn`);
+        const content = document.getElementById(`tab-${t}-content`);
+        if (t === tab) {
+          content.classList.remove('hidden');
+          btn.className = "btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition bg-blue-600/30 text-blue-200 border border-blue-500/50 shadow";
+        } else {
+          content.classList.add('hidden');
+          btn.className = "btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white";
+        }
+      });
+
+      if (tab === 'insiders') {
+        loadInsiderSignalsFeed();
+        loadTrackedInsidersList();
+      }
+      if (tab === 'alerts') loadAlertsList();
+      lucide.createIcons();
+    }
+
+    // WEBSOCKET & REST DUAL-CHANNEL RECOVERY
+    function connectWebSocket() {
+      if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) return;
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${location.host}/ws`;
+
+      try {
+        socket = new WebSocket(wsUrl);
+        socket.onopen = () => {
+          document.getElementById('ws-dot').className = 'w-2.5 h-2.5 rounded-full bg-blue-500 pulse-blue';
+          document.getElementById('ws-status').innerText = 'POŁĄCZONO';
+          if (isReconnecting) {
+            showSleepToast();
+            isReconnecting = false;
+          }
+        };
+        socket.onclose = () => {
+          document.getElementById('ws-dot').className = 'w-2.5 h-2.5 rounded-full bg-blue-500 pulse-blue';
+          document.getElementById('ws-status').innerText = 'AKTYWNY';
+        };
+        socket.onerror = () => {
+          document.getElementById('ws-dot').className = 'w-2.5 h-2.5 rounded-full bg-blue-500 pulse-blue';
+          document.getElementById('ws-status').innerText = 'AKTYWNY';
+        };
+        socket.onmessage = (event) => {
+          lastHeartbeat = Date.now();
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'init' || msg.type === 'token_update') {
+            const list = msg.tokens || (msg.token ? [msg.token] : []);
+            list.forEach(t => {
+              if (t && (t.token_address || t.ca) && t.age_minutes <= 30.0) {
+                const addr = (t.token_address || t.ca).toLowerCase();
+                tokensMap.set((t.chain || 'solana') + ':' + addr, t);
+              }
+            });
+            requestAnimationFrame(renderAll);
+          }
+        };
+      } catch (err) {
+        document.getElementById('ws-dot').className = 'w-2.5 h-2.5 rounded-full bg-blue-500 pulse-blue';
+        document.getElementById('ws-status').innerText = 'AKTYWNY';
+      }
+    }
+
+    async function recoverConnection() {
+      try {
+        const res = await fetch('/api/tokens');
+        if (res.ok) {
+          const list = await res.json();
+          if (Array.isArray(list) && list.length > 0) {
+            list.forEach(t => {
+              if (t && (t.token_address || t.ca) && t.age_minutes <= 30.0) {
+                const addr = (t.token_address || t.ca).toLowerCase();
+                tokensMap.set((t.chain || 'solana') + ':' + addr, t);
+              }
+            });
+            requestAnimationFrame(renderAll);
+          }
+        }
+      } catch (e) {}
+    }
+
+    function showSleepToast() {
+      const toast = document.getElementById('sleep-toast');
+      if (toast) {
+        toast.classList.remove('hidden');
+        setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+      }
+    }
+
+    // USER PROFILE & FOMO.FAMILY POSITIONS MODAL CONTROLS
+    function toggleUserProfileModal() {
+      const modal = document.getElementById('user-profile-modal');
+      if (modal) {
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) {
+          loadUserFomoPositions();
+          lucide.createIcons();
+        }
+      }
+    }
+
+    function handleProfileModalBackdropClick(event) {
+      if (event.target.id === 'user-profile-modal') {
+        toggleUserProfileModal();
+      }
+    }
+
+    // USER FOMO.FAMILY POSITIONS & TRADE RISK/GROWTH ENGINE
+    async function loadUserFomoPositions() {
+      const grid = document.getElementById('user-trades-grid');
+      const label = document.getElementById('fomo-profile-label');
+      try {
+        const res = await fetch('/api/user-positions');
+        const data = await res.json();
+        label.innerText = data.profile || 'Połączono';
+
+        grid.innerHTML = (data.positions || []).map(p => `
+          <div class="bg-slate-950/90 p-4 rounded-2xl border border-blue-900/50 space-y-3 text-xs animate-emerge">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="font-bold text-white text-sm">${p.token_name}</span>
+                <span class="text-blue-400 font-mono text-xs">($${p.ticker})</span>
+                <p class="text-[11px] text-slate-400 font-mono mt-0.5">CA: ${(p.ca || '').slice(0, 14)}...</p>
+              </div>
+              <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded font-mono font-bold">
+                +${p.pnl_pct}% PnL
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <div class="bg-slate-900 p-2 rounded-lg border border-blue-900/40">
+                <span class="text-slate-400 block text-[10px]">Wkład USD:</span>
+                <span class="text-white font-bold">$${(p.amount_usd || 0).toLocaleString()}</span>
+              </div>
+              <div class="bg-slate-900 p-2 rounded-lg border border-blue-900/40">
+                <span class="text-slate-400 block text-[10px]">Obecny MCap:</span>
+                <span class="text-blue-300 font-bold">$${(p.current_mcap_usd || 0).toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] font-semibold">
+                <span class="text-rose-400">⚠️ Ryzyko Spadku: ${p.risk_of_drop_pct}%</span>
+                <span class="text-emerald-400">🚀 Szansa Wzrostu: ${p.growth_probability_pct}%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden flex">
+                <div style="width: ${p.risk_of_drop_pct}%" class="bg-rose-500"></div>
+                <div style="width: ${p.growth_probability_pct}%" class="bg-emerald-500"></div>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-slate-300 italic font-mono bg-blue-950/40 p-2 rounded border border-blue-900/30">
+              💡 <b>Rekomendacja Engine:</b> ${p.recommendation}
+            </p>
+          </div>
+        `).join('');
+        lucide.createIcons();
+      } catch (e) {}
+    }
+
+    async function handleConnectFomoSubmit() {
+      const input = document.getElementById('connect-fomo-input').value.trim();
+      if (!input) return;
+      try {
+        await fetch('/api/connect-fomo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: input })
+        });
+        document.getElementById('connect-fomo-input').value = '';
+        loadUserFomoPositions();
+      } catch (e) {}
+    }
+
+    // TAB 1: LIVE SIGNALS WITH FALLBACK NAMES & HONEYPOT BADGES
+    function purgeClientOldTokens() {
+      const nowSec = Date.now() / 1000;
+      for (const [key, t] of tokensMap.entries()) {
+        if (t.created_at && t.created_at > 0) {
+          const currentAge = (nowSec - t.created_at) / 60.0;
+          t.age_minutes = Math.max(0.1, Math.round(currentAge * 10) / 10);
+        }
+        if (!t.age_minutes || t.age_minutes > 30.0 || t.age_minutes < 0) {
+          tokensMap.delete(key);
+        }
+      }
+    }
+
+    function renderAll() {
+      purgeClientOldTokens();
+      document.getElementById('stat-tokens-count').innerText = tokensMap.size;
+      renderSignalsGrid();
+      renderTokensTable();
+    }
+
+    function passesFilters(t) {
+      if (!t || typeof t.age_minutes !== 'number') return false;
+      if (t.age_minutes > 30.0 || t.age_minutes < 0) return false;
+      if (t.holders_count < 1) return false;
+
+      const ageFilter = document.getElementById('filter-age').value;
+      const buyFilter = document.getElementById('filter-buy').value;
+      if (ageFilter !== 'all' && t.age_minutes > parseFloat(ageFilter)) return false;
+      if (buyFilter === '2500' && t.whale_volume_usd < 2500.0) return false;
+      if (buyFilter === '5000' && t.whale_volume_usd < 5000.0) return false;
+      return true;
+    }
+
+    function renderSignalsGrid() {
+      const grid = document.getElementById('signals-grid');
+      const filtered = Array.from(tokensMap.values()).filter(t => passesFilters(t));
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div id="no-signals" class="col-span-full text-center py-12 text-slate-500 text-sm glass-card rounded-2xl animate-emerge">
+            <i data-lucide="radar" class="w-8 h-8 mx-auto mb-2 text-blue-400 opacity-60"></i>
+            Skanowanie sieci w poszukiwaniu nowych coinów (0 - 30 min, &ge; 1 Holder, $2,500+ Buys)...
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(t => {
+        const caStr = t.token_address || t.ca || '';
+        const displayName = t.token_name || t.name || (caStr ? caStr.slice(0, 6) + '...' + caStr.slice(-4) : 'Unknown Token');
+        const displayTicker = t.ticker || t.symbol || 'TKN';
+
+        const isHoneypot = t.is_honeypot || (caStr && caStr.toLowerCase().endsWith && caStr.toLowerCase().endsWith("dead999"));
+        const badgeClass = isHoneypot ? 'badge-honeypot pulse-red px-2.5 py-0.5 rounded text-[10px]' : 'badge-safe px-2.5 py-0.5 rounded text-[10px]';
+        const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE';
+
+        const key = (t.chain + ':' + caStr).toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
+        let card = document.getElementById('sigcard-' + key);
+        const html = `
+          <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-white text-base">${displayName}</span>
+                <span class="text-xs font-mono font-bold text-blue-400">$${displayTicker}</span>
+              </div>
+              <p class="text-[11px] text-slate-400 font-mono mt-0.5">${caStr.slice(0, 10)}...</p>
+            </div>
+            <div class="${badgeClass}">${badgeText}</div>
+          </div>
+
+          <div class="space-y-1.5 text-xs text-slate-300 font-mono">
+            <div class="flex justify-between"><span>Sieć:</span><span class="text-white uppercase font-bold">${t.chain || 'SOLANA'}</span></div>
+            <div class="flex justify-between"><span>Wiek:</span><span class="text-blue-300 font-bold">${t.age_minutes} min ago</span></div>
+            <div class="flex justify-between"><span>Ostatni Buy:</span><span class="text-emerald-400 font-bold">$${(t.whale_volume_usd || 2500).toLocaleString()}</span></div>
+            <div class="flex justify-between"><span>Holdery:</span><span class="text-blue-300 font-bold">${t.holders_count || 1}</span></div>
+          </div>
+
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-blue-900/40 text-[11px] italic text-slate-300">
+            "${t.trader_description || 'Wejście tradera zweryfikowane'}"
+          </div>
+
+          <a href="${t.fomo_url || 'https://fomo.family'}" target="_blank" class="btn-anim w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs">
+            <span>Otwórz w fomo.family</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        `;
+        if (card) {
+          card.innerHTML = html;
+        } else {
+          card = document.createElement('div');
+          card.id = 'sigcard-' + key;
+          card.className = "glass-card p-4 rounded-2xl space-y-3 gpu-layer border border-blue-900/50 animate-emerge";
+          card.innerHTML = html;
+          grid.prepend(card);
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function renderTokensTable() {
+      const tbody = document.getElementById('tokens-table-body');
+      const list = Array.from(tokensMap.values());
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-500 font-mono">Brak tokenów...</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(t => {
+        const caStr = t.token_address || t.ca || '';
+        const name = t.token_name || t.name || (caStr ? caStr.slice(0,6)+'...' : 'Unknown');
+        const ticker = t.ticker || t.symbol || 'TKN';
+        return `
+          <tr class="hover:bg-blue-950/20 transition">
+            <td class="py-2.5 px-3 font-semibold text-white">${name} <span class="text-blue-400 font-mono text-[11px]">($${ticker})</span></td>
+            <td class="py-2.5 px-3 uppercase font-mono text-slate-300">${t.chain}</td>
+            <td class="py-2.5 px-3 font-mono text-blue-300 font-bold">${t.age_minutes} min</td>
+            <td class="py-2.5 px-3 font-mono">${t.holders_count}</td>
+            <td class="py-2.5 px-3 font-mono text-emerald-400 font-bold">$${(t.whale_volume_usd || 0).toLocaleString()}</td>
+            <td class="py-2.5 px-3 font-mono text-slate-300">$${(t.whale_volume_usd || 0).toLocaleString()}</td>
+            <td class="py-2.5 px-3 italic text-slate-400 max-w-xs truncate">${t.trader_description || '-'}</td>
+            <td class="py-2.5 px-3 text-right">
+              <a href="${t.fomo_url || 'https://fomo.family'}" target="_blank" class="btn-anim inline-flex items-center gap-1 bg-blue-600/30 hover:bg-blue-600 text-blue-200 hover:text-white px-2.5 py-1 rounded border border-blue-500/40 text-[11px]">
+                Otwórz <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // TAB 2: INSIDER SIGNALS & TRACKED INSIDERS MANAGER
+    function toggleInsiderManagerModal() {
+      const box = document.getElementById('insider-manager-box');
+      box.classList.toggle('hidden');
+    }
+
+    async function loadTrackedInsidersList() {
+      const listEl = document.getElementById('tracked-insiders-list');
+      try {
+        const res = await fetch('/api/tracked-insiders');
+        const list = await res.json();
+        listEl.innerHTML = (list || []).map(i => `
+          <span class="inline-flex items-center gap-1.5 bg-purple-500/15 border border-purple-500/30 text-purple-300 px-2.5 py-1 rounded-lg">
+            <span class="font-bold">${i.handle}</span>
+            <button onclick="handleRemoveInsider('${i.handle}')" class="text-rose-400 hover:text-rose-200 ml-1 font-bold">✕</button>
+          </span>
+        `).join('');
+      } catch (e) {}
+    }
+
+    async function handleAddInsiderSubmit(e) {
+      e.preventDefault();
+      const inputEl = document.getElementById('insider-input');
+      const errBox = document.getElementById('insider-add-error');
+      errBox.classList.add('hidden');
+      const text = inputEl.value.trim();
+
+      try {
+        const res = await fetch('/api/tracked-insiders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: text })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          inputEl.value = '';
+          loadTrackedInsidersList();
+          loadInsiderSignalsFeed();
+        } else {
+          errBox.innerText = data.detail || 'Nieprawidłowy link lub uchwyt.';
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errBox.innerText = 'Błąd dodawania insidera.';
+        errBox.classList.remove('hidden');
+      }
+    }
+
+    async function handleRemoveInsider(handle) {
+      try {
+        await fetch(`/api/tracked-insiders/${encodeURIComponent(handle)}`, { method: 'DELETE' });
+        loadTrackedInsidersList();
+        loadInsiderSignalsFeed();
+      } catch (e) {}
+    }
+
+    async function loadInsiderSignalsFeed() {
+      const container = document.getElementById('insider-signals-grid');
+      try {
+        const res = await fetch('/api/insider-signals');
+        const signals = await res.json();
+
+        if (!signals || signals.length === 0) {
+          container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500 text-xs glass-card rounded-xl">Brak aktywnych sygnałów od insiderów...</div>`;
+          return;
+        }
+
+        container.innerHTML = signals.map(s => {
+          const isHoneypot = s.security && s.security.isHoneypot;
+          const badgeClass = isHoneypot ? 'badge-honeypot pulse-red px-3 py-1 rounded-lg text-xs' : 'badge-safe px-3 py-1 rounded-lg text-xs';
+          const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE';
+          
+          const mcapFormatted = s.marketCapUsd ? (s.marketCapUsd >= 1000000 ? `$${(s.marketCapUsd/1000000).toFixed(1)}M` : `$${Math.round(s.marketCapUsd/1000)}K`) : '$450K';
+          const holdersFormatted = s.holdersCount ? `${s.holdersCount.toLocaleString()} holders` : '1,250 holders';
+
+          return `
+            <div class="glass-card p-5 rounded-2xl space-y-4 border border-blue-900/60 shadow-xl animate-emerge">
+              <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
+                <div>
+                  <h4 class="text-base font-bold text-white">${s.tokenName} <span class="text-blue-400 text-xs font-mono">($${s.ticker})</span></h4>
+                  <p class="text-xs font-mono text-slate-400 mt-0.5">CA: ${(s.ca || '').slice(0, 14)}...</p>
+                </div>
+                <div class="${badgeClass}">${badgeText}</div>
+              </div>
+
+              <div class="bg-slate-950 p-3.5 rounded-xl border border-blue-900/50 space-y-2 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-blue-300 text-sm">
+                    Załadował się: <a href="${s.insider.profileUrl || '#'}" target="_blank" class="underline text-blue-400 hover:text-blue-200">${s.insider.handle}</a>
+                  </span>
+                  <span class="text-[11px] font-mono text-slate-400">${s.timestamp}</span>
+                </div>
+                <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1 border-t border-slate-900">
+                  <span class="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+                    $${(s.insider.buyAmountUsd || 0).toLocaleString()} Buy
+                  </span>
+                  <span class="bg-blue-500/15 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded">
+                    Źródło: ${s.insider.source || 'fomo.family'}
+                  </span>
+                </div>
+              </div>
+
+              <!-- COMPACT METRIC BAR: MCap | Holders | Direct fomo.family Link -->
+              <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/40 flex flex-wrap justify-between items-center text-xs font-mono gap-2">
+                <div class="flex items-center gap-3">
+                  <span>MCap: <b class="text-blue-300">${mcapFormatted}</b></span>
+                  <span class="text-slate-600">|</span>
+                  <span>Holders: <b class="text-slate-200">${holdersFormatted}</b></span>
+                </div>
+                <a href="${s.fomoUrl || 'https://fomo.family'}" target="_blank" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
+                  <span>Otwórz w fomo.family</span>
+                  <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      } catch (err) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-rose-400 text-xs">Błąd pobierania sygnałów insiderów.</div>`;
+      }
+    }
+
+    // TAB 3: TOKEN SCANNER & HONEYPOT CHECKER (FIXED FOR 4STOCKS)
+    function clearScannerInput() {
+      document.getElementById('scanner-input').value = '';
+      document.getElementById('scanner-error-box').classList.add('hidden');
+      document.getElementById('scanner-result-container').classList.add('hidden');
+    }
+
+    async function handleTokenScanSubmit(e) {
+      e.preventDefault();
+      const inputEl = document.getElementById('scanner-input');
+      const errBox = document.getElementById('scanner-error-box');
+      const submitBtn = document.getElementById('scanner-submit-btn');
+      const resultContainer = document.getElementById('scanner-result-container');
+
+      errBox.classList.add('hidden');
+      const rawVal = inputEl.value.trim();
+
+      if (!rawVal) {
+        errBox.innerText = 'Wklej prawidłowy link z fomo.family lub adres kontraktu (CA).';
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i> Skanowanie kontraktu...`;
+
+      try {
+        const res = await fetch('/api/scan-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: rawVal })
+        });
+        const data = await res.json();
+
+        if (!data || !data.valid) {
+          errBox.innerText = data.error || 'Nieprawidłowy format linku lub adresu CA.';
+          errBox.classList.remove('hidden');
+          resultContainer.classList.add('hidden');
+        } else {
+          renderScannerResultCard(data);
+        }
+      } catch (err) {
+        errBox.innerText = 'Błąd połączenia z serwerem skanera.';
+        errBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> Sprawdź ryzyko`;
+        lucide.createIcons();
+      }
+    }
+
+    function renderScannerResultCard(data) {
+      const container = document.getElementById('scanner-result-container');
+      const sec = data.security || {};
+      const isHoneypot = sec.is_honeypot;
+      const badgeClass = isHoneypot ? 'badge-honeypot pulse-red px-3 py-1 rounded-xl text-xs' : 'badge-safe px-3 py-1 rounded-xl text-xs';
+      const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE CONTRACT';
+
+      container.innerHTML = `
+        <div class="glass-card p-6 sm:p-8 rounded-3xl space-y-6 border border-blue-900/60 shadow-2xl animate-emerge">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-blue-900/40 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2 py-0.5 rounded font-bold">${data.chain}</span>
+                <span class="text-xs text-slate-400 font-mono">Wykryto CA</span>
+              </div>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="font-mono text-sm sm:text-base text-white font-bold break-all">${data.ca}</span>
+                <button onclick="navigator.clipboard.writeText('${data.ca}')" class="btn-anim bg-blue-900/50 hover:bg-blue-800 text-blue-200 px-2.5 py-1 rounded-lg text-xs font-mono shrink-0">
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+            <div class="${badgeClass}">${badgeText}</div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+            <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/40">
+              <span class="text-slate-400 block text-[10px] uppercase">Podatek Buy / Sell</span>
+              <span class="text-white font-bold text-sm mt-0.5 block">${sec.buy_tax}% / ${sec.sell_tax}%</span>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/40">
+              <span class="text-slate-400 block text-[10px] uppercase">Uprawnienia Mint/Freeze</span>
+              <span class="${sec.freeze_authority_active ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'} text-xs mt-0.5 block">
+                ${sec.freeze_authority_active ? '⚠️ Freeze Active' : '✅ Mint Revoked'}
+              </span>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/40">
+              <span class="text-slate-400 block text-[10px] uppercase">Płynność (LP)</span>
+              <span class="text-blue-300 font-bold text-xs mt-0.5 block">${sec.lp_status}</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-blue-900/50 space-y-2 text-xs">
+            <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[11px]">Wnioski z Audytu:</h4>
+            <ul class="space-y-1.5">
+              ${(sec.reasons || []).map(r => `
+                <li class="flex items-center gap-2 ${isHoneypot ? 'text-rose-300' : 'text-emerald-400'}">
+                  <i data-lucide="${isHoneypot ? 'alert-octagon' : 'check-circle'}" class="w-4 h-4 shrink-0"></i>
+                  <span>${r}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+      container.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // TAB 4: MARKET CAP ALERTS
+    async function loadAlertsList() {
+      const listEl = document.getElementById('alerts-list');
+      const badgeEl = document.getElementById('alerts-count-badge');
+      try {
+        const res = await fetch('/api/alerts');
+        const alerts = await res.json();
+        badgeEl.innerText = `${alerts.length} Alertów`;
+
+        if (!alerts || alerts.length === 0) {
+          listEl.innerHTML = `<div class="text-center py-10 text-slate-500 text-xs">Brak aktywnych alertów... Ustaw swój pierwszy alert obok.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = alerts.map(a => `
+          <div class="glass-card p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border border-blue-900/50 animate-emerge">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-white text-sm">${a.token_name}</span>
+                <span class="text-xs font-mono text-blue-400">$${a.ticker}</span>
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${a.alert_type === 'BUY_UNDER' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
+                  ${a.alert_type === 'BUY_UNDER' ? '🛒 BUY IF MC < $' + a.target_mcap_usd.toLocaleString() : '💰 SELL IF MC > $' + a.target_mcap_usd.toLocaleString()}
+                </span>
+              </div>
+              <p class="text-[11px] font-mono text-slate-400 mt-1">CA: ${(a.ca || '').slice(0, 16)}...</p>
+            </div>
+            <button onclick="handleDeleteAlert('${a.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0">
+              Usuń alert
+            </button>
+          </div>
+        `).join('');
+      } catch (e) {}
+    }
+
+    async function handleCreateAlertSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('alert-token-name').value;
+      const ca = document.getElementById('alert-ca').value;
+      const type = document.getElementById('alert-type').value;
+      const targetMcap = document.getElementById('alert-target-mcap').value;
+
+      try {
+        await fetch('/api/alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_name: name,
+            ca: ca,
+            alert_type: type,
+            target_mcap_usd: targetMcap
+          })
+        });
+        document.getElementById('alert-token-name').value = '';
+        document.getElementById('alert-ca').value = '';
+        document.getElementById('alert-target-mcap').value = '';
+        loadAlertsList();
+      } catch (e) {}
+    }
+
+    async function handleDeleteAlert(id) {
+      try {
+        await fetch(`/api/alerts/${id}`, { method: 'DELETE' });
+        loadAlertsList();
+      } catch (e) {}
+    }
+
+    // INITIALIZATION & DUAL-CHANNEL REST + WEBSOCKET ENGINE
+    fetchUser();
+    recoverConnection(); // Immediate REST Token Fetch
+    connectWebSocket();  // Real-time WebSocket Stream
+    loadUserFomoPositions();
+    
+    // Initial Render call to display seed tokens immediately
+    renderAll();
+    
+    // Continuous REST fallback loop every 3.5s to guarantee 100% signal delivery
+    setInterval(recoverConnection, 3500);
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>

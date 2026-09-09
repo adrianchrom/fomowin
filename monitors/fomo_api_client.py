@@ -1,0 +1,145 @@
+import asyncio
+import logging
+import urllib.request
+import ssl
+import json
+from datetime import datetime, timezone
+from typing import Optional, Dict, Any, List
+from config import config
+
+logger = logging.getLogger("FOMOApiClient")
+
+# Known Native Quote Currencies across Solana, EVM & Robinhood Chain
+QUOTE_CURRENCIES = {
+    # Solana
+    "so11111111111111111111111111111111111111112", # WSOL
+    "epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v", # USDC (Solana)
+    "es9vmfrzacermjfrf4h2fyd4conky11mcce8benwnybf", # USDT (Solana)
+    # Base / Robinhood / EVM
+    "0x4200000000000000000000000000000000000006", # WETH (Base)
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", # USDC (Base)
+    "0x0bd7d308f8e1639fab988df18a8011f41eacad73", # WETH (Robinhood)
+    "0x5317c0d077d2eeb639448939b930d49c4984b63b", # WBTC (Robinhood)
+    "0x0000000000000000000000000000000000000000",
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", # WETH (Ethereum)
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", # USDC (Ethereum)
+    "0xdac17f958d2ee523a2206206994597c13d831ec7", # USDT (Ethereum)
+}
+
+class FOMOApiClient:
+    """Client for interacting with GeckoTerminal New Pools API, DexScreener, and FOMO Family."""
+
+    def __init__(self):
+        self.ssl_ctx = ssl.create_default_context()
+        self.ssl_ctx.check_hostname = False
+        self.ssl_ctx.verify_mode = ssl.CERT_NONE
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Referer": "https://fomo.family/",
+            "Accept": "application/json, text/plain, */*"
+        }
+
+    def get_fomo_url(self, chain: str, token_address: str) -> str:
+        """Construct the direct FOMO trading URL for a given token contract/mint address."""
+        return f"{config.FOMO_BASE_URL}/tokens/{chain.lower()}/{token_address.lower()}"
+
+    async def fetch_geckoterminal_new_pools(self, chain_id: str) -> List[Dict[str, Any]]:
+        """Fetch brand new pools (STRICTLY 0-30 minutes old) with correct target token identification."""
+        url = f"https://api.geckoterminal.com/api/v2/networks/{chain_id}/new_pools"
+        try:
+            req = urllib.request.Request(url, headers=self.headers)
+            loop = asyncio.get_event_loop()
+
+            def _fetch():
+                with urllib.request.urlopen(req, context=self.ssl_ctx, timeout=8) as resp:
+                    return json.loads(resp.read().decode("utf-8"))
+
+            data = await loop.run_in_executor(None, _fetch)
+            raw_pools = data.get("data", [])
+            parsed_pools = []
+
+            for p in raw_pools:
+                attr = p.get("attributes", {})
+                rel = p.get("relationships", {})
+                
+                # Extract base & quote token IDs
+                base_token_id = rel.get("base_token", {}).get("data", {}).get("id", "")
+                quote_token_id = rel.get("quote_token", {}).get("data", {}).get("id", "")
+
+                base_addr = base_token_id.split("_", 1)[1].lower() if "_" in base_token_id else ""
+                quote_addr = quote_token_id.split("_", 1)[1].lower() if "_" in quote_token_id else ""
+
+                if not base_addr and not quote_addr:
+                    continue
+
+                # Correctly identify NEW target token vs native quote currency (SOL/WETH/USDC)
+                if base_addr in QUOTE_CURRENCIES and quote_addr not in QUOTE_CURRENCIES and quote_addr:
+                    target_token_addr = quote_addr
+                elif base_addr:
+                    target_token_addr = base_addr
+                else:
+                    target_token_addr = quote_addr
+
+                if not target_token_addr or target_token_addr in QUOTE_CURRENCIES:
+                    continue
+
+                # Calculate Age with strict ISO date parsing
+                created_str = attr.get("pool_created_at")
+                age_min = -1.0
+                if created_str:
+                    try:
+                        # Clean ISO format in Python 3.9
+                        clean_str = created_str.split(".")[0].rstrip("Z")
+                        created_dt = datetime.strptime(clean_str, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
+                        age_sec = (datetime.now(timezone.utc) - created_dt).total_seconds()
+                        age_min = age_sec / 60.0
+                    except Exception as e:
+                        logger.debug(f"Failed to parse pool_created_at '{created_str}': {e}")
+                        continue
+
+                # Strict Filter: Discard token if age > 30 minutes or unverified!
+                if age_min < 0 or age_min > config.MAX_NEW_TOKEN_AGE_MINUTES:
+                    continue
+
+                raw_name = attr.get("name", "Unknown Pool")
+                # Parse correct symbol for target token
+                if "/" in raw_name:
+                    parts = [x.strip() for x in raw_name.split("/")]
+                    if target_token_addr == quote_addr and len(parts) > 1:
+                        symbol = parts[1]
+                    else:
+                        symbol = parts[0]
+                else:
+                    symbol = raw_name
+
+                price_usd = float(attr.get("base_token_price_usd", 0) or 0)
+                mc = float(attr.get("fdv_usd", 0) or attr.get("market_cap_usd", 0) or 0)
+                liq = float(attr.get("reserve_in_usd", 0) or 0)
+                pc5m = float(attr.get("price_change_percentage", {}).get("m5", 0) or 0)
+
+                # Fallback Market Cap calculation if FDV is not reported
+                if mc == 0 and price_usd > 0:
+                    mc = price_usd * 1_000_000_000
+                elif mc == 0 and liq > 0:
+                    mc = liq * 2
+
+                parsed_pools.append({
+                    "token_address": target_token_addr,
+                    "symbol": symbol,
+                    "name": f"{symbol} Token",
+                    "chain": chain_id,
+                    "pair_address": p.get("id", ""),
+                    "price_usd": price_usd,
+                    "market_cap": mc,
+                    "liquidity_usd": liq,
+                    "age_minutes": round(age_min, 1),
+                    "price_change_5m": pc5m,
+                    "fomo_url": self.get_fomo_url(chain_id, target_token_addr)
+                })
+
+            return parsed_pools
+        except Exception as e:
+            logger.debug(f"Failed to fetch GeckoTerminal new pools for {chain_id}: {e}")
+            return []
+
+fomo_client = FOMOApiClient()
