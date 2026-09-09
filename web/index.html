@@ -930,10 +930,15 @@
             "${t.trader_description || 'Wejście tradera zweryfikowane'}"
           </div>
 
-          <a href="${t.fomo_url || 'https://fomo.family'}" target="_blank" class="btn-anim w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs">
-            <span>Otwórz w fomo.family</span>
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          </a>
+          <div class="flex gap-2">
+            <a href="${t.fomo_url || 'https://fomo.family'}" target="_blank" class="btn-anim flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs">
+              <span>Otwórz w fomo.family</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+            <a href="https://dexscreener.com/search?q=${encodeURIComponent(caStr)}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1 text-xs shrink-0">
+              <span>DexScreener</span>
+            </a>
+          </div>
         `;
         grid.appendChild(card);
       });
@@ -1083,10 +1088,15 @@
                   <span class="text-slate-600">|</span>
                   <span>Holdery: <b class="text-slate-200">${holdersFormatted}</b></span>
                 </div>
-                <a href="${s.fomoUrl || 'https://fomo.family'}" target="_blank" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
-                  <span>Otwórz w fomo.family</span>
-                  <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
+                <div class="flex items-center gap-1.5">
+                  <a href="${s.fomoUrl || 'https://fomo.family'}" target="_blank" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
+                    <span>Otwórz w fomo.family</span>
+                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                  </a>
+                  <a href="https://dexscreener.com/search?q=${encodeURIComponent(s.ca)}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-2.5 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
+                    <span>DexScreener</span>
+                  </a>
+                </div>
               </div>
             </div>
           `;

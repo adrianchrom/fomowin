@@ -102,6 +102,7 @@ class FOMOApiClient:
                     continue
 
                 raw_name = attr.get("name", "Unknown Pool")
+                symbol = raw_name
                 # Parse correct symbol for target token
                 if "/" in raw_name:
                     parts = [x.strip() for x in raw_name.split("/")]
