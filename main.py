@@ -62,13 +62,13 @@ manager = ConnectionManager()
 SAMPLE_INSIDER_SIGNAL = risk_engine.analyze_signal(
     source_account="@unipcs",
     platform="Twitter",
-    content="Aping into this new runner on fomo.family, looks early: 7xKX...pump",
-    token_name="Unipcs Runner",
-    ticker="RUNNER",
-    ca="7xKXtg2CW87d97TXJSD9...",
+    content="Aping into Peanut on fomo.family, looks early: 2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump",
+    token_name="Peanut the Squirrel",
+    ticker="PNUT",
+    ca="2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump",
     mint_authority_revoked=True,
-    freeze_authority_active=True,
-    top_holders_supply_pct=34.0
+    freeze_authority_active=False,
+    top_holders_supply_pct=14.0
 )
 
 # Event Callbacks
@@ -220,26 +220,26 @@ async def get_user_positions(request: Request):
         "positions": [
             {
                 "id": "pos-1",
-                "token_name": "Unipcs Runner",
-                "ticker": "RUNNER",
-                "ca": "7xKXtg2CW87d97TXJSD9...",
-                "amount_usd": 3200.0,
-                "entry_mcap_usd": 120000.0,
-                "current_mcap_usd": 450000.0,
-                "pnl_pct": 275.0,
-                "risk_of_drop_pct": 68.5,
-                "growth_probability_pct": 31.5,
-                "risk_level": "HIGH_VOLATILITY",
-                "recommendation": "Rozważ częściową realizację zysków (Take Profit)."
+                "token_name": "Peanut the Squirrel",
+                "ticker": "PNUT",
+                "ca": "2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump",
+                "amount_usd": 15200.0,
+                "entry_mcap_usd": 120000000.0,
+                "current_mcap_usd": 850000000.0,
+                "pnl_pct": 608.3,
+                "risk_of_drop_pct": 18.5,
+                "growth_probability_pct": 81.5,
+                "risk_level": "SAFE_BULLISH",
+                "recommendation": "Silny akumulowany aktyw – wysokie prawdopodobieństwo dalszych wzrostów."
             },
             {
                 "id": "pos-2",
-                "token_name": "Horseimnot Alpha",
-                "ticker": "HORSE",
-                "ca": "0x58ffac95f78d15cecddb91056c8f79f704144e34",
-                "amount_usd": 5400.0,
-                "entry_mcap_usd": 650000.0,
-                "current_mcap_usd": 1400000.0,
+                "token_name": "Brett on Base",
+                "ticker": "BRETT",
+                "ca": "0x532f27101965dd16442e59d40670fa5bb0915b9b",
+                "amount_usd": 24000.0,
+                "entry_mcap_usd": 650000000.0,
+                "current_mcap_usd": 1400000000.0,
                 "pnl_pct": 115.3,
                 "risk_of_drop_pct": 22.0,
                 "growth_probability_pct": 78.0,

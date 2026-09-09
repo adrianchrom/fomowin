@@ -36,13 +36,13 @@ class AlertsManager:
         self.alerts: Dict[str, MarketCapAlert] = {}
         # Pre-seed with a sample alert for demonstration
         sample = MarketCapAlert(
-            token_name="Unipcs Runner",
-            ticker="RUNNER",
-            ca="7xKXtg2CW87d97TXJSD9...",
+            token_name="Peanut the Squirrel",
+            ticker="PNUT",
+            ca="2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump",
             alert_type="BUY_UNDER",
-            target_mcap_usd=50000.0,
-            initial_mcap_usd=120000.0,
-            fomo_url="https://fomo.family/tokens/solana/7xKXtg2CW87d97TXJSD9"
+            target_mcap_usd=500000000.0,
+            initial_mcap_usd=850000000.0,
+            fomo_url="https://fomo.family/tokens/solana/2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump"
         )
         self.alerts[sample.id] = sample
 

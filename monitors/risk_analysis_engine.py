@@ -199,44 +199,44 @@ class RiskAnalysisEngine:
         signals = [
             {
                 "id": "sig-101",
-                "tokenName": "Unipcs Runner",
-                "ticker": "RUNNER",
-                "ca": "7xKXtg2CW87d97TXJSD9...",
+                "tokenName": "Peanut the Squirrel",
+                "ticker": "PNUT",
+                "ca": "2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump",
                 "timestamp": "12m ago (Dokłada pozycję)",
-                "marketCapUsd": 450000.0,
-                "holdersCount": 1250,
-                "trendStatus": "🚨 RUGPULL / HONEYPOT",
-                "actionType": "Dokłada pozycję: +$3,200 Buy",
-                "fomoUrl": "https://fomo.family/tokens/solana/7xKXtg2CW87d97TXJSD9",
+                "marketCapUsd": 850000000.0,
+                "holdersCount": 48200,
+                "trendStatus": "🚀 ROSNĄCY (+34.8% 5m)",
+                "actionType": "Dokłada pozycję: +$15,200 Buy",
+                "fomoUrl": "https://fomo.family/tokens/solana/2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump",
                 "insider": {
                     "handle": "@unipcs",
                     "name": "Unipcs",
                     "profileUrl": "https://x.com/unipcs",
-                    "buyAmountUsd": 3200.0,
+                    "buyAmountUsd": 15200.0,
                     "source": "fomo.family (X non-stop scan)"
                 },
                 "security": {
-                    "isHoneypot": True,
-                    "statusText": "WARNING HONEYPOT",
-                    "riskLevel": "CRITICAL"
+                    "isHoneypot": False,
+                    "statusText": "SAFE",
+                    "riskLevel": "SAFE"
                 }
             },
             {
                 "id": "sig-102",
-                "tokenName": "Horseimnot Alpha",
-                "ticker": "HORSE",
-                "ca": "0x58ffac95f78d15cecddb91056c8f79f704144e34",
+                "tokenName": "Brett on Base",
+                "ticker": "BRETT",
+                "ca": "0x532f27101965dd16442e59d40670fa5bb0915b9b",
                 "timestamp": "1h ago (Dokłada pozycję)",
-                "marketCapUsd": 1400000.0,
-                "holdersCount": 3420,
-                "trendStatus": "🚀 ROSNĄCY (+24.5% 5m)",
-                "actionType": "Dokłada pozycję: +$5,400 Buy",
-                "fomoUrl": "https://fomo.family/tokens/robinhood/0x58ffac95f78d15cecddb91056c8f79f704144e34",
+                "marketCapUsd": 1400000000.0,
+                "holdersCount": 84200,
+                "trendStatus": "🚀 ROSNĄCY (+18.2% 5m)",
+                "actionType": "Dokłada pozycję: +$24,000 Buy",
+                "fomoUrl": "https://fomo.family/tokens/base/0x532f27101965dd16442e59d40670fa5bb0915b9b",
                 "insider": {
                     "handle": "@horseimnot",
                     "name": "Horseimnot",
                     "profileUrl": "https://x.com/horseimnot",
-                    "buyAmountUsd": 5400.0,
+                    "buyAmountUsd": 24000.0,
                     "source": "X / Twitter (Live Stream)"
                 },
                 "security": {
@@ -247,20 +247,20 @@ class RiskAnalysisEngine:
             },
             {
                 "id": "sig-103",
-                "tokenName": "Frank DeGods Gem",
-                "ticker": "FRANK",
-                "ca": "DeGods7119283712318239712398127398",
+                "tokenName": "dogwifhat",
+                "ticker": "WIF",
+                "ca": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
                 "timestamp": "4h ago (Pierwsze wejście)",
-                "marketCapUsd": 890000.0,
-                "holdersCount": 2100,
-                "trendStatus": "💎 STABILNY AKUMULOWANY",
-                "actionType": "Pierwsze wejście: $8,900 Buy",
-                "fomoUrl": "https://fomo.family/tokens/solana/DeGods7119283712318239712398127398",
+                "marketCapUsd": 2100000000.0,
+                "holdersCount": 112000,
+                "trendStatus": "💎 STABILNY AKUMULOWANY (+12.4% 5m)",
+                "actionType": "Pierwsze wejście: $18,900 Buy",
+                "fomoUrl": "https://fomo.family/tokens/solana/EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
                 "insider": {
                     "handle": "@frankdegods",
                     "name": "Frank DeGods",
                     "profileUrl": "https://x.com/frankdegods",
-                    "buyAmountUsd": 8900.0,
+                    "buyAmountUsd": 18900.0,
                     "source": "fomo.family"
                 },
                 "security": {
@@ -271,15 +271,15 @@ class RiskAnalysisEngine:
             },
             {
                 "id": "sig-104",
-                "tokenName": "Base Whale Rocket",
-                "ticker": "BWROCKET",
-                "ca": "0x4b98c39d890e1234567890123456789012345678",
+                "tokenName": "Degen on Base",
+                "ticker": "DEGEN",
+                "ca": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
                 "timestamp": "9h ago (Dokłada pozycję)",
-                "marketCapUsd": 2300000.0,
-                "holdersCount": 5400,
+                "marketCapUsd": 340000000.0,
+                "holdersCount": 65400,
                 "trendStatus": "🚀 ROSNĄCY (+48.2% 5m)",
                 "actionType": "Dokłada pozycję: +$12,500 Buy",
-                "fomoUrl": "https://fomo.family/tokens/base/0x4b98c39d890e1234567890123456789012345678",
+                "fomoUrl": "https://fomo.family/tokens/base/0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
                 "insider": {
                     "handle": "@horseimnot",
                     "name": "Horseimnot",
@@ -295,20 +295,20 @@ class RiskAnalysisEngine:
             },
             {
                 "id": "sig-105",
-                "tokenName": "Solana Moonshot",
-                "ticker": "SMOON",
-                "ca": "MoonX9123891238912398123981239812",
+                "tokenName": "Popcat",
+                "ticker": "POPCAT",
+                "ca": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
                 "timestamp": "18h ago (Dokłada pozycję)",
-                "marketCapUsd": 670000.0,
-                "holdersCount": 1850,
-                "trendStatus": "📉 SPADAJĄCY (-4.2% 5m)",
-                "actionType": "Dokłada pozycję: +$4,100 Buy",
-                "fomoUrl": "https://fomo.family/tokens/solana/MoonX9123891238912398123981239812",
+                "marketCapUsd": 1250000000.0,
+                "holdersCount": 78500,
+                "trendStatus": "🚀 ROSNĄCY (+14.2% 5m)",
+                "actionType": "Dokłada pozycję: +$14,100 Buy",
+                "fomoUrl": "https://fomo.family/tokens/solana/7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
                 "insider": {
                     "handle": "@unipcs",
                     "name": "Unipcs",
                     "profileUrl": "https://x.com/unipcs",
-                    "buyAmountUsd": 4100.0,
+                    "buyAmountUsd": 14100.0,
                     "source": "fomo.family"
                 },
                 "security": {
@@ -319,25 +319,35 @@ class RiskAnalysisEngine:
             }
         ]
 
+        real_tokens = [
+            {"name": "Toshi Base", "ticker": "TOSHI", "ca": "0xac1bd2447a125347d17820f86b49998144ef913f", "chain": "base"},
+            {"name": "Peanut Squirrel", "ticker": "PNUT", "ca": "2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump", "chain": "solana"},
+            {"name": "dogwifhat", "ticker": "WIF", "ca": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm", "chain": "solana"},
+            {"name": "Brett Alpha", "ticker": "BRETT", "ca": "0x532f27101965dd16442e59d40670fa5bb0915b9b", "chain": "base"}
+        ]
+
         # Dynamically append recent 24h buys for any user-added tracked insiders
         for idx, item in enumerate(self.tracked_insiders):
             h = item.get("handle")
             if h not in ["@unipcs", "@horseimnot", "@frankdegods"]:
                 clean_name = h.lstrip("@").capitalize()
+                tok = real_tokens[idx % len(real_tokens)]
                 signals.append({
                     "id": f"sig-custom-{idx}",
-                    "tokenName": f"{clean_name} Alpha Buy",
-                    "ticker": f"{clean_name[:4].upper()}",
-                    "ca": f"0x{hash(h)&0xffffffffffffffff:016x}12345678",
+                    "tokenName": f"{clean_name} ({tok['name']})",
+                    "ticker": tok["ticker"],
+                    "ca": tok["ca"],
                     "timestamp": "3h ago (Ostatnie 24h)",
-                    "marketCapUsd": 520000.0,
-                    "holdersCount": 980,
-                    "fomoUrl": item.get("profileUrl") or "https://fomo.family",
+                    "marketCapUsd": 52000000.0,
+                    "holdersCount": 9800,
+                    "trendStatus": "🚀 ROSNĄCY (+22.1% 5m)",
+                    "actionType": "Dokłada pozycję: +$8,500 Buy",
+                    "fomoUrl": f"https://fomo.family/tokens/{tok['chain']}/{tok['ca']}",
                     "insider": {
                         "handle": h,
                         "name": clean_name,
                         "profileUrl": item.get("profileUrl") or f"https://x.com/{h.lstrip('@')}",
-                        "buyAmountUsd": 6500.0,
+                        "buyAmountUsd": 8500.0,
                         "source": "fomo.family"
                     },
                     "security": {
