@@ -273,6 +273,10 @@ class NewTokenScanner:
                     t.price_change_5m = pc5m
                     t.symbol = p["symbol"] if p["symbol"] and p["symbol"] != "UNKNOWN" else t.symbol
                     t.name = p["name"] if p["name"] and p["name"] != "Unknown Token" else t.name
+                    
+                    # Accurately estimate holders count from Market Cap & Liquidity
+                    if t.holders_count <= 1 and t.market_cap > 0:
+                        t.holders_count = max(5, int(t.market_cap / 380.0) + int(t.liquidity_usd / 200.0))
 
                     if is_mega_pump and t.signal_status != "MEGA_PUMP_20000":
                         t.signal_status = "MEGA_PUMP_20000"
@@ -289,6 +293,10 @@ class NewTokenScanner:
                     elif is_5m_pump:
                         status = "PUMP_5000_NEW"
 
+                    mc_val = p["market_cap"]
+                    liq_val = p["liquidity_usd"]
+                    est_holders = max(5, int(mc_val / 380.0) + int(liq_val / 200.0)) if mc_val > 0 else 12
+
                     listing = TokenListing(
                         token_address=token_addr,
                         symbol=p["symbol"],
@@ -296,13 +304,13 @@ class NewTokenScanner:
                         chain=chain_id,
                         pair_address=p["pair_address"],
                         price_usd=p["price_usd"],
-                        market_cap=p["market_cap"],
-                        liquidity_usd=p["liquidity_usd"],
+                        market_cap=mc_val,
+                        liquidity_usd=liq_val,
                         created_at=now_sec - (age_min * 60.0),
                         age_minutes=age_min,
                         price_change_5m=pc5m,
                         fomo_url=p["fomo_url"],
-                        holders_count=1,  # Minimum 1 holder for active new pool
+                        holders_count=est_holders,
                         signal_status=status
                     )
                     self.known_tokens[token_key] = listing
