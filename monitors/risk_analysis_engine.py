@@ -9,6 +9,19 @@ logger = logging.getLogger("RiskAnalysisEngine")
 CREDENTIALS_DIR = os.path.dirname(os.path.dirname(__file__))
 INSIDERS_FILE = os.path.join(CREDENTIALS_DIR, "TRACKED_INSIDERS.json")
 
+KNOWN_TOKEN_MAP = {
+    "PNUT": {"ca": "2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump", "chain": "solana", "name": "Peanut the Squirrel"},
+    "PEANUT": {"ca": "2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump", "chain": "solana", "name": "Peanut the Squirrel"},
+    "WIF": {"ca": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm", "chain": "solana", "name": "dogwifhat"},
+    "DOGWIFHAT": {"ca": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm", "chain": "solana", "name": "dogwifhat"},
+    "BRETT": {"ca": "0x532f27101965dd16442e59d40670fa5bb0915b9b", "chain": "base", "name": "Brett on Base"},
+    "POPCAT": {"ca": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr", "chain": "solana", "name": "Popcat"},
+    "DEGEN": {"ca": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed", "chain": "base", "name": "Degen on Base"},
+    "TOSHI": {"ca": "0xac1bd2447a125347d17820f86b49998144ef913f", "chain": "base", "name": "Toshi Base"},
+    "BONK": {"ca": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", "chain": "solana", "name": "Bonk"},
+    "MYRO": {"ca": "HhJpSTGG2LeG4SRvDRq7WoPriZFggMGLRZqiFuHepump", "chain": "solana", "name": "Myro"},
+}
+
 DEFAULT_TRACKED_INSIDERS = [
     {"handle": "@unipcs", "source": "X / Twitter", "url": "https://x.com/unipcs"},
     {"handle": "@horseimnot", "source": "X / Twitter", "url": "https://x.com/horseimnot"},
@@ -103,51 +116,98 @@ class RiskAnalysisEngine:
         return False
 
     def parse_ca_or_url(self, input_text: str) -> Dict[str, Any]:
-        """Extract Contract Address (CA) and chain from fomo.family URL or direct CA string."""
+        """Extract Contract Address (CA) and chain from fomo.family, DexScreener, PumpFun, GeckoTerminal URLs or token name/ticker."""
         if not input_text or not isinstance(input_text, str):
             return {"valid": False, "error": "Nieprawidłowy format linku lub adresu CA"}
 
         text = input_text.strip()
+        if not text:
+            return {"valid": False, "error": "Wprowadź link lub adres kontraktu CA"}
 
-        # Handle any fomo.family URLs (e.g., https://fomo.family/tokens/robinhood/0x... or https://fomo.family/tokens/solana/7x...)
-        if "fomo.family" in text:
-            # Match /tokens/{chain}/{ca} pattern
-            match = re.search(r'fomo\.family/tokens/([^/]+)/([a-zA-Z0-9]+)', text)
-            if match:
-                chain = match.group(1).lower()
-                ca = match.group(2)
-                return {"valid": True, "ca": ca, "chain": chain}
-            
-            # Match any CA inside fomo URL
-            match_ca = re.search(r'(0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{16,50})', text)
-            if match_ca:
-                ca = match_ca.group(1)
-                return {"valid": True, "ca": ca, "chain": "evm" if ca.startswith("0x") else "solana"}
+        # 1. Handle Known Token names/tickers (PNUT, WIF, BRETT, POPCAT, DEGEN, TOSHI, etc.)
+        clean_upper = text.strip("$@ ").upper()
+        if clean_upper in KNOWN_TOKEN_MAP:
+            tok = KNOWN_TOKEN_MAP[clean_upper]
+            return {
+                "valid": True,
+                "ca": tok["ca"],
+                "chain": tok["chain"],
+                "token_name": tok["name"],
+                "ticker": clean_upper
+            }
 
-        # Direct EVM address check (0x followed by 40 hex characters)
+        # 2. Extract CA from supported URLs (fomo.family, DexScreener, Pump.fun, GeckoTerminal, Solscan, etc.)
+        # fomo.family URL
+        match_fomo = re.search(r'fomo\.family/tokens/([^/]+)/([a-zA-Z0-9]+)', text)
+        if match_fomo:
+            return {"valid": True, "ca": match_fomo.group(2), "chain": match_fomo.group(1).lower()}
+
+        # DexScreener URL
+        match_dex = re.search(r'dexscreener\.com/([^/]+)/([a-zA-Z0-9]+)', text)
+        if match_dex:
+            chain = match_dex.group(1).lower()
+            ca = match_dex.group(2)
+            chain_clean = "solana" if chain == "solana" or not ca.startswith("0x") else "base"
+            return {"valid": True, "ca": ca, "chain": chain_clean}
+
+        # Pump.fun URL
+        match_pump = re.search(r'pump\.fun/(?:coin/)?([a-zA-Z0-9]+)', text)
+        if match_pump:
+            return {"valid": True, "ca": match_pump.group(1), "chain": "solana"}
+
+        # GeckoTerminal URL
+        match_gecko = re.search(r'geckoterminal\.com/([^/]+)/(?:pools|tokens)/([a-zA-Z0-9]+)', text)
+        if match_gecko:
+            chain = match_gecko.group(1).lower()
+            ca = match_gecko.group(2)
+            chain_clean = "solana" if chain == "solana" or not ca.startswith("0x") else "base"
+            return {"valid": True, "ca": ca, "chain": chain_clean}
+
+        # Solscan URL
+        match_solscan = re.search(r'solscan\.io/(?:token|account)/([a-zA-Z0-9]+)', text)
+        if match_solscan:
+            return {"valid": True, "ca": match_solscan.group(1), "chain": "solana"}
+
+        # 3. Direct EVM address check (0x followed by 40 hex characters)
         if re.match(r'^0x[a-fA-F0-9]{40}$', text):
-            return {"valid": True, "ca": text, "chain": "robinhood/base"}
+            return {"valid": True, "ca": text, "chain": "base"}
 
-        # Direct Solana / Base58 address check (length 16-50)
-        if re.match(r'^[1-9A-HJ-NP-Za-km-z]{16,50}$', text):
+        # 4. Direct Solana / Base58 address check (length 32 to 44 Base58 characters)
+        if re.match(r'^[1-9A-HJ-NP-Za-km-z]{32,44}$', text):
             return {"valid": True, "ca": text, "chain": "solana"}
 
-        # Accept token names, tickers, or search queries
+        # Any EVM 0x address embedded in string
+        match_evm = re.search(r'0x[a-fA-F0-9]{40}', text)
+        if match_evm:
+            return {"valid": True, "ca": match_evm.group(0), "chain": "base"}
+
+        # Any Solana Base58 address ending with 'pump' or length 32-44 embedded in string
+        match_sol = re.search(r'[1-9A-HJ-NP-Za-km-z]{32,44}', text)
+        if match_sol:
+            return {"valid": True, "ca": match_sol.group(0), "chain": "solana"}
+
+        # 5. Fallback for custom token names or search queries (e.g. 4stocks, ticker, name)
         if len(text) >= 2:
             clean_search = re.sub(r'[^a-zA-Z0-9_-]', '', text)
             if clean_search:
-                return {"valid": True, "ca": clean_search, "chain": "search"}
+                return {
+                    "valid": True,
+                    "ca": clean_search,
+                    "chain": "base" if clean_search.startswith("0x") else "solana",
+                    "token_name": clean_search,
+                    "ticker": clean_search.upper()
+                }
 
-        return {"valid": False, "error": "Nieprawidłowy format linku lub adresu CA"}
+        return {"valid": False, "error": "Nie odnaleziono podanego kontraktu tokena. Wklej prawidłowy adres CA (Solana / EVM) lub link (fomo.family, DexScreener, pump.fun)."}
 
     def scan_token_ca(self, input_text: str) -> Dict[str, Any]:
-        """Audit a single token by URL or CA - Fixes false positive for 4stocks & bonding curves."""
+        """Audit a single token by URL, ticker name, or CA - Fixes false positive for 4stocks & bonding curves."""
         parsed = self.parse_ca_or_url(input_text)
         if not parsed["valid"]:
             return parsed
 
         ca = parsed["ca"]
-        chain = parsed.get("chain", "unknown")
+        chain = parsed.get("chain", "solana" if not ca.startswith("0x") else "base")
         
         # 4stocks & Bonding curve / custom router false-positive fix:
         # Mark as Honeypot ONLY IF sell simulation explicitly fails (execution reverted), sell tax = 100%, or blacklist active.
@@ -177,10 +237,19 @@ class RiskAnalysisEngine:
             else:
                 reasons.append("Brak krytycznych zagrożeń w kodzie kontraktu.")
 
+        from monitors.fomo_api_client import fomo_client
+        clean_chain = chain if chain in ["solana", "base", "robinhood"] else ("solana" if not ca.startswith("0x") else "base")
+        fomo_url = fomo_client.get_fomo_url(clean_chain, ca)
+        dex_url = f"https://dexscreener.com/solana/{ca}" if clean_chain == "solana" or not ca.startswith("0x") else f"https://dexscreener.com/{clean_chain}/{ca}"
+
         return {
             "valid": True,
             "ca": ca,
-            "chain": chain if chain != "search" else "robinhood/base",
+            "chain": clean_chain,
+            "fomo_url": fomo_url,
+            "dex_url": dex_url,
+            "token_name": parsed.get("token_name", f"Token {ca[:4]}..."),
+            "ticker": parsed.get("ticker", "TKN"),
             "security": {
                 "is_honeypot": is_honeypot,
                 "status_text": "WARNING HONEYPOT" if is_honeypot else "SAFE CONTRACT",

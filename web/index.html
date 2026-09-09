@@ -1223,6 +1223,16 @@
               `).join('')}
             </ul>
           </div>
+
+          <div class="flex gap-2 pt-2">
+            <a href="${data.fomo_url || 'https://fomo.family'}" target="_blank" class="btn-anim flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-1.5 text-xs">
+              <span>Otwórz w fomo.family</span>
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+            </a>
+            <a href="${data.dex_url || 'https://dexscreener.com'}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-4 py-3 rounded-xl flex items-center justify-center gap-1 text-xs shrink-0">
+              <span>DexScreener</span>
+            </a>
+          </div>
         </div>
       `;
       container.classList.remove('hidden');
