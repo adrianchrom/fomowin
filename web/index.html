@@ -1142,23 +1142,33 @@
           return;
         }
 
-        listEl.innerHTML = alerts.map(a => `
-          <div class="glass-card p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border border-blue-900/50 animate-emerge">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-white text-sm">${a.token_name}</span>
-                <span class="text-xs font-mono text-blue-400">$${a.ticker}</span>
-                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${a.alert_type === 'BUY_UNDER' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
-                  ${a.alert_type === 'BUY_UNDER' ? '🛒 BUY IF MC < $' + a.target_mcap_usd.toLocaleString() : '💰 SELL IF MC > $' + a.target_mcap_usd.toLocaleString()}
-                </span>
+        listEl.innerHTML = alerts.map(a => {
+          const fomoLink = a.fomo_url || ((a.ca || '').startsWith('0x') ? `https://fomo.family/tokens/robinhood/${a.ca}` : `https://fomo.family/tokens/solana/${a.ca}`);
+          return `
+            <div class="glass-card p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border border-blue-900/50 animate-emerge">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-bold text-white text-sm">${a.token_name}</span>
+                  <span class="text-xs font-mono text-blue-400">$${a.ticker}</span>
+                  <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${a.alert_type === 'BUY_UNDER' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
+                    ${a.alert_type === 'BUY_UNDER' ? '🛒 BUY IF MC < $' + Number(a.target_mcap_usd).toLocaleString() : '💰 SELL IF MC > $' + Number(a.target_mcap_usd).toLocaleString()}
+                  </span>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">CA: ${(a.ca || '').slice(0, 16)}...</p>
               </div>
-              <p class="text-[11px] font-mono text-slate-400 mt-1">CA: ${(a.ca || '').slice(0, 16)}...</p>
+
+              <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <a href="${fomoLink}" target="_blank" class="btn-anim bg-blue-600/30 hover:bg-blue-600 text-blue-200 hover:text-white px-3 py-1.5 rounded-lg border border-blue-500/40 text-xs font-semibold inline-flex items-center gap-1.5 shrink-0">
+                  <span>Otwórz w fomo.family</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+                <button onclick="handleDeleteAlert('${a.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0">
+                  Usuń
+                </button>
+              </div>
             </div>
-            <button onclick="handleDeleteAlert('${a.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0">
-              Usuń alert
-            </button>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (e) {}
     }
 
