@@ -802,21 +802,6 @@
       });
     }
 
-    function renderSignalsGrid() {
-      const grid = document.getElementById('signals-grid');
-      const filtered = getSortedTokens();
-      
-      if (filtered.length === 0) {
-        grid.innerHTML = `
-          <div id="no-signals" class="col-span-full text-center py-12 text-slate-500 text-sm glass-card rounded-2xl animate-emerge">
-            <i data-lucide="radar" class="w-8 h-8 mx-auto mb-2 text-blue-400 opacity-60"></i>
-            Skanowanie sieci w poszukiwaniu nowych coinów (0 - 30 min, &ge; 1 Holder, $2,500+ Buys)...
-          </div>
-        `;
-        lucide.createIcons();
-        return;
-      }
-
     function getTokenDisplayName(t) {
       if (!t) return 'Crypto Token';
       if (t.token_name && t.token_name !== 'null' && t.token_name !== 'undefined' && t.token_name !== 'Unknown Token') return t.token_name;
@@ -850,13 +835,20 @@
         const displayTicker = t.ticker || t.symbol || 'TKN';
 
         const isHoneypot = t.is_honeypot || (caStr && caStr.toLowerCase().endsWith && caStr.toLowerCase().endsWith("dead999"));
-        const badgeClass = isHoneypot ? 'badge-honeypot pulse-red px-2.5 py-0.5 rounded text-[10px]' : 'badge-safe px-2.5 py-0.5 rounded text-[10px]';
-        const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE';
+        const isRugpull = t.signal_status === "RUGPULL_DEAD" || t.is_rugpull || (t.liquidity_usd !== undefined && t.liquidity_usd < 500 && t.market_cap > 5000) || (t.price_change_5m !== undefined && t.price_change_5m <= -85.0);
+
+        let badgeClass = 'badge-safe px-2.5 py-0.5 rounded text-[10px]';
+        let badgeText = '✅ SAFE';
+
+        if (isHoneypot || isRugpull) {
+          badgeClass = 'badge-honeypot pulse-red px-2.5 py-0.5 rounded text-[10px] font-bold';
+          badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '🚨 RUGPULL / MARTWY COIN';
+        }
 
         const pc5m = t.price_change_5m || 0;
         let trendHtml = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded text-[10px] font-bold">🚀 ROSNĄCY (+${pc5m.toFixed(1)}% 5m)</span>`;
-        if (isHoneypot) {
-          trendHtml = `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold pulse-red">🚨 RUGPULL / HONEYPOT</span>`;
+        if (isHoneypot || isRugpull) {
+          trendHtml = `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold pulse-red">🚨 RUGPULL / MARTWY COIN (Płynność wyciągnięta / 0 ruchu)</span>`;
         } else if (pc5m < 0) {
           trendHtml = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-[10px] font-bold">📉 SPADAJĄCY (${pc5m.toFixed(1)}% 5m)</span>`;
         }

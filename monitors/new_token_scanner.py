@@ -263,6 +263,7 @@ class NewTokenScanner:
 
                 is_mega_pump = pc5m >= config.MEGA_PUMP_5M_TARGET_PCT   # +20,000%
                 is_5m_pump = (pc5m >= config.PUMP_5M_TARGET_PCT) and (age_min <= 5.0) # +5,000% in <= 5m
+                is_rugpull = (p["liquidity_usd"] < 500.0 and p["market_cap"] > 5000.0) or (pc5m <= -85.0)
 
                 if token_key in self.known_tokens:
                     t = self.known_tokens[token_key]
@@ -274,11 +275,9 @@ class NewTokenScanner:
                     t.symbol = p["symbol"] if p["symbol"] and p["symbol"] != "UNKNOWN" else t.symbol
                     t.name = p["name"] if p["name"] and p["name"] != "Unknown Token" else t.name
                     
-                    # Accurately estimate holders count from Market Cap & Liquidity
-                    if t.holders_count <= 1 and t.market_cap > 0:
-                        t.holders_count = max(5, int(t.market_cap / 380.0) + int(t.liquidity_usd / 200.0))
-
-                    if is_mega_pump and t.signal_status != "MEGA_PUMP_20000":
+                    if is_rugpull:
+                        t.signal_status = "RUGPULL_DEAD"
+                    elif is_mega_pump and t.signal_status != "MEGA_PUMP_20000":
                         t.signal_status = "MEGA_PUMP_20000"
                         if self._on_signal_callback:
                             await self._on_signal_callback(t, {"type": "mega_pump", "pump_pct": pc5m})
@@ -288,7 +287,9 @@ class NewTokenScanner:
                             await self._on_signal_callback(t, {"type": "pump_5m", "pump_pct": pc5m})
                 else:
                     status = "SEARCHING"
-                    if is_mega_pump:
+                    if is_rugpull:
+                        status = "RUGPULL_DEAD"
+                    elif is_mega_pump:
                         status = "MEGA_PUMP_20000"
                     elif is_5m_pump:
                         status = "PUMP_5000_NEW"
