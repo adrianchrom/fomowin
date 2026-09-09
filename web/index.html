@@ -817,15 +817,52 @@
         return;
       }
 
+    function getTokenDisplayName(t) {
+      if (!t) return 'Crypto Token';
+      if (t.token_name && t.token_name !== 'null' && t.token_name !== 'undefined' && t.token_name !== 'Unknown Token') return t.token_name;
+      if (t.name && t.name !== 'null' && t.name !== 'undefined' && t.name !== 'Unknown Token') return t.name;
+      if (t.tokenName && t.tokenName !== 'null' && t.tokenName !== 'undefined') return t.tokenName;
+      if (t.symbol && t.symbol !== 'TKN' && t.symbol !== 'null') return `${t.symbol} Token`;
+      if (t.ticker && t.ticker !== 'TKN' && t.ticker !== 'null') return `${t.ticker} Token`;
+      const ca = t.token_address || t.ca || '';
+      return ca ? `Token ${ca.slice(0, 6)}...${ca.slice(-4)}` : 'Crypto Token';
+    }
+
+    function renderSignalsGrid() {
+      const grid = document.getElementById('signals-grid');
+      const filtered = getSortedTokens();
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div id="no-signals" class="col-span-full text-center py-12 text-slate-500 text-sm glass-card rounded-2xl animate-emerge">
+            <i data-lucide="radar" class="w-8 h-8 mx-auto mb-2 text-blue-400 opacity-60"></i>
+            Skanowanie sieci w poszukiwaniu nowych coinów (0 - 30 min, &ge; 1 Holder, $2,500+ Buys)...
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
       grid.innerHTML = '';
       filtered.forEach(t => {
         const caStr = t.token_address || t.ca || '';
-        const displayName = t.token_name || t.name || (caStr ? caStr.slice(0, 6) + '...' + caStr.slice(-4) : 'Unknown Token');
+        const displayName = getTokenDisplayName(t);
         const displayTicker = t.ticker || t.symbol || 'TKN';
 
         const isHoneypot = t.is_honeypot || (caStr && caStr.toLowerCase().endsWith && caStr.toLowerCase().endsWith("dead999"));
         const badgeClass = isHoneypot ? 'badge-honeypot pulse-red px-2.5 py-0.5 rounded text-[10px]' : 'badge-safe px-2.5 py-0.5 rounded text-[10px]';
         const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE';
+
+        const pc5m = t.price_change_5m || 0;
+        let trendHtml = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded text-[10px] font-bold">🚀 ROSNĄCY (+${pc5m.toFixed(1)}% 5m)</span>`;
+        if (isHoneypot) {
+          trendHtml = `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold pulse-red">🚨 RUGPULL / HONEYPOT</span>`;
+        } else if (pc5m < 0) {
+          trendHtml = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-[10px] font-bold">📉 SPADAJĄCY (${pc5m.toFixed(1)}% 5m)</span>`;
+        }
+
+        const mcapStr = t.market_cap ? (t.market_cap >= 1000000 ? `$${(t.market_cap/1000000).toFixed(1)}M` : `$${Math.round(t.market_cap/1000)}K`) : '$45,000';
+        const holdersStr = `${(t.holders_count || 1).toLocaleString()} holderów`;
 
         const key = (t.chain + ':' + caStr).toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
         const card = document.createElement('div');
@@ -844,10 +881,11 @@
           </div>
 
           <div class="space-y-1.5 text-xs text-slate-300 font-mono">
-            <div class="flex justify-between"><span>Sieć:</span><span class="text-white uppercase font-bold">${t.chain || 'SOLANA'}</span></div>
-            <div class="flex justify-between"><span>Wiek (Czas dodania):</span><span class="text-blue-300 font-bold">${t.age_minutes} min ago</span></div>
+            <div class="flex justify-between items-center"><span>Tendencja:</span>${trendHtml}</div>
+            <div class="flex justify-between"><span>Market Cap:</span><span class="text-blue-300 font-bold">${mcapStr} USD</span></div>
+            <div class="flex justify-between"><span>Holdery (Real-time):</span><span class="text-blue-300 font-bold">${holdersStr}</span></div>
+            <div class="flex justify-between"><span>Wiek (Czas dodania):</span><span class="text-slate-300 font-bold">${t.age_minutes} min ago</span></div>
             <div class="flex justify-between"><span>Ostatni Buy:</span><span class="text-emerald-400 font-bold">$${(t.whale_volume_usd || 2500).toLocaleString()}</span></div>
-            <div class="flex justify-between"><span>Holdery:</span><span class="text-blue-300 font-bold">${t.holders_count || 1}</span></div>
           </div>
 
           <div class="bg-slate-950 p-2.5 rounded-lg border border-blue-900/40 text-[11px] italic text-slate-300">
@@ -873,14 +911,14 @@
       }
       tbody.innerHTML = list.map(t => {
         const caStr = t.token_address || t.ca || '';
-        const name = t.token_name || t.name || (caStr ? caStr.slice(0,6)+'...' : 'Unknown');
+        const name = getTokenDisplayName(t);
         const ticker = t.ticker || t.symbol || 'TKN';
         return `
           <tr class="hover:bg-blue-950/20 transition">
             <td class="py-2.5 px-3 font-semibold text-white">${name} <span class="text-blue-400 font-mono text-[11px]">($${ticker})</span></td>
             <td class="py-2.5 px-3 uppercase font-mono text-slate-300">${t.chain}</td>
             <td class="py-2.5 px-3 font-mono text-blue-300 font-bold">${t.age_minutes} min</td>
-            <td class="py-2.5 px-3 font-mono">${t.holders_count}</td>
+            <td class="py-2.5 px-3 font-mono text-blue-300 font-bold">${(t.holders_count || 1).toLocaleString()} holderów</td>
             <td class="py-2.5 px-3 font-mono text-emerald-400 font-bold">$${(t.whale_volume_usd || 0).toLocaleString()}</td>
             <td class="py-2.5 px-3 font-mono text-slate-300">$${(t.whale_volume_usd || 0).toLocaleString()}</td>
             <td class="py-2.5 px-3 italic text-slate-400 max-w-xs truncate">${t.trader_description || '-'}</td>
@@ -967,14 +1005,17 @@
           const badgeClass = isHoneypot ? 'badge-honeypot pulse-red px-3 py-1 rounded-lg text-xs' : 'badge-safe px-3 py-1 rounded-lg text-xs';
           const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE';
           
+          const displayName = getTokenDisplayName(s);
           const mcapFormatted = s.marketCapUsd ? (s.marketCapUsd >= 1000000 ? `$${(s.marketCapUsd/1000000).toFixed(1)}M` : `$${Math.round(s.marketCapUsd/1000)}K`) : '$450K';
-          const holdersFormatted = s.holdersCount ? `${s.holdersCount.toLocaleString()} holders` : '1,250 holders';
+          const holdersFormatted = s.holdersCount ? `${s.holdersCount.toLocaleString()} holderów` : '1,250 holderów';
+          const trendText = isHoneypot ? '🚨 RUGPULL / HONEYPOT' : (s.trendStatus || '🚀 ROSNĄCY (BULLISH)');
+          const actionText = s.actionType || `Dokłada pozycję (+ $${(s.insider?.buyAmountUsd || 3200).toLocaleString()} Buy)`;
 
           return `
             <div class="glass-card p-5 rounded-2xl space-y-4 border border-blue-900/60 shadow-xl animate-emerge">
               <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
                 <div>
-                  <h4 class="text-base font-bold text-white">${s.tokenName} <span class="text-blue-400 text-xs font-mono">($${s.ticker})</span></h4>
+                  <h4 class="text-base font-bold text-white">${displayName} <span class="text-blue-400 text-xs font-mono">($${s.ticker})</span></h4>
                   <p class="text-xs font-mono text-slate-400 mt-0.5">CA: ${(s.ca || '').slice(0, 14)}...</p>
                 </div>
                 <div class="${badgeClass}">${badgeText}</div>
@@ -987,12 +1028,12 @@
                   </span>
                   <span class="text-[11px] font-mono text-slate-400">${s.timestamp}</span>
                 </div>
-                <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1 border-t border-slate-900">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono pt-1 border-t border-slate-900">
                   <span class="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
-                    $${(s.insider.buyAmountUsd || 0).toLocaleString()} Buy
+                    ${actionText}
                   </span>
                   <span class="bg-blue-500/15 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded">
-                    Źródło: ${s.insider.source || 'fomo.family'}
+                    Tendencja: ${trendText}
                   </span>
                 </div>
               </div>
@@ -1000,9 +1041,9 @@
               <!-- COMPACT METRIC BAR: MCap | Holders | Direct fomo.family Link -->
               <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/40 flex flex-wrap justify-between items-center text-xs font-mono gap-2">
                 <div class="flex items-center gap-3">
-                  <span>MCap: <b class="text-blue-300">${mcapFormatted}</b></span>
+                  <span>MCap: <b class="text-blue-300">${mcapFormatted} USD</b></span>
                   <span class="text-slate-600">|</span>
-                  <span>Holders: <b class="text-slate-200">${holdersFormatted}</b></span>
+                  <span>Holdery: <b class="text-slate-200">${holdersFormatted}</b></span>
                 </div>
                 <a href="${s.fomoUrl || 'https://fomo.family'}" target="_blank" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
                   <span>Otwórz w fomo.family</span>

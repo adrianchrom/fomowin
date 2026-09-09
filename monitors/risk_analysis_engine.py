@@ -176,16 +176,18 @@ class RiskAnalysisEngine:
                 "tokenName": "Unipcs Runner",
                 "ticker": "RUNNER",
                 "ca": "7xKXtg2CW87d97TXJSD9...",
-                "timestamp": "12m ago (Ostatnie 24h)",
+                "timestamp": "12m ago (Dokłada pozycję)",
                 "marketCapUsd": 450000.0,
                 "holdersCount": 1250,
+                "trendStatus": "🚨 RUGPULL / HONEYPOT",
+                "actionType": "Dokłada pozycję: +$3,200 Buy",
                 "fomoUrl": "https://fomo.family/tokens/solana/7xKXtg2CW87d97TXJSD9",
                 "insider": {
                     "handle": "@unipcs",
                     "name": "Unipcs",
                     "profileUrl": "https://x.com/unipcs",
                     "buyAmountUsd": 3200.0,
-                    "source": "fomo.family"
+                    "source": "fomo.family (X non-stop scan)"
                 },
                 "security": {
                     "isHoneypot": True,
@@ -198,16 +200,18 @@ class RiskAnalysisEngine:
                 "tokenName": "Horseimnot Alpha",
                 "ticker": "HORSE",
                 "ca": "0x58ffac95f78d15cecddb91056c8f79f704144e34",
-                "timestamp": "1h ago (Ostatnie 24h)",
+                "timestamp": "1h ago (Dokłada pozycję)",
                 "marketCapUsd": 1400000.0,
                 "holdersCount": 3420,
+                "trendStatus": "🚀 ROSNĄCY (+24.5% 5m)",
+                "actionType": "Dokłada pozycję: +$5,400 Buy",
                 "fomoUrl": "https://fomo.family/tokens/robinhood/0x58ffac95f78d15cecddb91056c8f79f704144e34",
                 "insider": {
                     "handle": "@horseimnot",
                     "name": "Horseimnot",
                     "profileUrl": "https://x.com/horseimnot",
                     "buyAmountUsd": 5400.0,
-                    "source": "X / Twitter"
+                    "source": "X / Twitter (Live Stream)"
                 },
                 "security": {
                     "isHoneypot": False,
@@ -220,9 +224,11 @@ class RiskAnalysisEngine:
                 "tokenName": "Frank DeGods Gem",
                 "ticker": "FRANK",
                 "ca": "DeGods7119283712318239712398127398",
-                "timestamp": "4h ago (Ostatnie 24h)",
+                "timestamp": "4h ago (Pierwsze wejście)",
                 "marketCapUsd": 890000.0,
                 "holdersCount": 2100,
+                "trendStatus": "💎 STABILNY AKUMULOWANY",
+                "actionType": "Pierwsze wejście: $8,900 Buy",
                 "fomoUrl": "https://fomo.family/tokens/solana/DeGods7119283712318239712398127398",
                 "insider": {
                     "handle": "@frankdegods",
@@ -242,16 +248,18 @@ class RiskAnalysisEngine:
                 "tokenName": "Base Whale Rocket",
                 "ticker": "BWROCKET",
                 "ca": "0x4b98c39d890e1234567890123456789012345678",
-                "timestamp": "9h ago (Ostatnie 24h)",
+                "timestamp": "9h ago (Dokłada pozycję)",
                 "marketCapUsd": 2300000.0,
                 "holdersCount": 5400,
+                "trendStatus": "🚀 ROSNĄCY (+48.2% 5m)",
+                "actionType": "Dokłada pozycję: +$12,500 Buy",
                 "fomoUrl": "https://fomo.family/tokens/base/0x4b98c39d890e1234567890123456789012345678",
                 "insider": {
                     "handle": "@horseimnot",
                     "name": "Horseimnot",
                     "profileUrl": "https://x.com/horseimnot",
                     "buyAmountUsd": 12500.0,
-                    "source": "fomo.family"
+                    "source": "fomo.family (X Scanner)"
                 },
                 "security": {
                     "isHoneypot": False,
@@ -264,9 +272,11 @@ class RiskAnalysisEngine:
                 "tokenName": "Solana Moonshot",
                 "ticker": "SMOON",
                 "ca": "MoonX9123891238912398123981239812",
-                "timestamp": "18h ago (Ostatnie 24h)",
+                "timestamp": "18h ago (Dokłada pozycję)",
                 "marketCapUsd": 670000.0,
                 "holdersCount": 1850,
+                "trendStatus": "📉 SPADAJĄCY (-4.2% 5m)",
+                "actionType": "Dokłada pozycję: +$4,100 Buy",
                 "fomoUrl": "https://fomo.family/tokens/solana/MoonX9123891238912398123981239812",
                 "insider": {
                     "handle": "@unipcs",
