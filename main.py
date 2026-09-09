@@ -263,6 +263,12 @@ async def get_risk_sample():
     """Returns the pre-analyzed sample signal provided by user."""
     return SAMPLE_INSIDER_SIGNAL
 
+@app.post("/api/scan-token")
+async def scan_token_route(data: Dict[str, Any] = Body(...)):
+    """API endpoint to scan token CA or URL for honeypot & contract safety."""
+    input_text = data.get("input", "")
+    return risk_engine.scan_token_ca(input_text)
+
 @app.post("/api/risk-analysis")
 async def analyze_risk_post(data: Dict[str, Any] = Body(...)):
     """API endpoint to analyze custom on-chain signal risk & insider classification."""

@@ -247,10 +247,31 @@
 
       <!-- Filters Toolbar -->
       <div class="glass-card p-4 rounded-xl flex flex-wrap justify-between items-center gap-3 animate-emerge">
-        <div class="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs w-full lg:w-auto">
           <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
             <i data-lucide="filter" class="w-4 h-4 text-blue-400"></i> Filtry:
           </span>
+          <select id="filter-sort" onchange="renderAll()" class="bg-blue-950 border border-blue-500/50 text-blue-200 font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-400">
+            <option value="age_asc">⏱️ Sortuj: Najnowsze (Czas dodania)</option>
+            <option value="mcap_desc">💰 Sortuj: Market Cap (Najwyższy)</option>
+            <option value="holders_desc">👥 Sortuj: Holdery (Najwięcej)</option>
+            <option value="buy_desc">🚀 Sortuj: Największy Buy ($)</option>
+          </select>
+          <select id="filter-holders" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="all">Wszyscy holdery (&ge; 1)</option>
+            <option value="10">&ge; 10 Holderów</option>
+            <option value="50">&ge; 50 Holderów</option>
+            <option value="100">&ge; 100 Holderów</option>
+            <option value="500">&ge; 500 Holderów</option>
+          </select>
+          <select id="filter-mcap" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="all">Wszystkie Market Cap</option>
+            <option value="50000">MCap &ge; $50K</option>
+            <option value="100000">MCap &ge; $100K</option>
+            <option value="250000">MCap &ge; $250K</option>
+            <option value="500000">MCap &ge; $500K</option>
+            <option value="1000000">MCap &ge; $1M</option>
+          </select>
           <select id="filter-age" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
             <option value="all">Wszystkie do 30m</option>
             <option value="5">Do 5 minut</option>
@@ -748,17 +769,42 @@
       if (t.age_minutes > 30.0 || t.age_minutes < 0) return false;
       if (t.holders_count < 1) return false;
 
-      const ageFilter = document.getElementById('filter-age').value;
-      const buyFilter = document.getElementById('filter-buy').value;
+      const ageFilter = document.getElementById('filter-age')?.value || 'all';
+      const buyFilter = document.getElementById('filter-buy')?.value || 'all';
+      const holdersFilter = document.getElementById('filter-holders')?.value || 'all';
+      const mcapFilter = document.getElementById('filter-mcap')?.value || 'all';
+
       if (ageFilter !== 'all' && t.age_minutes > parseFloat(ageFilter)) return false;
       if (buyFilter === '2500' && t.whale_volume_usd < 2500.0) return false;
       if (buyFilter === '5000' && t.whale_volume_usd < 5000.0) return false;
+
+      if (holdersFilter !== 'all' && (t.holders_count || 0) < parseInt(holdersFilter)) return false;
+      if (mcapFilter !== 'all' && (t.market_cap || 0) < parseFloat(mcapFilter)) return false;
+
       return true;
+    }
+
+    function getSortedTokens() {
+      const filtered = Array.from(tokensMap.values()).filter(t => passesFilters(t));
+      const sortType = document.getElementById('filter-sort')?.value || 'age_asc';
+
+      return filtered.sort((a, b) => {
+        if (sortType === 'age_asc') {
+          return (a.age_minutes || 0) - (b.age_minutes || 0); // Newest/youngest first by default
+        } else if (sortType === 'mcap_desc') {
+          return (b.market_cap || 0) - (a.market_cap || 0);
+        } else if (sortType === 'holders_desc') {
+          return (b.holders_count || 0) - (a.holders_count || 0);
+        } else if (sortType === 'buy_desc') {
+          return (b.whale_volume_usd || 0) - (a.whale_volume_usd || 0);
+        }
+        return (a.age_minutes || 0) - (b.age_minutes || 0);
+      });
     }
 
     function renderSignalsGrid() {
       const grid = document.getElementById('signals-grid');
-      const filtered = Array.from(tokensMap.values()).filter(t => passesFilters(t));
+      const filtered = getSortedTokens();
       
       if (filtered.length === 0) {
         grid.innerHTML = `
@@ -771,6 +817,7 @@
         return;
       }
 
+      grid.innerHTML = '';
       filtered.forEach(t => {
         const caStr = t.token_address || t.ca || '';
         const displayName = t.token_name || t.name || (caStr ? caStr.slice(0, 6) + '...' + caStr.slice(-4) : 'Unknown Token');
@@ -781,8 +828,10 @@
         const badgeText = isHoneypot ? '🚨 WARNING HONEYPOT' : '✅ SAFE';
 
         const key = (t.chain + ':' + caStr).toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
-        let card = document.getElementById('sigcard-' + key);
-        const html = `
+        const card = document.createElement('div');
+        card.id = 'sigcard-' + key;
+        card.className = "glass-card p-4 rounded-2xl space-y-3 gpu-layer border border-blue-900/50 animate-emerge";
+        card.innerHTML = `
           <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
             <div>
               <div class="flex items-center gap-2">
@@ -796,7 +845,7 @@
 
           <div class="space-y-1.5 text-xs text-slate-300 font-mono">
             <div class="flex justify-between"><span>Sieć:</span><span class="text-white uppercase font-bold">${t.chain || 'SOLANA'}</span></div>
-            <div class="flex justify-between"><span>Wiek:</span><span class="text-blue-300 font-bold">${t.age_minutes} min ago</span></div>
+            <div class="flex justify-between"><span>Wiek (Czas dodania):</span><span class="text-blue-300 font-bold">${t.age_minutes} min ago</span></div>
             <div class="flex justify-between"><span>Ostatni Buy:</span><span class="text-emerald-400 font-bold">$${(t.whale_volume_usd || 2500).toLocaleString()}</span></div>
             <div class="flex justify-between"><span>Holdery:</span><span class="text-blue-300 font-bold">${t.holders_count || 1}</span></div>
           </div>
@@ -810,24 +859,16 @@
             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
           </a>
         `;
-        if (card) {
-          card.innerHTML = html;
-        } else {
-          card = document.createElement('div');
-          card.id = 'sigcard-' + key;
-          card.className = "glass-card p-4 rounded-2xl space-y-3 gpu-layer border border-blue-900/50 animate-emerge";
-          card.innerHTML = html;
-          grid.prepend(card);
-        }
+        grid.appendChild(card);
       });
       lucide.createIcons();
     }
 
     function renderTokensTable() {
       const tbody = document.getElementById('tokens-table-body');
-      const list = Array.from(tokensMap.values());
+      const list = getSortedTokens();
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-500 font-mono">Brak tokenów...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-500 font-mono">Brak tokenów dla wybranych filtrów...</td></tr>`;
         return;
       }
       tbody.innerHTML = list.map(t => {
