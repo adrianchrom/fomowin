@@ -49,13 +49,14 @@ class AuthManager:
             except Exception as e:
                 logger.error(f"Error writing credentials file: {e}")
 
-    def authenticate(self, username: str, password: str) -> Optional[str]:
-        """Authenticate user credentials and return a new session token if valid."""
+    def authenticate(self, username: str, password: str) -> Optional[tuple]:
+        """Authenticate user credentials case-insensitively and return (session_token, canonical_username) if valid."""
         username_clean = username.strip()
-        if username_clean in self.users and self.users[username_clean] == password.strip():
-            session_token = secrets.token_hex(24)
-            self.active_sessions[session_token] = username_clean
-            return session_token
+        for canonical_user, pass_val in self.users.items():
+            if canonical_user.lower() == username_clean.lower() and pass_val == password.strip():
+                session_token = secrets.token_hex(24)
+                self.active_sessions[session_token] = canonical_user
+                return session_token, canonical_user
         return None
 
     def verify_session(self, session_token: Optional[str]) -> Optional[str]:

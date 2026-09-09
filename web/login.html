@@ -37,7 +37,13 @@
     .btn-blue:active { transform: translateY(0.5px) scale(0.97); }
 
     .text-blue-glow {
-      text-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 60px rgba(37, 99, 235, 0.4);
+      text-shadow: 0 0 30px rgba(59, 130, 246, 0.8), 0 0 70px rgba(37, 99, 235, 0.6);
+    }
+    .liquid-dissolve {
+      transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      filter: blur(28px) brightness(1.5);
+      opacity: 0 !important;
+      transform: scale(1.3) translateY(-15px) !important;
     }
   </style>
 </head>
@@ -103,7 +109,7 @@
     <!-- PURE GREETING TEXT ONLY - NO BOXES, NO FRAMES, NO RECTANGLES -->
     <div id="liquid-welcome" class="hidden text-center transition-all duration-700 opacity-0 scale-95">
       <h1 id="liquid-name" class="text-6xl sm:text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 text-blue-glow py-4">
-        HEJ MACIEK!
+        HEJ...
       </h1>
     </div>
 
@@ -152,7 +158,7 @@
           sessionStorage.setItem('fomo_username', userCap);
 
           if (rememberMe) {
-            localStorage.setItem('fomo_saved_username', u);
+            localStorage.setItem('fomo_saved_username', data.username || u);
             localStorage.setItem('fomo_saved_password', p);
             localStorage.setItem('fomo_remember_me', 'true');
           } else {
@@ -175,6 +181,11 @@
               liquidWelcome.classList.remove('opacity-0', 'scale-95');
               liquidWelcome.classList.add('opacity-100', 'scale-100');
             }, 50);
+
+            // Dissolve effect ("rozpływanie się")
+            setTimeout(() => {
+              liquidWelcome.classList.add('liquid-dissolve');
+            }, 900);
 
             // Smooth redirect to dashboard
             setTimeout(() => {

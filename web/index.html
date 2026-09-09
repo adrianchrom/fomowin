@@ -78,7 +78,7 @@
             </span>
           </div>
           <p class="text-xs text-blue-300 font-semibold flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-0.5">
-            <span id="header-greeting" onclick="toggleUserProfileModal()" class="cursor-pointer hover:text-blue-200 hover:underline transition">👋 HEJ MACIEK!</span>
+            <span id="header-greeting" onclick="toggleUserProfileModal()" class="cursor-pointer hover:text-blue-200 hover:underline transition">👋 HEJ...</span>
             <span class="text-slate-400 font-normal">| Monitoring coinów &le; 30m, Insiderzy, Skaner CA, Trade Risk Engine</span>
           </p>
         </div>
@@ -108,7 +108,7 @@
       <div class="w-full lg:w-auto flex flex-wrap items-center justify-center lg:justify-end gap-2 sm:gap-3 text-xs">
         <div onclick="toggleUserProfileModal()" class="btn-anim flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/30 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-blue-500/20">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span id="user-badge" class="font-bold text-blue-300 font-mono">Maciek</span>
+          <span id="user-badge" class="font-bold text-blue-300 font-mono">...</span>
         </div>
 
         <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-blue-900/50">
@@ -147,7 +147,7 @@
       <div class="relative z-10 flex items-center gap-4 text-center sm:text-left">
         <span class="text-3xl sm:text-4xl shrink-0">⚡</span>
         <div>
-          <h2 id="greeting-title" class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 tracking-tight drop-shadow-md">HEJ MACIEK!</h2>
+          <h2 id="greeting-title" class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 tracking-tight drop-shadow-md">HEJ...</h2>
           <p class="text-xs sm:text-sm text-slate-300 mt-1">FOMO Signal Engine • Wiek tokenów: 0-30m • Min. Buy: $2,500 USD • Opisy Traderów</p>
         </div>
       </div>
@@ -529,8 +529,6 @@
     }
 
     async function fetchUser() {
-      const stored = sessionStorage.getItem('fomo_username');
-      if (stored) setGreeting(stored);
       try {
         const res = await fetch('/api/user');
         if (res.ok) {
@@ -539,20 +537,31 @@
             const userCap = data.username.charAt(0).toUpperCase() + data.username.slice(1);
             sessionStorage.setItem('fomo_username', userCap);
             setGreeting(userCap);
+          } else {
+            window.location.href = '/login';
           }
         } else {
           window.location.href = '/login';
         }
       } catch (e) {
-        if (!stored) window.location.href = '/login';
+        const stored = sessionStorage.getItem('fomo_username');
+        if (stored) setGreeting(stored);
+        else window.location.href = '/login';
       }
     }
 
     function setGreeting(name) {
-      const upper = name.toUpperCase();
-      document.getElementById('user-badge').innerText = name;
+      if (!name) return;
+      const cleanName = name.trim();
+      const userCap = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+      const upper = userCap.toUpperCase();
+      document.getElementById('user-badge').innerText = userCap;
       document.getElementById('header-greeting').innerText = `👋 HEJ ${upper}!`;
       document.getElementById('greeting-title').innerText = `HEJ ${upper}!`;
+      const fomoLabel = document.getElementById('fomo-profile-label');
+      if (fomoLabel) {
+        fomoLabel.innerText = `${userCap} (${upper === 'ADRIAN' ? 'adrian.chrom' : 'maciek.fomo'})`;
+      }
     }
 
     async function handleLogout() {

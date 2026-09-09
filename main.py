@@ -129,11 +129,12 @@ async def serve_login_page(request: Request):
 async def login_api(data: Dict[str, str] = Body(...)):
     username = data.get("username", "")
     password = data.get("password", "")
-    token = auth_manager.authenticate(username, password)
-    if not token:
+    result = auth_manager.authenticate(username, password)
+    if not result:
         return JSONResponse(status_code=401, content={"success": False, "detail": "Nieprawidłowy użytkownik lub hasło. Zalogować mogą się tylko Adrian lub Maciek."})
     
-    response = JSONResponse(content={"success": True, "username": username.strip()})
+    token, real_username = result
+    response = JSONResponse(content={"success": True, "username": real_username})
     response.set_cookie(key="fomo_session", value=token, max_age=86400 * 7, httponly=True, samesite="lax")
     return response
 
