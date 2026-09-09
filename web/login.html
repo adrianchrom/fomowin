@@ -80,6 +80,13 @@
           </div>
         </div>
 
+        <div class="flex items-center justify-between py-1 text-xs">
+          <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white select-none">
+            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded bg-slate-950 border border-blue-900/80 text-blue-600 focus:ring-2 focus:ring-blue-500/20 cursor-pointer">
+            <span>Zapamiętaj dane logowania</span>
+          </label>
+        </div>
+
         <button type="submit" id="submit-btn" class="btn-blue w-full text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer text-sm">
           <i data-lucide="log-in" class="w-4 h-4"></i>
           Zaloguj się
@@ -103,6 +110,18 @@
   </div>
 
   <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('fomo_saved_username');
+      const savedPass = localStorage.getItem('fomo_saved_password');
+      const remember = localStorage.getItem('fomo_remember_me');
+
+      if (remember === 'true' && savedUser) {
+        document.getElementById('username').value = savedUser;
+        if (savedPass) document.getElementById('password').value = savedPass;
+        document.getElementById('remember-me').checked = true;
+      }
+    });
+
     async function handleLogin(e) {
       e.preventDefault();
       const errBox = document.getElementById('error-box');
@@ -115,6 +134,7 @@
 
       const u = document.getElementById('username').value.trim();
       const p = document.getElementById('password').value.trim();
+      const rememberMe = document.getElementById('remember-me').checked;
 
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-50');
@@ -130,6 +150,16 @@
         if (res.ok && data.success) {
           const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : u;
           sessionStorage.setItem('fomo_username', userCap);
+
+          if (rememberMe) {
+            localStorage.setItem('fomo_saved_username', u);
+            localStorage.setItem('fomo_saved_password', p);
+            localStorage.setItem('fomo_remember_me', 'true');
+          } else {
+            localStorage.removeItem('fomo_saved_username');
+            localStorage.removeItem('fomo_saved_password');
+            localStorage.removeItem('fomo_remember_me');
+          }
 
           // Hide Login Card completely
           loginCard.classList.add('opacity-0', 'scale-95');
