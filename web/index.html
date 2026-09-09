@@ -900,6 +900,12 @@
         const mcapStr = t.market_cap ? (t.market_cap >= 1000000 ? `$${(t.market_cap/1000000).toFixed(1)}M` : `$${Math.round(t.market_cap/1000)}K`) : '$45,000';
         const holdersStr = `${(t.holders_count || 1).toLocaleString()} holderów`;
 
+        const chainPath = (t.chain || 'solana').toLowerCase() === 'base' ? 'base' : ((t.chain || 'solana').toLowerCase() === 'robinhood' ? 'robinhood' : 'solana');
+        const fomoUrl = t.fomo_url || `https://fomo.family/tokens/${chainPath}/${caStr}`;
+        const dexUrl = (chainPath === 'solana' || !caStr.startsWith('0x'))
+          ? `https://dexscreener.com/solana/${caStr}`
+          : `https://dexscreener.com/${chainPath}/${caStr}`;
+
         const key = (t.chain + ':' + caStr).toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
         const card = document.createElement('div');
         card.id = 'sigcard-' + key;
@@ -931,11 +937,11 @@
           </div>
 
           <div class="flex gap-2">
-            <a href="${t.fomo_url || 'https://fomo.family'}" target="_blank" class="btn-anim flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs">
+            <a href="${fomoUrl}" target="_blank" class="btn-anim flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs">
               <span>Otwórz w fomo.family</span>
               <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
             </a>
-            <a href="https://dexscreener.com/search?q=${encodeURIComponent(caStr)}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1 text-xs shrink-0">
+            <a href="${dexUrl}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1 text-xs shrink-0">
               <span>DexScreener</span>
             </a>
           </div>
@@ -1054,6 +1060,12 @@
           const trendText = isHoneypot ? '🚨 RUGPULL / HONEYPOT' : (s.trendStatus || '🚀 ROSNĄCY (BULLISH)');
           const actionText = s.actionType || `Dokłada pozycję (+ $${(s.insider?.buyAmountUsd || 3200).toLocaleString()} Buy)`;
 
+          const chainPath = (s.ca && s.ca.startsWith('0x')) ? 'base' : 'solana';
+          const fomoUrl = s.fomoUrl || `https://fomo.family/tokens/${chainPath}/${s.ca}`;
+          const dexUrl = chainPath === 'solana'
+            ? `https://dexscreener.com/solana/${s.ca}`
+            : `https://dexscreener.com/base/${s.ca}`;
+
           return `
             <div class="glass-card p-5 rounded-2xl space-y-4 border border-blue-900/60 shadow-xl animate-emerge">
               <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
@@ -1089,11 +1101,11 @@
                   <span>Holdery: <b class="text-slate-200">${holdersFormatted}</b></span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                  <a href="${s.fomoUrl || 'https://fomo.family'}" target="_blank" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
+                  <a href="${fomoUrl}" target="_blank" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
                     <span>Otwórz w fomo.family</span>
                     <i data-lucide="external-link" class="w-3 h-3"></i>
                   </a>
-                  <a href="https://dexscreener.com/search?q=${encodeURIComponent(s.ca)}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-2.5 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
+                  <a href="${dexUrl}" target="_blank" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-300 border border-blue-900/60 font-semibold px-2.5 py-1.5 rounded-lg inline-flex items-center gap-1 text-[11px]">
                     <span>DexScreener</span>
                   </a>
                 </div>

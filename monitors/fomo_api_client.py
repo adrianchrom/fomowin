@@ -40,8 +40,14 @@ class FOMOApiClient:
         }
 
     def get_fomo_url(self, chain: str, token_address: str) -> str:
-        """Construct the direct FOMO trading URL for a given token contract/mint address."""
-        return f"{config.FOMO_BASE_URL}/tokens/{chain.lower()}/{token_address.lower()}"
+        """Construct the direct FOMO trading URL preserving exact case sensitivity for Solana Base58."""
+        clean_chain = chain.lower()
+        clean_addr = token_address.strip()
+        if clean_chain == "solana":
+            return f"{config.FOMO_BASE_URL}/tokens/solana/{clean_addr}"
+        elif clean_chain in ["base", "robinhood", "ethereum", "evm"]:
+            return f"{config.FOMO_BASE_URL}/tokens/{clean_chain}/{clean_addr.lower()}"
+        return f"{config.FOMO_BASE_URL}/tokens/{clean_chain}/{clean_addr}"
 
     async def fetch_geckoterminal_new_pools(self, chain_id: str) -> List[Dict[str, Any]]:
         """Fetch brand new pools (STRICTLY 0-30 minutes old) with correct target token identification."""
@@ -62,25 +68,28 @@ class FOMOApiClient:
                 attr = p.get("attributes", {})
                 rel = p.get("relationships", {})
                 
-                # Extract base & quote token IDs
+                # Extract base & quote token IDs preserving case sensitivity for Base58 (Solana)
                 base_token_id = rel.get("base_token", {}).get("data", {}).get("id", "")
                 quote_token_id = rel.get("quote_token", {}).get("data", {}).get("id", "")
 
-                base_addr = base_token_id.split("_", 1)[1].lower() if "_" in base_token_id else ""
-                quote_addr = quote_token_id.split("_", 1)[1].lower() if "_" in quote_token_id else ""
+                base_addr = base_token_id.split("_", 1)[1] if "_" in base_token_id else ""
+                quote_addr = quote_token_id.split("_", 1)[1] if "_" in quote_token_id else ""
 
                 if not base_addr and not quote_addr:
                     continue
 
                 # Correctly identify NEW target token vs native quote currency (SOL/WETH/USDC)
-                if base_addr in QUOTE_CURRENCIES and quote_addr not in QUOTE_CURRENCIES and quote_addr:
+                base_is_quote = base_addr.lower() in QUOTE_CURRENCIES
+                quote_is_quote = quote_addr.lower() in QUOTE_CURRENCIES
+
+                if base_is_quote and not quote_is_quote and quote_addr:
                     target_token_addr = quote_addr
-                elif base_addr:
+                elif base_addr and not base_is_quote:
                     target_token_addr = base_addr
                 else:
                     target_token_addr = quote_addr
 
-                if not target_token_addr or target_token_addr in QUOTE_CURRENCIES:
+                if not target_token_addr or target_token_addr.lower() in QUOTE_CURRENCIES:
                     continue
 
                 # Calculate Age with strict ISO date parsing
@@ -119,7 +128,7 @@ class FOMOApiClient:
                     except (ValueError, TypeError):
                         pc5m = 0.0
 
-                if not symbol or symbol in ["No data here", "Unknown Pool", "UNKNOWN"]:
+                if not symbol or symbol in ["No data here", "Unknown Pool", "UNKNOWN", "null", "undefined"]:
                     symbol = f"TKN-{target_token_addr[:4].upper()}"
 
                 name = f"{symbol} Token" if not symbol.endswith("Token") else symbol
