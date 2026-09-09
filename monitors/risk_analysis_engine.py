@@ -1,3 +1,4 @@
+import os
 import logging
 import json
 import re
@@ -5,27 +6,48 @@ from typing import Dict, Any, List, Optional, Set
 
 logger = logging.getLogger("RiskAnalysisEngine")
 
-# Recognized Insider Accounts & Alpha Callers
-DEFAULT_INSIDER_ACCOUNTS = [
-    "@horseimnot",
-    "@unipcs",
-    "@frankdegods",
-    "@printgod",
-    "@0xleo",
-    "@coyote",
-    "@satsdats"
+CREDENTIALS_DIR = os.path.dirname(os.path.dirname(__file__))
+INSIDERS_FILE = os.path.join(CREDENTIALS_DIR, "TRACKED_INSIDERS.json")
+
+DEFAULT_TRACKED_INSIDERS = [
+    {"handle": "@unipcs", "source": "X / Twitter", "url": "https://x.com/unipcs"},
+    {"handle": "@horseimnot", "source": "X / Twitter", "url": "https://x.com/horseimnot"},
+    {"handle": "@frankdegods", "source": "X / Twitter", "url": "https://x.com/frankdegods"},
+    {"handle": "@printgod", "source": "Crypto Telegram", "url": "https://fomo.family/profile/printgod"},
+    {"handle": "@0xleo", "source": "X / Twitter", "url": "https://x.com/0xleo"},
+    {"handle": "@coyote", "source": "X / Twitter", "url": "https://x.com/coyote"},
+    {"handle": "@satsdats", "source": "X / Twitter", "url": "https://x.com/satsdats"}
 ]
 
 class RiskAnalysisEngine:
     """On-Chain Risk Analysis & Signal Categorization Engine for fomo.family, Solana & Crypto Twitter (X)."""
 
     def __init__(self):
-        self.tracked_insiders: List[Dict[str, str]] = [
-            {"handle": "@unipcs", "source": "X / Twitter", "url": "https://x.com/unipcs"},
-            {"handle": "@horseimnot", "source": "X / Twitter", "url": "https://x.com/horseimnot"},
-            {"handle": "@frankdegods", "source": "X / Twitter", "url": "https://x.com/frankdegods"},
-            {"handle": "@printgod", "source": "Crypto Telegram", "url": "https://fomo.family/profile/printgod"}
-        ]
+        self.insiders_file = INSIDERS_FILE
+        self.tracked_insiders: List[Dict[str, str]] = self.load_tracked_insiders()
+
+    def load_tracked_insiders(self) -> List[Dict[str, str]]:
+        """Load tracked insiders from persistent JSON file or return defaults."""
+        if os.path.exists(self.insiders_file):
+            try:
+                with open(self.insiders_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list) and len(data) > 0:
+                        return data
+            except Exception as e:
+                logger.error(f"Error reading {self.insiders_file}: {e}")
+
+        self.save_tracked_insiders(DEFAULT_TRACKED_INSIDERS)
+        return list(DEFAULT_TRACKED_INSIDERS)
+
+    def save_tracked_insiders(self, data: Optional[List[Dict[str, str]]] = None):
+        """Save tracked insiders to persistent JSON file so they are permanently preserved."""
+        insiders_to_save = data if data is not None else self.tracked_insiders
+        try:
+            with open(self.insiders_file, "w", encoding="utf-8") as f:
+                json.dump(insiders_to_save, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            logger.error(f"Error saving {self.insiders_file}: {e}")
 
     def parse_insider_input(self, input_text: str) -> Optional[Dict[str, str]]:
         """Parse X profile link, fomo.family profile link, or raw handle into handle dict."""
@@ -66,6 +88,7 @@ class RiskAnalysisEngine:
                 return ins
 
         self.tracked_insiders.append(parsed)
+        self.save_tracked_insiders()
         return parsed
 
     def remove_tracked_insider(self, handle: str) -> bool:
@@ -74,7 +97,10 @@ class RiskAnalysisEngine:
             target = "@" + target
         initial = len(self.tracked_insiders)
         self.tracked_insiders = [i for i in self.tracked_insiders if i["handle"].lower() != target]
-        return len(self.tracked_insiders) < initial
+        if len(self.tracked_insiders) < initial:
+            self.save_tracked_insiders()
+            return True
+        return False
 
     def parse_ca_or_url(self, input_text: str) -> Dict[str, Any]:
         """Extract Contract Address (CA) and chain from fomo.family URL or direct CA string."""
