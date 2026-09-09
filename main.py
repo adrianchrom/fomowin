@@ -180,6 +180,11 @@ async def get_tracked_insiders():
     """Get list of tracked insider handles."""
     return risk_engine.tracked_insiders
 
+@app.get("/api/insider-signals")
+async def get_insider_signals_route():
+    """Get live stream of Insider Signals."""
+    return risk_engine.get_insider_signals_feed()
+
 @app.post("/api/tracked-insiders")
 async def add_tracked_insider_route(data: Dict[str, Any] = Body(...)):
     """Add a tracked insider by X link, fomo.family link, or @handle."""
