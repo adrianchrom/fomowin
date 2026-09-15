@@ -2852,15 +2852,15 @@
     let currentUser = 'Maciek';
     let userPermissions = {
       fomo: true,
-      wydatki: false,
-      wyceny: false,
-      stopki_email: false,
-      kalendarz: false,
+      wydatki: true,
+      wyceny: true,
+      stopki_email: true,
+      kalendarz: true,
       ai_chat: true,
-      crm: false,
-      tasks: false,
-      password_gen: false,
-      currency_calc: false,
+      crm: true,
+      tasks: true,
+      password_gen: true,
+      currency_calc: true,
       is_admin: false
     };
 
@@ -3028,7 +3028,7 @@
       ['wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'crm', 'tasks', 'password_gen', 'currency_calc'].forEach(m => {
         const drawerBadge = document.getElementById(`lock-badge-${m}`);
         const tileStatus = document.getElementById(`tile-status-${m}`);
-        const isUnlocked = isAdrian || userPermissions[m] || m === 'ai_chat';
+        const isUnlocked = isAdrian || userPermissions[m] !== false;
 
         if (drawerBadge) {
           if (!isUnlocked) drawerBadge.classList.remove('hidden');
@@ -3061,7 +3061,7 @@
     function switchApp(appName) {
       const userLower = (currentUser || '').toLowerCase();
       const isAdrian = userLower === 'adrian';
-      const isAllowed = isAdrian || (userPermissions && userPermissions[appName]) || appName === 'fomo' || appName === 'dashboard' || appName === 'ai_chat';
+      const isAllowed = isAdrian || appName === 'fomo' || appName === 'dashboard' || appName === 'ai_chat' || (userPermissions && userPermissions[appName] !== false);
 
       const drawer = document.getElementById('burger-drawer');
       if (drawer && !drawer.classList.contains('-translate-x-full')) {
