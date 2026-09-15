@@ -1,0 +1,25 @@
+{
+  "Adrian": [
+    {
+      "name": "Firma Testowa",
+      "company": "TestCorp",
+      "email": "test@testcorp.com",
+      "phone": "+48 500 100 200",
+      "status": "Zainteresowany",
+      "value": 5000,
+      "notes": "Zapytanie o ofertę",
+      "id": "crm-1789497922178"
+    },
+    {
+      "name": "Firma Testowa",
+      "company": "TestCorp",
+      "email": "test@testcorp.com",
+      "phone": "+48 500 100 200",
+      "status": "Zainteresowany",
+      "value": 5000,
+      "notes": "Zapytanie o ofertę",
+      "id": "crm-1789497944669"
+    }
+  ],
+  "Maciek": []
+}

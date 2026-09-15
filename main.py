@@ -245,6 +245,91 @@ async def delete_kalendarz_route(request: Request, event_id: str):
     success = user_data_mgr.delete_user_kalendarz_event(user, event_id)
     return {"success": success}
 
+# CRM ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/crm")
+async def get_crm_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_crm(user)
+
+@app.post("/api/crm")
+async def add_crm_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    added = user_data_mgr.add_user_crm_client(user, data)
+    return {"success": True, "client": added}
+
+@app.put("/api/crm/{client_id}")
+async def update_crm_route(client_id: str, request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    updated = user_data_mgr.update_user_crm_client(user, client_id, data)
+    return {"success": updated is not None, "client": updated}
+
+@app.delete("/api/crm/{client_id}")
+async def delete_crm_route(client_id: str, request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    success = user_data_mgr.delete_user_crm_client(user, client_id)
+    return {"success": success}
+
+# TASKS (KANBAN / TODO) ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/tasks")
+async def get_tasks_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_tasks(user)
+
+@app.post("/api/tasks")
+async def add_task_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    added = user_data_mgr.add_user_task(user, data)
+    return {"success": True, "task": added}
+
+@app.put("/api/tasks/{task_id}")
+async def update_task_route(task_id: str, request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    updated = user_data_mgr.update_user_task(user, task_id, data)
+    return {"success": updated is not None, "task": updated}
+
+@app.delete("/api/tasks/{task_id}")
+async def delete_task_route(task_id: str, request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    success = user_data_mgr.delete_user_task(user, task_id)
+    return {"success": success}
+
+# CURRENCY CONVERTER & NBP RATES ENDPOINT
+@app.get("/api/currency/rates")
+async def get_currency_rates_route():
+    import urllib.request, ssl
+    fallback_rates = {
+        "EUR": {"code": "EUR", "name": "Euro", "mid": 4.28, "change": "+0.15%"},
+        "USD": {"code": "USD", "name": "Dolar amerykański", "mid": 3.92, "change": "-0.08%"},
+        "GBP": {"code": "GBP", "name": "Funt szterling", "mid": 5.12, "change": "+0.22%"},
+        "CHF": {"code": "CHF", "name": "Frank szwajcarski", "mid": 4.54, "change": "+0.05%"},
+        "NOK": {"code": "NOK", "name": "Korona norweska", "mid": 0.37, "change": "-0.12%"},
+        "SEK": {"code": "SEK", "name": "Korona szwedzka", "mid": 0.38, "change": "+0.02%"},
+        "CAD": {"code": "CAD", "name": "Dolar kanadyjski", "mid": 2.85, "change": "+0.10%"},
+        "AUD": {"code": "AUD", "name": "Dolar australijski", "mid": 2.58, "change": "-0.04%"},
+        "JPY": {"code": "JPY", "name": "Jen japoński (100 JPY)", "mid": 2.62, "change": "+0.18%"}
+    }
+    try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        url = "https://api.nbp.pl/api/exchangerates/tables/A/?format=json"
+        req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, context=ctx, timeout=4) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode("utf-8"))
+                if isinstance(data, list) and len(data) > 0:
+                    rates_list = data[0].get("rates", [])
+                    effective_date = data[0].get("effectiveDate", "")
+                    for r in rates_list:
+                        code = r.get("code")
+                        if code in fallback_rates:
+                            fallback_rates[code]["mid"] = round(r.get("mid", fallback_rates[code]["mid"]), 4)
+                            fallback_rates[code]["date"] = effective_date
+                    return {"success": True, "date": effective_date, "rates": fallback_rates}
+    except Exception as e:
+        logger.debug(f"NBP API fetch error: {e}")
+    return {"success": True, "date": "Dzisiaj", "rates": fallback_rates}
+
 # LLM TEXT MODEL CHAT ENDPOINTS
 @app.post("/api/llm/chat")
 async def chat_llm_route(data: Dict[str, Any] = Body(...)):

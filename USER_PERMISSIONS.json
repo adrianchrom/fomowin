@@ -6,7 +6,11 @@
     "stopki_email": true,
     "kalendarz": true,
     "is_admin": true,
-    "ai_chat": true
+    "ai_chat": true,
+    "crm": true,
+    "tasks": true,
+    "password_gen": true,
+    "currency_calc": true
   },
   "Maciek": {
     "fomo": true,
@@ -15,6 +19,10 @@
     "stopki_email": false,
     "kalendarz": true,
     "is_admin": false,
-    "ai_chat": true
+    "ai_chat": true,
+    "crm": true,
+    "tasks": true,
+    "password_gen": true,
+    "currency_calc": true
   }
 }

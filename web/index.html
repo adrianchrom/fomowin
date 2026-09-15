@@ -265,6 +265,38 @@
         <span id="lock-badge-ai_chat" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
+      <button onclick="switchApp('crm')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="users" class="w-4 h-4 text-teal-600"></i>
+          <span>👥 MODUŁ CRM</span>
+        </div>
+        <span id="lock-badge-crm" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+      </button>
+
+      <button onclick="switchApp('tasks')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="check-square" class="w-4 h-4 text-amber-600"></i>
+          <span>📋 LISTA ZADAŃ (KANBAN)</span>
+        </div>
+        <span id="lock-badge-tasks" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+      </button>
+
+      <button onclick="switchApp('password_gen')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="key-round" class="w-4 h-4 text-cyan-600"></i>
+          <span>🔐 GENERATOR HASŁA</span>
+        </div>
+        <span id="lock-badge-password_gen" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+      </button>
+
+      <button onclick="switchApp('currency_calc')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i>
+          <span>💱 PRZELICZNIK WALUT</span>
+        </div>
+        <span id="lock-badge-currency_calc" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+      </button>
+
       <!-- Admin Panel Section (Only for Adrian) -->
       <div id="admin-panel-nav-box" class="hidden pt-4 border-t border-slate-100 mt-2">
         <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pb-1 tracking-wider">Administracja</p>
@@ -428,6 +460,86 @@
           </div>
           <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
             <span>Otwórz Czat AI</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Tile 7: MODUŁ CRM -->
+        <div onclick="switchApp('crm')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold border border-teal-200">
+                <i data-lucide="users" class="w-6 h-6"></i>
+              </div>
+              <span id="tile-status-crm" class="text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200">Odblokowane</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">👥 MODUŁ CRM</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Baza klientów, rejestr zainteresowania usługami, wartość szans sprzedażowych, dane kontaktowe i notatki.</p>
+            </div>
+          </div>
+          <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
+            <span>Otwórz CRM</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Tile 8: LISTA ZADAŃ (KANBAN) -->
+        <div onclick="switchApp('tasks')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold border border-amber-200">
+                <i data-lucide="check-square" class="w-6 h-6"></i>
+              </div>
+              <span id="tile-status-tasks" class="text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200">Odblokowane</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">📋 LISTA ZADAŃ (KANBAN)</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Zarządzanie projektami: *Do zrobienia*, *W trakcie* oraz *Zrobione*. Wagi priorytetów i terminy wykonania.</p>
+            </div>
+          </div>
+          <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
+            <span>Otwórz Zadania</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Tile 9: GENERATOR HASŁA -->
+        <div onclick="switchApp('password_gen')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold border border-cyan-200">
+                <i data-lucide="key-round" class="w-6 h-6"></i>
+              </div>
+              <span id="tile-status-password_gen" class="text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200">Odblokowane</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">🔐 GENERATOR HASŁA</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Generowanie bezpiecznych haseł z wyborem długości, wielkich liter, cyfr, znaków specjalnych i wskaźnikiem siły.</p>
+            </div>
+          </div>
+          <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
+            <span>Generuj Hasło</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Tile 10: PRZELICZNIK WALUT -->
+        <div onclick="switchApp('currency_calc')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold border border-emerald-200">
+                <i data-lucide="calculator" class="w-6 h-6"></i>
+              </div>
+              <span id="tile-status-currency_calc" class="text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200">Odblokowane</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">💱 PRZELICZNIK WALUT</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Aktualne średnie kursy walut z NBP (EUR, USD, GBP, CHF, NOK, SEK) z przelicznikami i wskaźnikiem zmian.</p>
+            </div>
+          </div>
+          <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
+            <span>Przelicz Waluty</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </div>
         </div>
@@ -2019,6 +2131,62 @@
             </label>
           </div>
 
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
+              <div>
+                <span class="font-bold text-slate-900 block text-sm">👥 MODUŁ CRM</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do bazy klientów, statusów i szans sprzedażowych</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="admin-perm-crm" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="check-square" class="w-5 h-5 text-teal-600"></i>
+              <div>
+                <span class="font-bold text-slate-900 block text-sm">📋 LISTA ZADAŃ (KANBAN)</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do tablicy Kanban, statusów zadań i priorytetów</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="admin-perm-tasks" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="key" class="w-5 h-5 text-amber-600"></i>
+              <div>
+                <span class="font-bold text-slate-900 block text-sm">🔐 GENERATOR HASŁA</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do bezpiecznego generatora haseł z miernikiem siły</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="admin-perm-password_gen" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="calculator" class="w-5 h-5 text-sky-600"></i>
+              <div>
+                <span class="font-bold text-slate-900 block text-sm">💱 PRZELICZNIK WALUT</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do przelicznika z aktualnymi kursami walut NBP</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="admin-perm-currency_calc" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
         </div>
 
         <div class="pt-3 flex items-center justify-between border-t border-slate-100">
@@ -2028,6 +2196,332 @@
           <button onclick="handleSaveAdminPermissions()" class="btn-anim bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm ml-auto">
             <i data-lucide="save" class="w-4 h-4"></i> Zapisz Uprawnienia
           </button>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 7: 👥 MODUŁ CRM ==================== -->
+    <div id="app-container-crm" class="hidden space-y-6 animate-emerge">
+      
+      <!-- Module Header -->
+      <div class="clean-card p-6 rounded-3xl border border-indigo-200 bg-indigo-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-indigo-950 flex items-center gap-2">
+            <i data-lucide="users" class="w-6 h-6 text-indigo-600"></i>
+            👥 MODUŁ CRM — BAZA KLIENTÓW
+          </h2>
+          <p class="text-xs text-slate-600 mt-1">Zarządzanie relacjami z klientami, statusami szans i notatkami</p>
+        </div>
+        <button onclick="openCrmModal()" class="btn-anim bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md">
+          <i data-lucide="user-plus" class="w-4 h-4"></i> Dodaj Nowego Klienta
+        </button>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base">👥</div>
+          <div>
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Wszyscy Klienci</span>
+            <span id="crm-stat-total" class="text-xl font-bold text-slate-900">0</span>
+          </div>
+        </div>
+        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-base">⭐</div>
+          <div>
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Zainteresowani</span>
+            <span id="crm-stat-interested" class="text-xl font-bold text-emerald-700">0</span>
+          </div>
+        </div>
+        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-base">🤝</div>
+          <div>
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">W trakcie</span>
+            <span id="crm-stat-in-progress" class="text-xl font-bold text-amber-700">0</span>
+          </div>
+        </div>
+        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-base">💰</div>
+          <div>
+            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Wartość Szans</span>
+            <span id="crm-stat-value" class="text-xl font-bold text-purple-700">0 zł</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="clean-card p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="relative w-full sm:w-72">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="crm-search-input" oninput="renderCrmListUI()" placeholder="Szukaj klienta, firmy lub notatki..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <span class="text-xs font-bold text-slate-600 shrink-0">Filter:</span>
+          <select id="crm-status-filter" onchange="renderCrmListUI()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500 w-full sm:w-auto">
+            <option value="all">Wszystkie statusy</option>
+            <option value="Zainteresowany">Zainteresowany</option>
+            <option value="W trakcie negocjacji">W trakcie negocjacji</option>
+            <option value="Zrealizowany">Zrealizowany</option>
+            <option value="Niezainteresowany">Niezainteresowany</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Clients List / Grid -->
+      <div id="crm-clients-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 8: 📋 LISTA ZADAŃ (KANBAN) ==================== -->
+    <div id="app-container-tasks" class="hidden space-y-6 animate-emerge">
+      
+      <!-- Module Header -->
+      <div class="clean-card p-6 rounded-3xl border border-teal-200 bg-teal-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-teal-950 flex items-center gap-2">
+            <i data-lucide="check-square" class="w-6 h-6 text-teal-600"></i>
+            📋 LISTA ZADAŃ — TABLICA KANBAN
+          </h2>
+          <p class="text-xs text-slate-600 mt-1">Organizacja pracy, statusy zadań i śledzenie terminów wykonania</p>
+        </div>
+        <button onclick="openTaskModal()" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md">
+          <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Zadanie
+        </button>
+      </div>
+
+      <!-- Kanban Board Columns Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Column 1: DO ZROBIENIA -->
+        <div class="bg-slate-100/70 border border-slate-200 p-4 rounded-3xl space-y-4 min-h-[400px]">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h3 class="font-bold text-xs text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> 📌 DO ZROBIENIA
+            </h3>
+            <span id="tasks-count-todo" class="bg-slate-200 text-slate-700 font-bold text-[11px] px-2.5 py-0.5 rounded-full">0</span>
+          </div>
+          <div id="tasks-col-todo" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Column 2: W TRAKCIE -->
+        <div class="bg-blue-50/40 border border-blue-200 p-4 rounded-3xl space-y-4 min-h-[400px]">
+          <div class="flex items-center justify-between border-b border-blue-200 pb-3">
+            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ⚡ W TRAKCIE
+            </h3>
+            <span id="tasks-count-in_progress" class="bg-blue-100 text-blue-700 font-bold text-[11px] px-2.5 py-0.5 rounded-full">0</span>
+          </div>
+          <div id="tasks-col-in_progress" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Column 3: ZROBIONE -->
+        <div class="bg-emerald-50/40 border border-emerald-200 p-4 rounded-3xl space-y-4 min-h-[400px]">
+          <div class="flex items-center justify-between border-b border-emerald-200 pb-3">
+            <h3 class="font-bold text-xs text-emerald-900 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ✅ ZROBIONE
+            </h3>
+            <span id="tasks-count-done" class="bg-emerald-100 text-emerald-700 font-bold text-[11px] px-2.5 py-0.5 rounded-full">0</span>
+          </div>
+          <div id="tasks-col-done" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 9: 🔐 GENERATOR HASŁA ==================== -->
+    <div id="app-container-password_gen" class="hidden space-y-6 animate-emerge max-w-3xl mx-auto">
+      
+      <!-- Module Header -->
+      <div class="clean-card p-6 rounded-3xl border border-amber-200 bg-amber-50/20 text-center space-y-2">
+        <h2 class="text-xl font-bold text-amber-950 flex items-center justify-center gap-2">
+          <i data-lucide="key" class="w-6 h-6 text-amber-600"></i>
+          🔐 GENERATOR BEZPIECZNYCH HASEŁ
+        </h2>
+        <p class="text-xs text-slate-600">Generuj kryptograficznie silne, losowe hasła z pełną kontrolą długości i znaków</p>
+      </div>
+
+      <!-- Main Password Output Box -->
+      <div class="clean-card p-6 rounded-3xl space-y-4">
+        
+        <div class="relative">
+          <input type="text" id="gen-password-output" readonly class="w-full bg-slate-900 text-emerald-400 font-mono text-xl sm:text-2xl tracking-widest font-bold rounded-2xl px-5 py-4 text-center select-all border border-slate-800 shadow-inner focus:outline-none">
+          <button onclick="copyGeneratedPassword()" title="Kopiuj do schowka" class="btn-anim absolute right-3 top-1/2 -translate-y-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs flex items-center gap-1.5 shadow-md">
+            <i data-lucide="copy" class="w-4 h-4"></i> Kopiuj
+          </button>
+        </div>
+
+        <!-- Strength Indicator Bar -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>Siła Hasła:</span>
+            <span id="gen-password-strength-text" class="text-emerald-600">Bardzo Silne</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+            <div id="gen-password-strength-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300 w-full"></div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button onclick="generatePasswordUI()" class="btn-anim w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="refresh-cw" class="w-4.5 h-4.5"></i> Wygeneruj Nowe Hasło
+        </button>
+
+      </div>
+
+      <!-- Settings Box -->
+      <div class="clean-card p-6 rounded-3xl space-y-5">
+        <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <i data-lucide="sliders" class="w-4 h-4 text-amber-600"></i> Ustawienia Generatora
+        </h3>
+
+        <!-- Length Slider -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+            <span>Długość Hasła:</span>
+            <span id="gen-length-val" class="bg-amber-100 text-amber-800 px-3 py-1 rounded-xl font-mono text-sm">16 znaków</span>
+          </div>
+          <input type="range" id="gen-length-slider" min="8" max="64" value="16" oninput="updatePasswordLengthLabel(); generatePasswordUI();" class="w-full accent-amber-500 cursor-pointer">
+        </div>
+
+        <!-- Character Types Toggles -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          
+          <label class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/80 transition">
+            <span class="font-bold text-slate-800">Wielkie Litery (A-Z)</span>
+            <input type="checkbox" id="gen-opt-uppercase" checked onchange="generatePasswordUI()" class="w-4 h-4 accent-amber-500 rounded">
+          </label>
+
+          <label class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/80 transition">
+            <span class="font-bold text-slate-800">Małe Litery (a-z)</span>
+            <input type="checkbox" id="gen-opt-lowercase" checked onchange="generatePasswordUI()" class="w-4 h-4 accent-amber-500 rounded">
+          </label>
+
+          <label class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/80 transition">
+            <span class="font-bold text-slate-800">Cyfry (0-9)</span>
+            <input type="checkbox" id="gen-opt-digits" checked onchange="generatePasswordUI()" class="w-4 h-4 accent-amber-500 rounded">
+          </label>
+
+          <label class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/80 transition">
+            <span class="font-bold text-slate-800">Znaki Specjalne (!@#$%)</span>
+            <input type="checkbox" id="gen-opt-symbols" checked onchange="generatePasswordUI()" class="w-4 h-4 accent-amber-500 rounded">
+          </label>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 10: 💱 PRZELICZNIK WALUT ==================== -->
+    <div id="app-container-currency_calc" class="hidden space-y-6 animate-emerge max-w-4xl mx-auto">
+      
+      <!-- Module Header -->
+      <div class="clean-card p-6 rounded-3xl border border-sky-200 bg-sky-50/20 text-center space-y-2">
+        <h2 class="text-xl font-bold text-sky-950 flex items-center justify-center gap-2">
+          <i data-lucide="calculator" class="w-6 h-6 text-sky-600"></i>
+          💱 PRZELICZNIK WALUT (NBP LIVE)
+        </h2>
+        <p class="text-xs text-slate-600">Przeliczaj kwoty na podstawie aktualnych średnich kursów Narodowego Banku Polskiego</p>
+      </div>
+
+      <!-- Converter Card -->
+      <div class="clean-card p-6 rounded-3xl space-y-6">
+        
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-end gap-4">
+          
+          <!-- From Column -->
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700 block">Kwota do Przeliczenia:</label>
+            <input type="number" id="curr-amount-input" value="100" min="0" step="any" oninput="calculateCurrencyUI()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:outline-none focus:border-sky-500">
+            <label class="text-xs font-bold text-slate-700 block mt-2">Z Waluty:</label>
+            <select id="curr-from-select" onchange="calculateCurrencyUI()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-sky-500">
+              <option value="PLN" selected>PLN — Złoty polski</option>
+              <option value="EUR">EUR — Euro</option>
+              <option value="USD">USD — Dolar amerykański</option>
+              <option value="GBP">GBP — Funt szterling</option>
+              <option value="CHF">CHF — Frank szwajcarski</option>
+              <option value="NOK">NOK — Korona norweska</option>
+              <option value="SEK">SEK — Korona szwedzka</option>
+              <option value="CAD">CAD — Dolar kanadyjski</option>
+              <option value="AUD">AUD — Dolar australijski</option>
+              <option value="JPY">JPY — Jen japoński</option>
+            </select>
+          </div>
+
+          <!-- Swap Button -->
+          <div class="flex justify-center pb-1">
+            <button onclick="swapCurrenciesUI()" title="Zamień waluty" class="btn-anim bg-slate-100 hover:bg-sky-100 text-sky-700 border border-slate-200 p-3 rounded-2xl shadow-sm">
+              <i data-lucide="arrow-right-left" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- To Column -->
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700 block">Wynik Przeliczenia:</label>
+            <div id="curr-result-display" class="w-full bg-slate-900 text-sky-400 font-mono text-lg font-bold rounded-xl px-4 py-3 text-center border border-slate-800 truncate">
+              0.00 EUR
+            </div>
+            <label class="text-xs font-bold text-slate-700 block mt-2">Na Walutę:</label>
+            <select id="curr-to-select" onchange="calculateCurrencyUI()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-sky-500">
+              <option value="PLN">PLN — Złoty polski</option>
+              <option value="EUR" selected>EUR — Euro</option>
+              <option value="USD">USD — Dolar amerykański</option>
+              <option value="GBP">GBP — Funt szterling</option>
+              <option value="CHF">CHF — Frank szwajcarski</option>
+              <option value="NOK">NOK — Korona norweska</option>
+              <option value="SEK">SEK — Korona szwedzka</option>
+              <option value="CAD">CAD — Dolar kanadyjski</option>
+              <option value="AUD">AUD — Dolar australijski</option>
+              <option value="JPY">JPY — Jen japoński</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="text-center text-[11px] text-slate-500 pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-sky-600"></i>
+          <span>Kurs przeliczany bezpośrednio z tabeli średnich kursów NBP. Data aktualizacji: <b id="curr-update-date">—</b></span>
+        </div>
+
+      </div>
+
+      <!-- Live Exchange Rates Table -->
+      <div class="clean-card p-6 rounded-3xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="line-chart" class="w-4 h-4 text-sky-600"></i> Tabela Kursów Walut (do PLN)
+          </h3>
+          <button onclick="fetchCurrencyRatesUI()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Odśwież
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                <th class="py-2.5 px-3">Kod Waluty</th>
+                <th class="py-2.5 px-3">Nazwa Waluty</th>
+                <th class="py-2.5 px-3 text-right">Kurs Średni NBP (PLN)</th>
+              </tr>
+            </thead>
+            <tbody id="curr-table-body" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -2074,6 +2568,134 @@
           <!-- A4 PDF Content rendered here -->
         </div>
       </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== MODAL: CRM CLIENT (DODAJ / EDYTUJ) ==================== -->
+  <div id="crm-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-emerge">
+      <div class="p-5 bg-indigo-900 text-white flex items-center justify-between border-b border-indigo-800">
+        <h3 id="crm-modal-title" class="font-bold text-sm flex items-center gap-2">
+          <i data-lucide="user-plus" class="w-5 h-5 text-indigo-400"></i> Dodaj Nowego Klienta CRM
+        </h3>
+        <button onclick="closeCrmModal()" class="text-indigo-200 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveCrmClient(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="crm-client-id">
+        
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Imię i Nazwisko / Nazwa Klienta *</label>
+          <input type="text" id="crm-input-name" required placeholder="np. Jan Kowalski" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Firma / Organizacja</label>
+          <input type="text" id="crm-input-company" placeholder="np. TechCorp Sp. z o.o." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">E-mail</label>
+            <input type="email" id="crm-input-email" placeholder="jan@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Telefon</label>
+            <input type="tel" id="crm-input-phone" placeholder="+48 600 000 000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Status Szansy *</label>
+            <select id="crm-input-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+              <option value="Zainteresowany">⭐ Zainteresowany</option>
+              <option value="W trakcie negocjacji">🤝 W trakcie negocjacji</option>
+              <option value="Zrealizowany">✅ Zrealizowany</option>
+              <option value="Niezainteresowany">❌ Niezainteresowany</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Szacowana Wartość (zł)</label>
+            <input type="number" id="crm-input-value" value="0" min="0" step="any" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Notatki / Ustalenia z Klientem</label>
+          <textarea id="crm-input-notes" rows="3" placeholder="Szczegóły rozmowy, oczekiwania, terminy kontaktu..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeCrmModal()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Anuluj</button>
+          <button type="submit" class="btn-anim bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md">
+            <i data-lucide="save" class="w-4 h-4"></i> Zapisz Klienta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ==================== MODAL: TASK (DODAJ / EDYTUJ) ==================== -->
+  <div id="tasks-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-emerge">
+      <div class="p-5 bg-teal-900 text-white flex items-center justify-between border-b border-teal-800">
+        <h3 id="tasks-modal-title" class="font-bold text-sm flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-teal-400"></i> Dodaj Zadanie
+        </h3>
+        <button onclick="closeTaskModal()" class="text-teal-200 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveTask(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="task-input-id">
+        
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Tytuł Zadania *</label>
+          <input type="text" id="task-input-title" required placeholder="np. Wyślij wycenę do klienta XYZ" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-teal-500">
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Opis Zadania</label>
+          <textarea id="task-input-description" rows="3" placeholder="Dodatkowe szczegóły, wytyczne lub notatki..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-teal-500"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Status *</label>
+            <select id="task-input-status" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-teal-500">
+              <option value="todo">📌 Do zrobienia</option>
+              <option value="in_progress">⚡ W trakcie</option>
+              <option value="done">✅ Zrobione</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Priorytet *</label>
+            <select id="task-input-priority" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-teal-500">
+              <option value="Niski">🟢 Niski</option>
+              <option value="Średni" selected>🟡 Średni</option>
+              <option value="Wysoki">🟠 Wysoki</option>
+              <option value="Pilny">🔴 Pilny</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Termin (opcjonalnie)</label>
+            <input type="date" id="task-input-due_date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-teal-500">
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeTaskModal()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Anuluj</button>
+          <button type="submit" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md">
+            <i data-lucide="save" class="w-4 h-4"></i> Zapisz Zadanie
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2382,7 +3004,7 @@
         toggleBurgerDrawer();
       }
 
-      const apps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'admin'];
+      const apps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'admin', 'crm', 'tasks', 'password_gen', 'currency_calc'];
       
       apps.forEach(a => {
         const container = document.getElementById(`app-container-${a}`);
@@ -2412,7 +3034,11 @@
         'stopki_email': '✉️ STOPKI E-MAIL',
         'kalendarz': '📅 KALENDARZ',
         'ai_chat': '🤖 ASYSTENT AI',
-        'admin': '⚙️ PANEL ADMINA'
+        'admin': '⚙️ PANEL ADMINA',
+        'crm': '👥 MODUŁ CRM',
+        'tasks': '📋 LISTA ZADAŃ (KANBAN)',
+        'password_gen': '🔐 GENERATOR HASŁA',
+        'currency_calc': '💱 PRZELICZNIK WALUT'
       };
       updateAppTitle(titlesMap[appName] || 'Aplikacja');
 
@@ -2428,6 +3054,10 @@
       try { if (appName === 'stopki_email') updateEmailSignaturePreview(); } catch (e) {}
       try { if (appName === 'kalendarz') loadKalendarzData(); } catch (e) {}
       try { if (appName === 'admin') loadAdminPermissions(); } catch (e) {}
+      try { if (appName === 'crm') loadCrmData(); } catch (e) {}
+      try { if (appName === 'tasks') loadTasksData(); } catch (e) {}
+      try { if (appName === 'password_gen') generatePasswordUI(); } catch (e) {}
+      try { if (appName === 'currency_calc') fetchCurrencyRatesUI(); } catch (e) {}
 
       const floatWidget = document.getElementById('ai-floating-widget');
       if (floatWidget) {
@@ -4408,11 +5038,20 @@
           const s = document.getElementById('admin-perm-stopki_email');
           const k = document.getElementById('admin-perm-kalendarz');
           const ai = document.getElementById('admin-perm-ai_chat');
+          const crm = document.getElementById('admin-perm-crm');
+          const t = document.getElementById('admin-perm-tasks');
+          const pg = document.getElementById('admin-perm-password_gen');
+          const cc = document.getElementById('admin-perm-currency_calc');
+
           if (w) w.checked = !!perms.wydatki;
           if (wy) wy.checked = !!perms.wyceny;
           if (s) s.checked = !!perms.stopki_email;
           if (k) k.checked = !!perms.kalendarz;
           if (ai) ai.checked = !!perms.ai_chat;
+          if (crm) crm.checked = !!perms.crm;
+          if (t) t.checked = !!perms.tasks;
+          if (pg) pg.checked = !!perms.password_gen;
+          if (cc) cc.checked = !!perms.currency_calc;
         }
       } catch (e) {}
     }
@@ -4423,13 +5062,21 @@
       const s = document.getElementById('admin-perm-stopki_email');
       const k = document.getElementById('admin-perm-kalendarz');
       const ai = document.getElementById('admin-perm-ai_chat');
+      const crm = document.getElementById('admin-perm-crm');
+      const t = document.getElementById('admin-perm-tasks');
+      const pg = document.getElementById('admin-perm-password_gen');
+      const cc = document.getElementById('admin-perm-currency_calc');
 
       const payload = {
         wydatki: w ? w.checked : false,
         wyceny: wy ? wy.checked : false,
         stopki_email: s ? s.checked : false,
         kalendarz: k ? k.checked : false,
-        ai_chat: ai ? ai.checked : false
+        ai_chat: ai ? ai.checked : false,
+        crm: crm ? crm.checked : false,
+        tasks: t ? t.checked : false,
+        password_gen: pg ? pg.checked : false,
+        currency_calc: cc ? cc.checked : false
       };
 
       try {
@@ -4961,7 +5608,562 @@
       const c2 = document.getElementById('ai-mini-chat-messages');
       if (c1) c1.innerHTML = initialHtml;
       if (c2) c2.innerHTML = initialHtml;
-      showToast("Wyczyszczono historię czatu AI", "info");
+    // ==================== MODULE 7: 👥 CRM LOGIC ====================
+    let crmClients = [];
+
+    async function loadCrmData() {
+      try {
+        const res = await fetch('/api/crm');
+        if (res.ok) {
+          crmClients = await res.json();
+          renderCrmListUI();
+        }
+      } catch (e) {
+        showToast("Błąd podczas ładowania danych CRM", "error");
+      }
+    }
+
+    function renderCrmListUI() {
+      const search = (document.getElementById('crm-search-input')?.value || '').toLowerCase();
+      const statusFilter = document.getElementById('crm-status-filter')?.value || 'all';
+
+      let filtered = crmClients.filter(c => {
+        const matchSearch = !search || 
+          (c.name || '').toLowerCase().includes(search) || 
+          (c.company || '').toLowerCase().includes(search) || 
+          (c.notes || '').toLowerCase().includes(search) || 
+          (c.email || '').toLowerCase().includes(search) || 
+          (c.phone || '').toLowerCase().includes(search);
+        
+        const matchStatus = statusFilter === 'all' || c.status === statusFilter;
+        return matchSearch && matchStatus;
+      });
+
+      // Update KPI stats
+      const totalCount = crmClients.length;
+      const interestedCount = crmClients.filter(c => c.status === 'Zainteresowany').length;
+      const inProgressCount = crmClients.filter(c => c.status === 'W trakcie negocjacji').length;
+      const totalVal = crmClients.reduce((sum, c) => sum + (parseFloat(c.value) || 0), 0);
+
+      if (document.getElementById('crm-stat-total')) document.getElementById('crm-stat-total').innerText = totalCount;
+      if (document.getElementById('crm-stat-interested')) document.getElementById('crm-stat-interested').innerText = interestedCount;
+      if (document.getElementById('crm-stat-in-progress')) document.getElementById('crm-stat-in-progress').innerText = inProgressCount;
+      if (document.getElementById('crm-stat-value')) document.getElementById('crm-stat-value').innerText = totalVal.toLocaleString('pl-PL') + ' zł';
+
+      const listContainer = document.getElementById('crm-clients-list');
+      if (!listContainer) return;
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="col-span-full clean-card p-8 text-center text-slate-500 text-xs">
+            <i data-lucide="users" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
+            Brak klientów spełniających podane kryteria. Kliknij <b>"Dodaj Nowego Klienta"</b>.
+          </div>
+        `;
+        safeCreateIcons();
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(c => {
+        let badgeColor = 'bg-slate-100 text-slate-700';
+        if (c.status === 'Zainteresowany') badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        else if (c.status === 'W trakcie negocjacji') badgeColor = 'bg-amber-100 text-amber-800 border-amber-200';
+        else if (c.status === 'Zrealizowany') badgeColor = 'bg-purple-100 text-purple-800 border-purple-200';
+        else if (c.status === 'Niezainteresowany') badgeColor = 'bg-rose-100 text-rose-800 border-rose-200';
+
+        const valFormatted = (parseFloat(c.value) || 0).toLocaleString('pl-PL') + ' zł';
+
+        return `
+          <div class="clean-card p-5 rounded-2xl space-y-3 flex flex-col justify-between border border-slate-200 hover:border-indigo-300 transition shadow-sm">
+            <div class="space-y-2">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h4 class="font-bold text-sm text-slate-900">${escapeHtml(c.name)}</h4>
+                  ${c.company ? `<p class="text-xs font-semibold text-slate-500 flex items-center gap-1"><i data-lucide="building" class="w-3.5 h-3.5 text-indigo-500"></i> ${escapeHtml(c.company)}</p>` : ''}
+                </div>
+                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border ${badgeColor}">${escapeHtml(c.status)}</span>
+              </div>
+
+              <div class="space-y-1 text-xs text-slate-600 pt-1">
+                ${c.email ? `<p class="flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5 text-slate-400"></i> <a href="mailto:${escapeHtml(c.email)}" class="hover:underline text-indigo-600">${escapeHtml(c.email)}</a></p>` : ''}
+                ${c.phone ? `<p class="flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i> <a href="tel:${escapeHtml(c.phone)}" class="hover:underline text-indigo-600">${escapeHtml(c.phone)}</a></p>` : ''}
+                <p class="flex items-center gap-1.5 font-bold text-slate-800"><i data-lucide="banknote" class="w-3.5 h-3.5 text-emerald-600"></i> Szacowana wartość: <span class="text-emerald-700">${valFormatted}</span></p>
+              </div>
+
+              ${c.notes ? `<div class="bg-slate-50 p-2.5 rounded-xl text-[11px] text-slate-600 italic border border-slate-100">${escapeHtml(c.notes)}</div>` : ''}
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+              <button onclick="openCrmModal('${c.id}')" title="Edytuj" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-xs">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+              </button>
+              <button onclick="deleteCrmClientUI('${c.id}')" title="Usuń" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl text-xs">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      safeCreateIcons();
+    }
+
+    function openCrmModal(clientId = null) {
+      const modal = document.getElementById('crm-modal');
+      if (!modal) return;
+
+      document.getElementById('crm-client-id').value = clientId || '';
+      if (clientId) {
+        const client = crmClients.find(c => c.id === clientId);
+        if (client) {
+          document.getElementById('crm-modal-title').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-indigo-400"></i> Edytuj Klienta CRM`;
+          document.getElementById('crm-input-name').value = client.name || '';
+          document.getElementById('crm-input-company').value = client.company || '';
+          document.getElementById('crm-input-email').value = client.email || '';
+          document.getElementById('crm-input-phone').value = client.phone || '';
+          document.getElementById('crm-input-status').value = client.status || 'Zainteresowany';
+          document.getElementById('crm-input-value').value = client.value || 0;
+          document.getElementById('crm-input-notes').value = client.notes || '';
+        }
+      } else {
+        document.getElementById('crm-modal-title').innerHTML = `<i data-lucide="user-plus" class="w-5 h-5 text-indigo-400"></i> Dodaj Nowego Klienta CRM`;
+        document.getElementById('crm-input-name').value = '';
+        document.getElementById('crm-input-company').value = '';
+        document.getElementById('crm-input-email').value = '';
+        document.getElementById('crm-input-phone').value = '';
+        document.getElementById('crm-input-status').value = 'Zainteresowany';
+        document.getElementById('crm-input-value').value = 0;
+        document.getElementById('crm-input-notes').value = '';
+      }
+
+      modal.classList.remove('hidden');
+      safeCreateIcons();
+    }
+
+    function closeCrmModal() {
+      const modal = document.getElementById('crm-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function handleSaveCrmClient(e) {
+      e.preventDefault();
+      const id = document.getElementById('crm-client-id').value;
+      const name = document.getElementById('crm-input-name').value.trim();
+      const company = document.getElementById('crm-input-company').value.trim();
+      const email = document.getElementById('crm-input-email').value.trim();
+      const phone = document.getElementById('crm-input-phone').value.trim();
+      const status = document.getElementById('crm-input-status').value;
+      const value = parseFloat(document.getElementById('crm-input-value').value) || 0;
+      const notes = document.getElementById('crm-input-notes').value.trim();
+
+      if (!name) return;
+
+      const payload = { name, company, email, phone, status, value, notes };
+
+      try {
+        let res;
+        if (id) {
+          res = await fetch(`/api/crm/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch('/api/crm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        if (res.ok) {
+          closeCrmModal();
+          await loadCrmData();
+          showToast(id ? "Zaktualizowano dane klienta" : "Dodano nowego klienta", "success");
+        } else {
+          showToast("Błąd podczas zapisywania klienta", "error");
+        }
+      } catch (err) {
+        showToast("Błąd połączenia podczas zapisywania klienta", "error");
+      }
+    }
+
+    async function deleteCrmClientUI(id) {
+      if (!confirm("Czy na pewno chcesz usunąć tego klienta z CRM?")) return;
+      try {
+        const res = await fetch(`/api/crm/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          await loadCrmData();
+          showToast("Klient został usunięty", "info");
+        }
+      } catch (e) {
+        showToast("Błąd podczas usuwania klienta", "error");
+      }
+    }
+
+
+    // ==================== MODULE 8: 📋 KANBAN TASKS LOGIC ====================
+    let userTasks = [];
+
+    async function loadTasksData() {
+      try {
+        const res = await fetch('/api/tasks');
+        if (res.ok) {
+          userTasks = await res.json();
+          renderTasksUI();
+        }
+      } catch (e) {
+        showToast("Błąd podczas ładowania zadań", "error");
+      }
+    }
+
+    function renderTasksUI() {
+      const todoCol = document.getElementById('tasks-col-todo');
+      const inProgCol = document.getElementById('tasks-col-in_progress');
+      const doneCol = document.getElementById('tasks-col-done');
+
+      const todoTasks = userTasks.filter(t => t.status === 'todo');
+      const inProgTasks = userTasks.filter(t => t.status === 'in_progress');
+      const doneTasks = userTasks.filter(t => t.status === 'done');
+
+      if (document.getElementById('tasks-count-todo')) document.getElementById('tasks-count-todo').innerText = todoTasks.length;
+      if (document.getElementById('tasks-count-in_progress')) document.getElementById('tasks-count-in_progress').innerText = inProgTasks.length;
+      if (document.getElementById('tasks-count-done')) document.getElementById('tasks-count-done').innerText = doneTasks.length;
+
+      const renderCard = (t) => {
+        let prioBadge = 'bg-slate-100 text-slate-700';
+        if (t.priority === 'Niski') prioBadge = 'bg-slate-100 text-slate-700';
+        else if (t.priority === 'Średni') prioBadge = 'bg-amber-100 text-amber-800';
+        else if (t.priority === 'Wysoki') prioBadge = 'bg-orange-100 text-orange-800';
+        else if (t.priority === 'Pilny') prioBadge = 'bg-rose-100 text-rose-800 font-bold';
+
+        return `
+          <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm space-y-3 hover:shadow-md transition">
+            <div class="flex items-start justify-between gap-2">
+              <h4 class="font-bold text-xs text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded-full shrink-0 ${prioBadge}">${escapeHtml(t.priority || 'Średni')}</span>
+            </div>
+
+            ${t.description ? `<p class="text-[11px] text-slate-600 leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
+
+            ${t.due_date ? `<div class="text-[10px] text-slate-500 font-medium flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> Termin: ${escapeHtml(t.due_date)}</div>` : ''}
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-1">
+                ${t.status !== 'todo' ? `
+                  <button onclick="moveTaskStatus('${t.id}', '${t.status === 'done' ? 'in_progress' : 'todo'}')" title="Przesuń w lewo" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-1.5 rounded-lg text-xs">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : ''}
+                ${t.status !== 'done' ? `
+                  <button onclick="moveTaskStatus('${t.id}', '${t.status === 'todo' ? 'in_progress' : 'done'}')" title="Przesuń w prawo" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-1.5 rounded-lg text-xs">
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : ''}
+              </div>
+
+              <div class="flex items-center gap-1">
+                <button onclick="openTaskModal('${t.id}')" title="Edytuj" class="btn-anim text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteTaskUI('${t.id}')" title="Usuń" class="btn-anim text-rose-400 hover:text-rose-600 p-1.5 rounded-lg">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      };
+
+      if (todoCol) {
+        todoCol.innerHTML = todoTasks.length ? todoTasks.map(renderCard).join('') : `<p class="text-[11px] text-slate-400 text-center py-8 italic">Brak zadań</p>`;
+      }
+      if (inProgCol) {
+        inProgCol.innerHTML = inProgTasks.length ? inProgTasks.map(renderCard).join('') : `<p class="text-[11px] text-slate-400 text-center py-8 italic">Brak zadań w trakcie</p>`;
+      }
+      if (doneCol) {
+        doneCol.innerHTML = doneTasks.length ? doneTasks.map(renderCard).join('') : `<p class="text-[11px] text-slate-400 text-center py-8 italic">Brak ukończonych zadań</p>`;
+      }
+
+      safeCreateIcons();
+    }
+
+    function openTaskModal(taskId = null, defaultStatus = 'todo') {
+      const modal = document.getElementById('tasks-modal');
+      if (!modal) return;
+
+      document.getElementById('task-input-id').value = taskId || '';
+      if (taskId) {
+        const task = userTasks.find(t => t.id === taskId);
+        if (task) {
+          document.getElementById('tasks-modal-title').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-teal-400"></i> Edytuj Zadanie`;
+          document.getElementById('task-input-title').value = task.title || '';
+          document.getElementById('task-input-description').value = task.description || '';
+          document.getElementById('task-input-status').value = task.status || 'todo';
+          document.getElementById('task-input-priority').value = task.priority || 'Średni';
+          document.getElementById('task-input-due_date').value = task.due_date || '';
+        }
+      } else {
+        document.getElementById('tasks-modal-title').innerHTML = `<i data-lucide="plus-circle" class="w-5 h-5 text-teal-400"></i> Dodaj Zadanie`;
+        document.getElementById('task-input-title').value = '';
+        document.getElementById('task-input-description').value = '';
+        document.getElementById('task-input-status').value = defaultStatus;
+        document.getElementById('task-input-priority').value = 'Średni';
+        document.getElementById('task-input-due_date').value = '';
+      }
+
+      modal.classList.remove('hidden');
+      safeCreateIcons();
+    }
+
+    function closeTaskModal() {
+      const modal = document.getElementById('tasks-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function handleSaveTask(e) {
+      e.preventDefault();
+      const id = document.getElementById('task-input-id').value;
+      const title = document.getElementById('task-input-title').value.trim();
+      const description = document.getElementById('task-input-description').value.trim();
+      const status = document.getElementById('task-input-status').value;
+      const priority = document.getElementById('task-input-priority').value;
+      const due_date = document.getElementById('task-input-due_date').value;
+
+      if (!title) return;
+
+      const payload = { title, description, status, priority, due_date };
+
+      try {
+        let res;
+        if (id) {
+          res = await fetch(`/api/tasks/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch('/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        if (res.ok) {
+          closeTaskModal();
+          await loadTasksData();
+          showToast(id ? "Zaktualizowano zadanie" : "Dodano nowe zadanie", "success");
+        }
+      } catch (err) {
+        showToast("Błąd podczas zapisywania zadania", "error");
+      }
+    }
+
+    async function moveTaskStatus(id, newStatus) {
+      const task = userTasks.find(t => t.id === id);
+      if (!task) return;
+
+      const payload = { ...task, status: newStatus };
+      try {
+        const res = await fetch(`/api/tasks/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          await loadTasksData();
+        }
+      } catch (e) {}
+    }
+
+    async function deleteTaskUI(id) {
+      if (!confirm("Czy na pewno chcesz usunąć to zadanie?")) return;
+      try {
+        const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          await loadTasksData();
+          showToast("Zadanie zostało usunięte", "info");
+        }
+      } catch (e) {
+        showToast("Błąd podczas usuwania zadania", "error");
+      }
+    }
+
+
+    // ==================== MODULE 9: 🔐 PASSWORD GENERATOR LOGIC ====================
+    function updatePasswordLengthLabel() {
+      const slider = document.getElementById('gen-length-slider');
+      const valLabel = document.getElementById('gen-length-val');
+      if (slider && valLabel) {
+        valLabel.innerText = `${slider.value} znaków`;
+      }
+    }
+
+    function generatePasswordUI() {
+      const length = parseInt(document.getElementById('gen-length-slider')?.value || 16);
+      const incUpper = document.getElementById('gen-opt-uppercase')?.checked ?? true;
+      const incLower = document.getElementById('gen-opt-lowercase')?.checked ?? true;
+      const incDigits = document.getElementById('gen-opt-digits')?.checked ?? true;
+      const incSymbols = document.getElementById('gen-opt-symbols')?.checked ?? true;
+
+      const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+      const digitChars = '0123456789';
+      const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+      let charPool = '';
+      if (incUpper) charPool += uppercaseChars;
+      if (incLower) charPool += lowercaseChars;
+      if (incDigits) charPool += digitChars;
+      if (incSymbols) charPool += symbolChars;
+
+      if (!charPool) {
+        charPool = lowercaseChars + digitChars;
+      }
+
+      let password = '';
+      const array = new Uint32Array(length);
+      window.crypto.getRandomValues(array);
+
+      for (let i = 0; i < length; i++) {
+        password += charPool[array[i] % charPool.length];
+      }
+
+      const output = document.getElementById('gen-password-output');
+      if (output) output.value = password;
+
+      // Strength Calculation
+      let score = 0;
+      if (length >= 12) score++;
+      if (length >= 16) score++;
+      if (incUpper && incLower) score++;
+      if (incDigits) score++;
+      if (incSymbols) score++;
+
+      const strengthText = document.getElementById('gen-password-strength-text');
+      const strengthBar = document.getElementById('gen-password-strength-bar');
+
+      if (strengthText && strengthBar) {
+        if (score <= 2) {
+          strengthText.innerText = 'Słabe';
+          strengthText.className = 'text-rose-600 font-bold';
+          strengthBar.className = 'bg-rose-500 h-2.5 rounded-full transition-all duration-300 w-1/4';
+        } else if (score === 3 || score === 4) {
+          strengthText.innerText = 'Średnie / Dobre';
+          strengthText.className = 'text-amber-600 font-bold';
+          strengthBar.className = 'bg-amber-500 h-2.5 rounded-full transition-all duration-300 w-2/4';
+        } else if (score === 5) {
+          strengthText.innerText = 'Silne';
+          strengthText.className = 'text-emerald-600 font-bold';
+          strengthBar.className = 'bg-emerald-500 h-2.5 rounded-full transition-all duration-300 w-3/4';
+        } else {
+          strengthText.innerText = 'Bardzo Silne (Kryptograficzne)';
+          strengthText.className = 'text-emerald-600 font-bold';
+          strengthBar.className = 'bg-emerald-500 h-2.5 rounded-full transition-all duration-300 w-full';
+        }
+      }
+    }
+
+    function copyGeneratedPassword() {
+      const output = document.getElementById('gen-password-output');
+      if (!output || !output.value) return;
+      navigator.clipboard.writeText(output.value).then(() => {
+        showToast("Wygenerowane hasło skopiowane do schowka!", "success");
+      }).catch(() => {
+        output.select();
+        document.execCommand('copy');
+        showToast("Skopiowano do schowka!", "success");
+      });
+    }
+
+
+    // ==================== MODULE 10: 💱 CURRENCY CALCULATOR LOGIC ====================
+    let currencyRatesData = null;
+
+    async function fetchCurrencyRatesUI() {
+      try {
+        const res = await fetch('/api/currency/rates');
+        if (res.ok) {
+          currencyRatesData = await res.json();
+          renderCurrencyRatesTable();
+          calculateCurrencyUI();
+        }
+      } catch (e) {
+        showToast("Błąd podczas pobierania kursów NBP", "error");
+      }
+    }
+
+    function renderCurrencyRatesTable() {
+      if (!currencyRatesData) return;
+      const tbody = document.getElementById('curr-table-body');
+      const updateDateEl = document.getElementById('curr-update-date');
+
+      if (updateDateEl && currencyRatesData.effective_date) {
+        updateDateEl.innerText = currencyRatesData.effective_date;
+      }
+
+      if (!tbody || !currencyRatesData.rates) return;
+
+      const rates = currencyRatesData.rates;
+      const rows = Object.keys(rates).map(code => {
+        const item = rates[code];
+        const rateFormatted = (item.rate || 0).toFixed(4) + ' PLN';
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-2.5 px-3 font-bold font-mono text-slate-900">${escapeHtml(code)}</td>
+            <td class="py-2.5 px-3 text-slate-600">${escapeHtml(item.name || code)}</td>
+            <td class="py-2.5 px-3 text-right font-bold text-sky-700 font-mono">${rateFormatted}</td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.innerHTML = rows;
+    }
+
+    function calculateCurrencyUI() {
+      if (!currencyRatesData || !currencyRatesData.rates) return;
+
+      const amount = parseFloat(document.getElementById('curr-amount-input')?.value || 0);
+      const fromCurr = document.getElementById('curr-from-select')?.value || 'PLN';
+      const toCurr = document.getElementById('curr-to-select')?.value || 'EUR';
+      const display = document.getElementById('curr-result-display');
+
+      if (!display) return;
+
+      if (amount <= 0 || isNaN(amount)) {
+        display.innerText = `0.00 ${toCurr}`;
+        return;
+      }
+
+      const rates = currencyRatesData.rates;
+
+      // Convert amount to PLN first
+      let amountInPln = amount;
+      if (fromCurr !== 'PLN') {
+        const fromRate = rates[fromCurr] ? rates[fromCurr].rate : 1.0;
+        amountInPln = amount * fromRate;
+      }
+
+      // Convert PLN to target currency
+      let finalResult = amountInPln;
+      if (toCurr !== 'PLN') {
+        const toRate = rates[toCurr] ? rates[toCurr].rate : 1.0;
+        finalResult = amountInPln / toRate;
+      }
+
+      display.innerText = `${finalResult.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${toCurr}`;
+    }
+
+    function swapCurrenciesUI() {
+      const fromSelect = document.getElementById('curr-from-select');
+      const toSelect = document.getElementById('curr-to-select');
+      if (fromSelect && toSelect) {
+        const temp = fromSelect.value;
+        fromSelect.value = toSelect.value;
+        toSelect.value = temp;
+        calculateCurrencyUI();
+      }
     }
 
     // INITIALIZATION ON LOAD

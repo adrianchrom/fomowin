@@ -1,0 +1,21 @@
+{
+  "Adrian": [
+    {
+      "title": "Zadanie Testowe",
+      "description": "Opis testowego zadania",
+      "status": "todo",
+      "priority": "Wysoki",
+      "due_date": "2026-10-01",
+      "id": "task-1789497922194"
+    },
+    {
+      "title": "Zadanie Testowe",
+      "description": "Opis testowego zadania",
+      "status": "todo",
+      "priority": "Wysoki",
+      "due_date": "2026-10-01",
+      "id": "task-1789497944686"
+    }
+  ],
+  "Maciek": []
+}
