@@ -14,6 +14,7 @@ from monitors.risk_analysis_engine import risk_engine
 from monitors.auth_manager import auth_manager
 from monitors.alerts_manager import alerts_manager
 from monitors.user_data_manager import user_data_mgr
+from monitors.llm_engine import llm_engine
 from notifiers.telegram_notifier import telegram_notifier
 from notifiers.discord_notifier import discord_notifier
 from notifiers.console_notifier import console_notifier
@@ -243,6 +244,17 @@ async def delete_kalendarz_route(request: Request, event_id: str):
     user = getattr(request.state, "user", "Maciek")
     success = user_data_mgr.delete_user_kalendarz_event(user, event_id)
     return {"success": success}
+
+# LLM TEXT MODEL CHAT ENDPOINTS
+@app.post("/api/llm/chat")
+async def chat_llm_route(data: Dict[str, Any] = Body(...)):
+    prompt = data.get("prompt", "") or data.get("message", "")
+    return llm_engine.process_chat(prompt)
+
+@app.delete("/api/llm/chat")
+async def clear_llm_chat_route():
+    llm_engine.clear_history()
+    return {"success": True}
 
 # Main Application Routes
 @app.get("/", response_class=HTMLResponse)

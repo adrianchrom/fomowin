@@ -20,6 +20,7 @@ DEFAULT_PERMISSIONS = {
         "wyceny": True,
         "stopki_email": True,
         "kalendarz": True,
+        "ai_chat": True,
         "is_admin": True
     },
     "Maciek": {
@@ -28,6 +29,7 @@ DEFAULT_PERMISSIONS = {
         "wyceny": False,
         "stopki_email": False,
         "kalendarz": False,
+        "ai_chat": True,
         "is_admin": False
     }
 }
