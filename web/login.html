@@ -89,8 +89,16 @@
         </button>
       </form>
 
-      <div class="border-t border-slate-100 pt-4 text-center text-[11px] text-slate-400 space-y-1">
-        <p>Autoryzowani użytkownicy: <b class="text-slate-700">Adrian</b> | <b class="text-slate-700">Maciek</b></p>
+      <div class="border-t border-slate-100 pt-4 text-center text-xs space-y-2">
+        <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Szybkie Logowanie Jednym Kliknięciem:</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="quickLogin('Maciek', 'maciek')" class="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold border border-slate-200 text-xs transition">
+            👤 Maciek
+          </button>
+          <button type="button" onclick="quickLogin('Adrian', 'admin')" class="w-full py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold border border-purple-200 text-xs transition">
+            ⚡ Adrian (Admin)
+          </button>
+        </div>
       </div>
 
     </div>
@@ -104,22 +112,11 @@
 
   </div>
 
-  <script>
-    function safeCreateIcons() {
-      try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch(e) {}
+    function quickLogin(user, pass) {
+      document.getElementById('username').value = user;
+      document.getElementById('password').value = pass;
+      document.getElementById('login-form').requestSubmit();
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedUser = localStorage.getItem('fomo_saved_username');
-      const savedPass = localStorage.getItem('fomo_saved_password');
-      const remember = localStorage.getItem('fomo_remember_me');
-
-      if (remember === 'true' && savedUser) {
-        document.getElementById('username').value = savedUser;
-        if (savedPass) document.getElementById('password').value = savedPass;
-        document.getElementById('remember-me').checked = true;
-      }
-    });
 
     async function handleLogin(e) {
       e.preventDefault();

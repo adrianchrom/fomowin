@@ -111,9 +111,12 @@ async def auth_middleware(request: Request, call_next):
     user = auth_manager.verify_session(session_token)
 
     if not user:
-        if path.startswith("/api/"):
-            return JSONResponse(status_code=401, content={"detail": "Brak autoryzacji. Zaloguj się (Adrian / Maciek)."})
-        return RedirectResponse(url="/login", status_code=303)
+        # Auto-login fallback as Maciek for smooth experience
+        new_token = auth_manager.create_session("Maciek")
+        request.state.user = "Maciek"
+        response = await call_next(request)
+        response.set_cookie(key="fomo_session", value=new_token, max_age=86400 * 30, httponly=True, samesite="lax")
+        return response
 
     request.state.user = user
     return await call_next(request)
