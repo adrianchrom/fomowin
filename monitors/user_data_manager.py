@@ -9,6 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PERMISSIONS_FILE = os.path.join(BASE_DIR, "USER_PERMISSIONS.json")
 WYDATKI_FILE = os.path.join(BASE_DIR, "DATA_WYDATKI.json")
 WYCENY_FILE = os.path.join(BASE_DIR, "DATA_WYCENY.json")
+COMPANY_FILE = os.path.join(BASE_DIR, "DATA_COMPANY.json")
 
 DEFAULT_PERMISSIONS = {
     "Adrian": {
@@ -24,6 +25,27 @@ DEFAULT_PERMISSIONS = {
         "wyceny": False,
         "stopki_email": False,
         "is_admin": False
+    }
+}
+
+DEFAULT_COMPANY = {
+    "Adrian": {
+        "name": "Van Stev Sp. z o.o. Sp. k.",
+        "address": "ul. Prosta 20, 00-001 Warszawa",
+        "nip": "8992782026",
+        "phone": "+48 605 595 049",
+        "email": "adrian.chrom@gmail.com",
+        "bank": "00 1234 5678 9012 3456 7890 1234",
+        "logo_base64": ""
+    },
+    "Maciek": {
+        "name": "MHF Trading Group",
+        "address": "Rynek Główny 1, 30-001 Kraków",
+        "nip": "1234567890",
+        "phone": "+48 500 123 456",
+        "email": "maciek@fomo.win",
+        "bank": "11 2222 3333 4444 5555 6666 7777",
+        "logo_base64": ""
     }
 }
 
@@ -104,6 +126,7 @@ class UserDataManager:
         self.permissions = self._load_json(PERMISSIONS_FILE, DEFAULT_PERMISSIONS)
         self.wydatki = self._load_json(WYDATKI_FILE, DEFAULT_WYDATKI)
         self.wyceny = self._load_json(WYCENY_FILE, DEFAULT_WYCENY)
+        self.company = self._load_json(COMPANY_FILE, DEFAULT_COMPANY)
 
     def _load_json(self, filepath: str, default_data: dict) -> dict:
         if os.path.exists(filepath):
@@ -209,5 +232,18 @@ class UserDataManager:
             self._save_json(WYCENY_FILE, self.wyceny)
             return True
         return False
+
+    # COMPANY DATA (STRICT PER-USER ISOLATION)
+    def get_user_company(self, username: str) -> dict:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        return self.company.get(canonical, DEFAULT_COMPANY.get(canonical, {}))
+
+    def save_user_company(self, username: str, data: dict) -> dict:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        if canonical not in self.company:
+            self.company[canonical] = {}
+        self.company[canonical].update(data)
+        self._save_json(COMPANY_FILE, self.company)
+        return self.company[canonical]
 
 user_data_mgr = UserDataManager()

@@ -209,6 +209,18 @@ async def delete_wyceny_route(request: Request, entry_id: str):
     success = user_data_mgr.delete_user_wyceny(user, entry_id)
     return {"success": success}
 
+# COMPANY DATA ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/company")
+async def get_company_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_company(user)
+
+@app.post("/api/company")
+async def save_company_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    res = user_data_mgr.save_user_company(user, data)
+    return {"success": True, "company": res}
+
 # Main Application Routes
 @app.get("/", response_class=HTMLResponse)
 async def serve_dashboard():

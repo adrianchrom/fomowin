@@ -46,6 +46,28 @@
     }
     .animate-emerge { animation: animateEmerge 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
+    /* PDF A4 Paper & Modal Styles */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(6px); z-index: 50; display: flex; items: center; justify-content: center; padding: 1rem;
+    }
+    .pdf-modal-container {
+      background: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 900px; max-height: 92vh;
+      display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    }
+    .a4-paper {
+      background: #ffffff; width: 100%; max-width: 800px; margin: 0 auto; padding: 2.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; font-family: Arial, Helvetica, sans-serif;
+      color: #0f172a; line-height: 1.4;
+    }
+
+    /* Print Specific Styling */
+    @media print {
+      body * { visibility: hidden; }
+      #pdf-paper-content, #pdf-paper-content * { visibility: visible; }
+      #pdf-paper-content { position: absolute; left: 0; top: 0; width: 100%; padding: 0; border: none; box-shadow: none; }
+    }
+
     /* Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -153,7 +175,7 @@
       <button onclick="switchApp('wyceny')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
           <i data-lucide="file-text" class="w-4 h-4 text-purple-600"></i>
-          <span>🏷️ WYCENY</span>
+          <span>🏷️ WYCENY (POI)</span>
         </div>
         <span id="lock-badge-wyceny" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
@@ -253,7 +275,7 @@
           </div>
         </div>
 
-        <!-- Tile 3: WYCENY -->
+        <!-- Tile 3: WYCENY (POI) -->
         <div onclick="switchApp('wyceny')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
@@ -263,8 +285,8 @@
               <span id="tile-status-wyceny" class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">Moduł</span>
             </div>
             <div>
-              <h3 class="text-lg font-bold text-slate-900">🏷️ WYCENY</h3>
-              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kalkulator i generator profesjonalnych kosztorysów oraz wycen projektowych dla klientów.</p>
+              <h3 class="text-lg font-bold text-slate-900">🏷️ WYCENY & KOSZTORYSY</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Ustawienia danych firmy, logo, kalkulator kosztorysów i generator wydruku ofert PDF dla klientów.</p>
             </div>
           </div>
           <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
@@ -284,7 +306,7 @@
             </div>
             <div>
               <h3 class="text-lg font-bold text-slate-900">✉️ STOPKI E-MAIL</h3>
-              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kreator eleganckich stopek HTML do podpisów e-mailowych z szybkim generowaniem kodu.</p>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kreator eleganckich stopek HTML do podpisów e-mailowych z klauzulami RODO (PL/EN/DE) i logo.</p>
             </div>
           </div>
           <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
@@ -462,15 +484,15 @@
       <!-- Financial Balance Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="clean-card p-5 rounded-2xl bg-emerald-50/50 border-emerald-200">
-          <p class="text-xs font-semibold text-emerald-700 uppercase">Suma Przychody</p>
+          <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Suma Przychody</p>
           <p id="wydatki-przychody-sum" class="text-2xl font-black text-emerald-800 mt-1">0.00 PLN</p>
         </div>
         <div class="clean-card p-5 rounded-2xl bg-rose-50/50 border-rose-200">
-          <p class="text-xs font-semibold text-rose-700 uppercase">Suma Wydatki</p>
+          <p class="text-xs font-semibold text-rose-700 uppercase tracking-wider">Suma Wydatki</p>
           <p id="wydatki-koszty-sum" class="text-2xl font-black text-rose-800 mt-1">0.00 PLN</p>
         </div>
         <div class="clean-card p-5 rounded-2xl bg-blue-50/50 border-blue-200">
-          <p class="text-xs font-semibold text-blue-700 uppercase">Bilans Netto</p>
+          <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">Bilans Netto</p>
           <p id="wydatki-bilans" class="text-2xl font-black text-blue-900 mt-1">0.00 PLN</p>
         </div>
       </div>
@@ -481,15 +503,41 @@
           <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Dodaj Nowy Wpis Finansowy
         </h3>
         <form onsubmit="handleAddWydatkiSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          <select id="wyd-type" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-            <option value="PRZYCHÓD">🟢 PRZYCHÓD</option>
-            <option value="WYDATEK">🔴 WYDATEK</option>
-          </select>
-          <input type="text" id="wyd-title" placeholder="Tytuł / Nazwa operacji..." required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 sm:col-span-2">
-          <input type="number" step="0.01" id="wyd-amount" placeholder="Kwota PLN..." required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-          <input type="text" id="wyd-category" placeholder="Kategoria (np. Usługi, Biuro)..." class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-          <input type="date" id="wyd-date" required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-          <input type="text" id="wyd-note" placeholder="Dodatkowe notatki..." class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 sm:col-span-2">
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Typ Transakcji:</label>
+            <select id="wyd-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              <option value="PRZYCHÓD">🟢 PRZYCHÓD</option>
+              <option value="WYDATEK">🔴 WYDATEK</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Osoba / Płatnik:</label>
+            <select id="wyd-payer" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              <option value="Adrian">Adrian</option>
+              <option value="Maciek">Maciek</option>
+              <option value="Wspólne">Wspólne</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block font-semibold mb-1 text-slate-700">Tytuł / Nazwa operacji:</label>
+            <input type="text" id="wyd-title" placeholder="np. Zlecenie wdrożenia / Zakup sprzętu..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Kwota (PLN):</label>
+            <input type="number" step="0.01" id="wyd-amount" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Kategoria:</label>
+            <input type="text" id="wyd-category" placeholder="np. Usługi, Biuro, Sprzęt..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Data:</label>
+            <input type="date" id="wyd-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Uwagi / Notatka:</label>
+            <input type="text" id="wyd-note" placeholder="Szczegóły płatności..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
           <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
             <button type="submit" class="btn-anim bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
               <i data-lucide="check" class="w-4 h-4"></i> Zapisz Wpis
@@ -508,6 +556,7 @@
             <thead class="bg-slate-100 text-slate-600 uppercase font-mono text-[11px] border-b border-slate-200">
               <tr>
                 <th class="p-3.5">Typ</th>
+                <th class="p-3.5">Płatnik</th>
                 <th class="p-3.5">Tytuł</th>
                 <th class="p-3.5">Kategoria</th>
                 <th class="p-3.5">Data</th>
@@ -525,7 +574,7 @@
     </div>
 
 
-    <!-- ==================== MODULE 3: 🏷️ WYCENY ==================== -->
+    <!-- ==================== MODULE 3: 🏷️ WYCENY (POI SYSTEM) ==================== -->
     <div id="app-container-wyceny" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
@@ -533,63 +582,187 @@
         <div>
           <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="file-text" class="w-6 h-6 text-purple-600"></i>
-            🏷️ WYCENY — Generator Kosztorysów
+            🏷️ WYCENY & KOSZTORYSY (SYSTEM POI)
           </h2>
-          <p class="text-xs text-slate-500 mt-1">Kalkulator i wyceny projektowe konta <b id="wyceny-user-name" class="text-slate-900">...</b></p>
+          <p class="text-xs text-slate-500 mt-1">Ustawienia Wystawcy, dane firmowe, kalkulator kosztorysów i generator ofert PDF</p>
         </div>
       </div>
 
-      <!-- Add Quote Form -->
+      <!-- 1. DANE FIRMY / WYSTAWCE I LOGO FIRMOWE -->
       <div class="clean-card p-6 rounded-3xl space-y-4">
-        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-          <i data-lucide="plus-circle" class="w-4 h-4 text-purple-600"></i> Stwórz Nową Wycenę Projektu
-        </h3>
-        <form onsubmit="handleAddWycenaSubmit(event)" class="space-y-4 text-xs">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Nazwa Klienta / Firmy:</label>
-              <input type="text" id="wyc-client" placeholder="np. Firma ABC Sp. z o.o." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="building" class="w-4 h-4 text-purple-600"></i>
+            🏛️ Dane Wystawcy i Logo Firmowe (Zapamiętywane Automatycznie)
+          </h3>
+          <span id="company-save-status" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">Auto-save aktywny</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 text-xs">
+          <div class="lg:col-span-2 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Nazwa Firmy / Wystawca:</label>
+                <input type="text" id="company-name" oninput="saveCompanyDataFromForm()" placeholder="np. Van Stev Sp. z o.o." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">NIP:</label>
+                <input type="text" id="company-nip" oninput="saveCompanyDataFromForm()" placeholder="np. 8992782026" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
             </div>
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Tytuł Wyceny / Projektu:</label>
-              <input type="text" id="wyc-project" placeholder="np. Wdrożenie Platformy Web" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Telefon kontaktowy:</label>
+                <input type="text" id="company-phone" oninput="saveCompanyDataFromForm()" placeholder="np. +48 605 595 049" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">E-mail kontaktowy:</label>
+                <input type="email" id="company-email" oninput="saveCompanyDataFromForm()" placeholder="np. kontakt@vanstev.pl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
             </div>
+
             <div>
-              <label class="block font-semibold mb-1 text-slate-700">Stawka VAT (%):</label>
-              <input type="number" id="wyc-tax" value="23" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              <label class="block font-semibold mb-1 text-slate-700">Adres (Ulica, Kod i Miasto):</label>
+              <input type="text" id="company-address" oninput="saveCompanyDataFromForm()" placeholder="np. ul. Prosta 20, 00-001 Warszawa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+            </div>
+
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Numer konta bankowego (opcjonalnie):</label>
+              <input type="text" id="company-bank" oninput="saveCompanyDataFromForm()" placeholder="np. 00 1234 5678 9012 3456 7890 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-mono">
             </div>
           </div>
 
-          <!-- Dynamic Items List -->
-          <div class="space-y-2">
+          <!-- Logo Upload Box -->
+          <div class="space-y-3">
+            <label class="block font-semibold text-slate-700">Logo Firmy (Wyświetlane w rogu PDF):</label>
+            <div onclick="document.getElementById('company-logo-input').click()" class="border-2 border-dashed border-slate-300 rounded-2xl p-5 text-center cursor-pointer hover:bg-slate-50 transition flex flex-col items-center justify-center space-y-2 min-h-[180px]">
+              <img id="company-logo-preview" src="" class="hidden max-h-20 max-w-[180px] object-contain mb-2" alt="Logo firmy">
+              <i data-lucide="image" class="w-8 h-8 text-purple-600"></i>
+              <p class="text-xs font-bold text-purple-700">Kliknij, aby dodać lub zmienić Logo</p>
+              <span class="text-[11px] text-slate-400">(Formaty: PNG, JPG, SVG)</span>
+              <input type="file" id="company-logo-input" accept="image/*" onchange="handleCompanyLogoUpload(event)" class="hidden">
+            </div>
+            <button id="btn-remove-company-logo" onclick="removeCompanyLogo()" class="hidden w-full btn-anim bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Usuń Logo Firmy
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. FORMULARZ STWORZENIA DEDYKOWANEJ WYCENY -->
+      <div class="clean-card p-6 rounded-3xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="user-check" class="w-4 h-4 text-purple-600"></i>
+            👤 Dane Klienta (Zamawiającego) & Parametry Wyceny
+          </h3>
+          <button type="button" onclick="generateNewQuoteNumberUI()" class="btn-anim text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-xl border border-slate-200 font-semibold flex items-center gap-1">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Nowy Numer Wyceny
+          </button>
+        </div>
+
+        <form onsubmit="handleAddWycenaSubmit(event)" class="space-y-4 text-xs">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Numer Wyceny:</label>
+              <input type="text" id="wyc-number" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-purple-700 font-bold font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Data wystawienia:</label>
+              <input type="date" id="wyc-issue-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Termin ważności:</label>
+              <input type="date" id="wyc-valid-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Zamawiający / Klient:</label>
+              <input type="text" id="wyc-client" placeholder="np. Jan Kowalski / Firma ABC" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Telefon Klienta:</label>
+              <input type="text" id="wyc-client-phone" placeholder="np. +48 500 600 700" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Adres wykonania usługi / klienta:</label>
+              <input type="text" id="wyc-client-address" placeholder="np. ul. Leśna 10, Poznań" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Tytuł Projektu / Usługi:</label>
+            <input type="text" id="wyc-project" placeholder="np. Kompleksowy Montaż Instalacji Elektrycznej" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+          </div>
+
+          <!-- Dynamic Items List Table -->
+          <div class="space-y-2 pt-2">
             <div class="flex justify-between items-center">
-              <label class="font-bold text-slate-800">Pozycje Kosztorysowe:</label>
-              <button type="button" onclick="addWycenaItemRow()" class="btn-anim text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-lg border border-slate-200 flex items-center gap-1 font-semibold">
+              <label class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <i data-lucide="list" class="w-4 h-4 text-purple-600"></i> Pozycje Kosztorysowe Wyceny:
+              </label>
+              <button type="button" onclick="addWycenaItemRow()" class="btn-anim text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded-xl border border-purple-200 flex items-center gap-1 font-bold">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i> Dodaj Pozycję
               </button>
             </div>
+
             <div id="wycena-items-container" class="space-y-2">
-              <!-- Item Row 1 -->
-              <div class="grid grid-cols-1 sm:grid-cols-6 gap-2 wycena-item-row">
-                <input type="text" placeholder="Opis usługi / modułu..." required class="sm:col-span-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc">
-                <input type="number" value="1" placeholder="Ilość" required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty">
-                <input type="number" step="0.01" placeholder="Cena PLN" required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-price">
-                <button type="button" onclick="this.parentElement.remove()" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
+              <!-- Item Row 1 default -->
+              <div class="grid grid-cols-1 sm:grid-cols-7 gap-2 wycena-item-row bg-slate-50 p-2.5 rounded-2xl border border-slate-200 items-center">
+                <input type="text" placeholder="Opis pozycji / usługi / materiału..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc">
+                <input type="number" value="1" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty">
+                <select class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
+                  <option value="szt.">szt.</option>
+                  <option value="kpl.">kpl.</option>
+                  <option value="m">m</option>
+                  <option value="m²">m²</option>
+                  <option value="mb">mb</option>
+                  <option value="godz.">godz.</option>
+                  <option value="kg">kg</option>
+                </select>
+                <input type="number" step="0.01" placeholder="Cena jedn. PLN" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold wyc-item-price">
+                <button type="button" onclick="this.parentElement.remove()" class="bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
               </div>
             </div>
           </div>
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="btn-anim bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="check" class="w-4 h-4"></i> Zapisz i Wygeneruj Wycenę
-            </button>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">Uwagi i Warunki Wyceny / Płatności:</label>
+            <textarea id="wyc-notes" rows="2" placeholder="np. Wycena ważna 14 dni. Płatność przelewem po akceptacji prac..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"></textarea>
           </div>
+
+          <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-slate-100">
+            <div class="text-xs">
+              <span class="text-slate-500">Suma Wyceny:</span>
+              <strong id="wyc-live-total" class="text-lg font-black text-purple-900 ml-1">0.00 PLN</strong>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="openCurrentQuotePdfModal()" class="btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm">
+                <i data-lucide="printer" class="w-4 h-4"></i> Generuj / Podgląd PDF & Wydruk
+              </button>
+              <button type="submit" class="btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+                <i data-lucide="check" class="w-4 h-4"></i> Zapisz Wycenę
+              </button>
+            </div>
+          </div>
+
         </form>
       </div>
 
-      <!-- Existing Quotes Cards Grid -->
-      <div id="wyceny-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Rendered by JS -->
+      <!-- Existing Quotes Grid -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="folder" class="w-4 h-4 text-purple-600"></i>
+          Zapisane Wyceny Projektowe
+        </h3>
+        <div id="wyceny-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Rendered by JS -->
+        </div>
       </div>
 
     </div>
@@ -603,57 +776,159 @@
         <div>
           <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="mail" class="w-6 h-6 text-cyan-600"></i>
-            ✉️ STOPKI E-MAIL — Kreator Podpisów HTML
+            ✉️ STOPKI E-MAIL — Kreator Podpisów HTML PRO
           </h2>
-          <p class="text-xs text-slate-500 mt-1">Szybkie generowanie spójnego podpisu e-mailowego HTML do programu pocztowego</p>
+          <p class="text-xs text-slate-500 mt-1">Szybkie generowanie spójnego podpisu e-mailowego HTML z klauzulą poufności i RODO</p>
         </div>
       </div>
 
       <!-- Signature Generator Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
         
-        <!-- Form Inputs -->
-        <div class="clean-card p-6 rounded-3xl space-y-4">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-            <i data-lucide="edit-3" class="w-4 h-4 text-cyan-600"></i> Dane do Podpisu E-mail
-          </h3>
-          <div class="space-y-3">
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Imię i Nazwisko:</label>
-              <input type="text" id="sig-name" value="Adrian Chrom" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+        <!-- Form Inputs Left Column -->
+        <div class="space-y-4">
+          
+          <!-- Template Selector Card -->
+          <div class="clean-card p-5 rounded-3xl space-y-3">
+            <label class="block font-bold text-slate-900 text-xs">Styl Szablonu Stopki:</label>
+            <div class="grid grid-cols-3 gap-2">
+              <label class="cursor-pointer">
+                <input type="radio" name="sigTemplateStyle" value="top-line" checked onchange="updateEmailSignaturePreview()" class="peer sr-only">
+                <div class="p-2.5 rounded-xl border border-slate-200 text-center font-bold text-[11px] peer-checked:bg-blue-50 peer-checked:border-blue-600 peer-checked:text-blue-700 transition">
+                  Górny pasek
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="sigTemplateStyle" value="left-line" onchange="updateEmailSignaturePreview()" class="peer sr-only">
+                <div class="p-2.5 rounded-xl border border-slate-200 text-center font-bold text-[11px] peer-checked:bg-blue-50 peer-checked:border-blue-600 peer-checked:text-blue-700 transition">
+                  Pionowy pasek
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="sigTemplateStyle" value="minimal" onchange="updateEmailSignaturePreview()" class="peer sr-only">
+                <div class="p-2.5 rounded-xl border border-slate-200 text-center font-bold text-[11px] peer-checked:bg-blue-50 peer-checked:border-blue-600 peer-checked:text-blue-700 transition">
+                  Minimalizm
+                </div>
+              </label>
             </div>
+          </div>
+
+          <!-- Personal Data Card -->
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <i data-lucide="user" class="w-4 h-4 text-cyan-600"></i> Dane Osobowe & Kontaktowe
+            </h3>
+            
             <div>
-              <label class="block font-semibold mb-1 text-slate-700">Stanowisko / Rola:</label>
-              <input type="text" id="sig-role" value="Executive Manager" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              <label class="block font-semibold mb-1 text-slate-700">Zwrot grzecznościowy / Nagłówek:</label>
+              <input type="text" id="sig-greeting" value="Pozdrawiam serdecznie / Best regards" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
             </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Imię i Nazwisko:</label>
+                <input type="text" id="sig-name" value="Adrian Chromiańczuk" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Stanowisko / Rola:</label>
+                <input type="text" id="sig-role" value="Executive Manager" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Telefon kontaktowy:</label>
-                <input type="text" id="sig-phone" value="+48 500 000 000" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="text" id="sig-phone" value="+48 605 595 049" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">E-mail firmowy:</label>
-                <input type="email" id="sig-email" value="adrian@kontakt.pl" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="email" id="sig-email" value="adrian.chrom@gmail.com" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
             </div>
+
             <div>
               <label class="block font-semibold mb-1 text-slate-700">Strona WWW:</label>
-              <input type="text" id="sig-website" value="www.strona.pl" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-            </div>
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Kolor akcentu:</label>
-              <input type="color" id="sig-color" value="#2563eb" oninput="updateEmailSignaturePreview()" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl p-1 cursor-pointer">
+              <input type="text" id="sig-website" value="www.vanstev.pl" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
             </div>
           </div>
+
+          <!-- Color Customization Card -->
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <i data-lucide="palette" class="w-4 h-4 text-cyan-600"></i> Kolorystyka & Stylistyka
+            </h3>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Kolor kreski głównej:</label>
+                <input type="color" id="sig-line-color" value="#c0d600" oninput="updateEmailSignaturePreview()" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl p-1 cursor-pointer">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Kolor akcentu linków:</label>
+                <input type="color" id="sig-accent-color" value="#1e88e5" oninput="updateEmailSignaturePreview()" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl p-1 cursor-pointer">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Grubość kreski (px):</label>
+                <select id="sig-line-width" onchange="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                  <option value="2">2 px</option>
+                  <option value="3" selected>3 px</option>
+                  <option value="4">4 px</option>
+                  <option value="6">6 px</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Styl ikon kontaktowych:</label>
+                <select id="sig-icon-style" onchange="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                  <option value="emoji" selected>Emoji (📞 ✉️ 🌐)</option>
+                  <option value="none">Brak ikon</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clause RODO Card -->
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="shield" class="w-4 h-4 text-cyan-600"></i> Klauzula Prawna / RODO
+              </h3>
+              <label class="flex items-center gap-2 cursor-pointer font-bold">
+                <input type="checkbox" id="sig-enable-clause" checked onchange="updateEmailSignaturePreview()" class="w-4 h-4 rounded border-slate-300 text-blue-600">
+                <span>Włącz Klauzulę</span>
+              </label>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block font-semibold text-slate-700">Języki klauzuli:</label>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-1.5 cursor-pointer font-medium">
+                  <input type="checkbox" id="sig-lang-pl" checked onchange="updateEmailSignaturePreview()" class="w-4 h-4 rounded text-blue-600">
+                  <span>PL (Polski)</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer font-medium">
+                  <input type="checkbox" id="sig-lang-en" onchange="updateEmailSignaturePreview()" class="w-4 h-4 rounded text-blue-600">
+                  <span>EN (Angielski)</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer font-medium">
+                  <input type="checkbox" id="sig-lang-de" onchange="updateEmailSignaturePreview()" class="w-4 h-4 rounded text-blue-600">
+                  <span>DE (Niemiecki)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Live Visual Preview & HTML Code -->
+        <!-- Live Visual Preview & HTML Code Output Right Column -->
         <div class="space-y-4">
           <div class="clean-card p-6 rounded-3xl space-y-3">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-              <i data-lucide="eye" class="w-4 h-4 text-emerald-600"></i> Podgląd Wizualny Na Żywo
+              <i data-lucide="eye" class="w-4 h-4 text-emerald-600"></i> Podgląd Wizualny Podpisu E-mail
             </h3>
-            <div id="email-sig-preview-box" class="p-4 bg-white border border-slate-200 rounded-2xl shadow-inner min-h-[140px] flex items-center">
+            <div id="email-sig-preview-box" class="p-5 bg-white border border-slate-200 rounded-2xl shadow-inner min-h-[160px] flex items-center">
               <!-- Live HTML rendered here -->
             </div>
           </div>
@@ -661,13 +936,18 @@
           <div class="clean-card p-6 rounded-3xl space-y-3">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
               <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <i data-lucide="code" class="w-4 h-4 text-cyan-600"></i> Kod HTML do Skopiowania
+                <i data-lucide="code" class="w-4 h-4 text-cyan-600"></i> Kod HTML Stopki
               </h3>
-              <button onclick="copyEmailSignatureHtml()" class="btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Kopiuj HTML
-              </button>
+              <div class="flex items-center gap-2">
+                <button onclick="copyFormattedSignatureVisual()" class="btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Skopiuj do Gmail / Outlook
+                </button>
+                <button onclick="downloadEmailSignatureHtml()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> .html
+                </button>
+              </div>
             </div>
-            <textarea id="email-sig-code-output" readonly rows="5" class="w-full bg-slate-900 text-slate-200 font-mono text-[11px] p-3 rounded-xl border border-slate-800 focus:outline-none select-all"></textarea>
+            <textarea id="email-sig-code-output" readonly rows="7" class="w-full bg-slate-900 text-slate-200 font-mono text-[11px] p-3 rounded-xl border border-slate-800 focus:outline-none select-all"></textarea>
           </div>
         </div>
 
@@ -716,8 +996,8 @@
             <div class="flex items-center gap-3">
               <i data-lucide="file-text" class="w-5 h-5 text-purple-600"></i>
               <div>
-                <span class="font-bold text-slate-900 block text-sm">🏷️ WYCENY</span>
-                <span class="text-slate-500 text-[11px]">Dostęp do tworzenia i edycji wycen projektowych</span>
+                <span class="font-bold text-slate-900 block text-sm">🏷️ WYCENY (POI)</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do danych firmy, kosztorysów i generowania wycen PDF</span>
               </div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
@@ -731,7 +1011,7 @@
               <i data-lucide="mail" class="w-5 h-5 text-cyan-600"></i>
               <div>
                 <span class="font-bold text-slate-900 block text-sm">✉️ STOPKI E-MAIL</span>
-                <span class="text-slate-500 text-[11px]">Dostęp do generatora stopek HTML</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do generatora stopek HTML z RODO</span>
               </div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
@@ -772,12 +1052,37 @@
   </main>
 
 
+  <!-- ==================== MODAL PODGLĄDU I DRUKOWANIA PDF WYCENY ==================== -->
+  <div id="pdf-preview-modal" class="hidden modal-backdrop">
+    <div class="pdf-modal-container">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-purple-400"></i>
+          <span class="font-bold text-sm">Podgląd Wydruku PDF — Wycena / Kosztorys</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="printer" class="w-4 h-4"></i> Drukuj / Zapisz jako PDF
+          </button>
+          <button onclick="closePdfModal()" class="btn-anim bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-xl text-xs">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 overflow-y-auto flex-1 bg-slate-100">
+        <div id="pdf-paper-content" class="a4-paper">
+          <!-- A4 PDF Content rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- JAVASCRIPT APP STATE & LOGIC -->
   <script>
     let socket = null;
     let tokensMap = new Map();
-    let trackedInsidersList = [];
-    let alertsList = [];
 
     let soundEnabled = true;
     let currentTab = 'live';
@@ -789,6 +1094,30 @@
       wyceny: false,
       stopki_email: false,
       is_admin: false
+    };
+
+    // User Company Data State
+    let companyData = {
+      name: 'Van Stev Sp. z o.o. Sp. k.',
+      address: 'ul. Prosta 20, 00-001 Warszawa',
+      nip: '8992782026',
+      phone: '+48 605 595 049',
+      email: 'adrian.chrom@gmail.com',
+      bank: '00 1234 5678 9012 3456 7890 1234',
+      logo_base64: ''
+    };
+
+    // Current Quote State
+    let currentQuote = {
+      number: '',
+      issueDate: new Date().toISOString().split('T')[0],
+      validDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      clientName: '',
+      clientPhone: '',
+      clientAddress: '',
+      projectTitle: '',
+      notes: 'Wycena ważna przez 14 dni od daty wystawienia.\nPłatność przelewem po akceptacji prac.',
+      items: []
     };
 
     // SEED SAMPLE TOKENS
@@ -856,6 +1185,7 @@
             sessionStorage.setItem('fomo_username', currentUser);
             setGreeting(currentUser);
             updatePermissionsUI();
+            loadCompanyData();
           } else {
             window.location.href = '/login';
           }
@@ -888,7 +1218,6 @@
     function updatePermissionsUI() {
       const isAdrian = currentUser.toLowerCase() === 'adrian';
       
-      // Show/Hide Admin Panel in Drawer & Dashboard Tile
       const adminBox = document.getElementById('admin-panel-nav-box');
       const adminTile = document.getElementById('tile-admin');
       if (adminBox) {
@@ -900,7 +1229,6 @@
         else adminTile.classList.add('hidden');
       }
 
-      // Update drawer badges & dashboard tiles status badges
       ['wydatki', 'wyceny', 'stopki_email'].forEach(m => {
         const drawerBadge = document.getElementById(`lock-badge-${m}`);
         const tileStatus = document.getElementById(`tile-status-${m}`);
@@ -938,7 +1266,6 @@
       const isAdrian = currentUser.toLowerCase() === 'adrian';
       const isAllowed = isAdrian || userPermissions[appName] || appName === 'fomo' || appName === 'dashboard';
 
-      // Close drawer if open
       const drawer = document.getElementById('burger-drawer');
       if (drawer && !drawer.classList.contains('-translate-x-full')) {
         toggleBurgerDrawer();
@@ -966,21 +1293,23 @@
 
       currentApp = appName;
 
-      // Update Current App Title in Header
       const titlesMap = {
         'dashboard': '🏠 Dashboard',
         'fomo': '⚡ FOMO Engine',
         'wydatki': '💰 WYDATKI',
-        'wyceny': '🏷️ WYCENY',
+        'wyceny': '🏷️ WYCENY (POI)',
         'stopki_email': '✉️ STOPKI E-MAIL',
         'admin': '⚙️ PANEL ADMINA'
       };
       updateAppTitle(titlesMap[appName] || 'Aplikacja');
 
-      // Load App Specific Data
       if (appName === 'fomo') renderLiveSignals();
       if (appName === 'wydatki') loadWydatkiData();
-      if (appName === 'wyceny') loadWycenyData();
+      if (appName === 'wyceny') {
+        loadCompanyData();
+        generateNewQuoteNumberUI();
+        loadWycenyData();
+      }
       if (appName === 'stopki_email') updateEmailSignaturePreview();
       if (appName === 'admin') loadAdminPermissions();
 
@@ -1006,21 +1335,14 @@
           btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100";
         }
       });
-
-      if (tab === 'insiders') {
-        loadInsiderSignalsFeed();
-        loadTrackedInsidersList();
-      }
-      if (tab === 'alerts') loadAlertsList();
       lucide.createIcons();
     }
 
-    // WEBSOCKET & REST DUAL-CHANNEL RECOVERY
+    // WEBSOCKET & REST RECOVERY
     function connectWebSocket() {
       if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) return;
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${location.host}/ws`;
-      
       socket = new WebSocket(wsUrl);
 
       socket.onmessage = (event) => {
@@ -1086,7 +1408,7 @@
       if (!tbody) return;
 
       if (!list || list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">Brak zarejestrowanych transakcji... Dodaj swój pierwszy wpis.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">Brak zarejestrowanych transakcji... Dodaj swój pierwszy wpis.</td></tr>`;
         document.getElementById('wydatki-przychody-sum').innerText = "0.00 PLN";
         document.getElementById('wydatki-koszty-sum').innerText = "0.00 PLN";
         document.getElementById('wydatki-bilans').innerText = "0.00 PLN";
@@ -1106,9 +1428,12 @@
           ? `<span class="bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded font-bold text-[10px]">PRZYCHÓD</span>`
           : `<span class="bg-rose-100 text-rose-800 border border-rose-200 px-2 py-0.5 rounded font-bold text-[10px]">WYDATEK</span>`;
 
+        const payerBadge = `<span class="bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded font-bold text-[10px]">${item.payer || 'Osobisty'}</span>`;
+
         return `
           <tr class="hover:bg-slate-50 font-medium text-slate-800">
             <td class="p-3.5">${typeBadge}</td>
+            <td class="p-3.5">${payerBadge}</td>
             <td class="p-3.5 font-bold">${item.title} ${item.note ? `<span class="block text-[11px] font-normal text-slate-400">${item.note}</span>` : ''}</td>
             <td class="p-3.5 text-slate-500">${item.category || '-'}</td>
             <td class="p-3.5 font-mono text-slate-500">${item.date}</td>
@@ -1132,6 +1457,7 @@
     async function handleAddWydatkiSubmit(e) {
       e.preventDefault();
       const type = document.getElementById('wyd-type').value;
+      const payer = document.getElementById('wyd-payer').value;
       const title = document.getElementById('wyd-title').value.trim();
       const amount = parseFloat(document.getElementById('wyd-amount').value);
       const category = document.getElementById('wyd-category').value.trim();
@@ -1142,7 +1468,7 @@
         await fetch('/api/wydatki', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type, title, amount_pln: amount, category, date, note })
+          body: JSON.stringify({ type, payer, title, amount_pln: amount, category, date, note })
         });
         document.getElementById('wyd-title').value = '';
         document.getElementById('wyd-amount').value = '';
@@ -1160,18 +1486,282 @@
     }
 
 
-    // ==================== MODULE 3: 🏷️ WYCENY LOGIC ====================
+    // ==================== MODULE 3: 🏷️ WYCENY (POI SYSTEM) LOGIC ====================
+    async function loadCompanyData() {
+      try {
+        const res = await fetch('/api/company');
+        if (res.ok) {
+          companyData = await res.json();
+          document.getElementById('company-name').value = companyData.name || '';
+          document.getElementById('company-nip').value = companyData.nip || '';
+          document.getElementById('company-phone').value = companyData.phone || '';
+          document.getElementById('company-email').value = companyData.email || '';
+          document.getElementById('company-address').value = companyData.address || '';
+          document.getElementById('company-bank').value = companyData.bank || '';
+
+          const logoPreview = document.getElementById('company-logo-preview');
+          const removeBtn = document.getElementById('btn-remove-company-logo');
+          if (companyData.logo_base64) {
+            logoPreview.src = companyData.logo_base64;
+            logoPreview.classList.remove('hidden');
+            removeBtn.classList.remove('hidden');
+          } else {
+            logoPreview.classList.add('hidden');
+            removeBtn.classList.add('hidden');
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function saveCompanyDataFromForm() {
+      companyData.name = document.getElementById('company-name').value;
+      companyData.nip = document.getElementById('company-nip').value;
+      companyData.phone = document.getElementById('company-phone').value;
+      companyData.email = document.getElementById('company-email').value;
+      companyData.address = document.getElementById('company-address').value;
+      companyData.bank = document.getElementById('company-bank').value;
+
+      try {
+        await fetch('/api/company', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(companyData)
+        });
+      } catch (e) {}
+    }
+
+    function handleCompanyLogoUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          companyData.logo_base64 = evt.target.result;
+          const logoPreview = document.getElementById('company-logo-preview');
+          const removeBtn = document.getElementById('btn-remove-company-logo');
+          logoPreview.src = companyData.logo_base64;
+          logoPreview.classList.remove('hidden');
+          removeBtn.classList.remove('hidden');
+          saveCompanyDataFromForm();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeCompanyLogo() {
+      companyData.logo_base64 = '';
+      const logoPreview = document.getElementById('company-logo-preview');
+      const removeBtn = document.getElementById('btn-remove-company-logo');
+      const fileInput = document.getElementById('company-logo-input');
+      logoPreview.classList.add('hidden');
+      removeBtn.classList.add('hidden');
+      if (fileInput) fileInput.value = '';
+      saveCompanyDataFromForm();
+    }
+
+    function generateNewQuoteNumberUI() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const rand = Math.floor(Math.random() * 900) + 100;
+      const qNum = `WYC/${year}/${month}/${rand}`;
+      document.getElementById('wyc-number').value = qNum;
+      document.getElementById('wyc-issue-date').value = today.toISOString().split('T')[0];
+      const validDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+      document.getElementById('wyc-valid-date').value = validDate.toISOString().split('T')[0];
+    }
+
     function addWycenaItemRow() {
       const container = document.getElementById('wycena-items-container');
       const div = document.createElement('div');
-      div.className = 'grid grid-cols-1 sm:grid-cols-6 gap-2 wycena-item-row animate-emerge';
+      div.className = 'grid grid-cols-1 sm:grid-cols-7 gap-2 wycena-item-row bg-slate-50 p-2.5 rounded-2xl border border-slate-200 items-center animate-emerge';
       div.innerHTML = `
-        <input type="text" placeholder="Opis usługi / modułu..." required class="sm:col-span-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc">
-        <input type="number" value="1" placeholder="Ilość" required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty">
-        <input type="number" step="0.01" placeholder="Cena PLN" required class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-price">
-        <button type="button" onclick="this.parentElement.remove()" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
+        <input type="text" placeholder="Opis pozycji / usługi / materiału..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc" oninput="updateQuoteLiveTotal()">
+        <input type="number" value="1" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty" oninput="updateQuoteLiveTotal()">
+        <select class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
+          <option value="szt.">szt.</option>
+          <option value="kpl.">kpl.</option>
+          <option value="m">m</option>
+          <option value="m²">m²</option>
+          <option value="mb">mb</option>
+          <option value="godz.">godz.</option>
+          <option value="kg">kg</option>
+        </select>
+        <input type="number" step="0.01" placeholder="Cena jedn. PLN" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold wyc-item-price" oninput="updateQuoteLiveTotal()">
+        <button type="button" onclick="this.parentElement.remove(); updateQuoteLiveTotal();" class="bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
       `;
       container.appendChild(div);
+      updateQuoteLiveTotal();
+    }
+
+    function updateQuoteLiveTotal() {
+      const rows = document.querySelectorAll('.wycena-item-row');
+      let total = 0;
+      rows.forEach(r => {
+        const qty = parseFloat(r.querySelector('.wyc-item-qty')?.value || 0);
+        const price = parseFloat(r.querySelector('.wyc-item-price')?.value || 0);
+        total += (qty * price);
+      });
+      const el = document.getElementById('wyc-live-total');
+      if (el) el.innerText = `${total.toFixed(2)} PLN`;
+    }
+
+    function openCurrentQuotePdfModal() {
+      const qNum = document.getElementById('wyc-number').value;
+      const issueDate = document.getElementById('wyc-issue-date').value;
+      const validDate = document.getElementById('wyc-valid-date').value;
+      const clientName = document.getElementById('wyc-client').value;
+      const clientPhone = document.getElementById('wyc-client-phone').value;
+      const clientAddress = document.getElementById('wyc-client-address').value;
+      const projectTitle = document.getElementById('wyc-project').value;
+      const notes = document.getElementById('wyc-notes').value;
+
+      const rows = document.querySelectorAll('.wycena-item-row');
+      const items = [];
+      rows.forEach(r => {
+        const desc = r.querySelector('.wyc-item-desc')?.value || '';
+        const qty = parseFloat(r.querySelector('.wyc-item-qty')?.value || 1);
+        const unit = r.querySelector('.wyc-item-unit')?.value || 'szt.';
+        const price = parseFloat(r.querySelector('.wyc-item-price')?.value || 0);
+        if (desc) items.push({ description: desc, quantity: qty, unit: unit, unitPrice: price });
+      });
+
+      const quoteObj = {
+        number: qNum,
+        issueDate: issueDate,
+        validDate: validDate,
+        clientName: clientName,
+        clientPhone: clientPhone,
+        clientAddress: clientAddress,
+        projectTitle: projectTitle,
+        notes: notes,
+        items: items
+      };
+
+      const paper = document.getElementById('pdf-paper-content');
+      const modal = document.getElementById('pdf-preview-modal');
+      paper.innerHTML = generatePdfA4HTML(quoteObj, companyData);
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closePdfModal() {
+      document.getElementById('pdf-preview-modal').classList.add('hidden');
+    }
+
+    function generatePdfA4HTML(quote, company) {
+      const logoHTML = company.logo_base64 
+        ? `<img src="${company.logo_base64}" style="max-height: 75px; max-width: 200px; object-fit: contain; margin-bottom: 8px;" alt="Logo Wystawcy">` 
+        : '';
+
+      let rowsHTML = '';
+      let totalSum = 0;
+
+      if (quote.items && quote.items.length > 0) {
+        quote.items.forEach((i, idx) => {
+          const qty = i.quantity || i.qty || 1;
+          const price = i.unitPrice || i.unit_price || 0;
+          const val = qty * price;
+          totalSum += val;
+
+          rowsHTML += `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 10px; text-align: center; font-weight: bold;">${idx + 1}</td>
+              <td style="padding: 10px;"><strong>${i.description}</strong></td>
+              <td style="padding: 10px; text-align: center;">${qty} ${i.unit || 'szt.'}</td>
+              <td style="padding: 10px; text-align: right;">${price.toFixed(2)} zł</td>
+              <td style="padding: 10px; text-align: right; font-weight: bold; color: #0f172a;">${val.toFixed(2)} zł</td>
+            </tr>
+          `;
+        });
+      } else {
+        rowsHTML = `<tr><td colspan="5" style="padding: 20px; text-align: center; color: #94a3b8;">Brak pozycji na wycenie</td></tr>`;
+      }
+
+      return `
+        <!-- DOKUMENT PDF WYCENY A4 -->
+        <div style="display: flex; justify-content: space-between; items-start; border-b: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 25px;">
+          <div>
+            ${logoHTML}
+            <h2 style="font-size: 18px; font-weight: bold; color: #0f172a; margin: 0;">${company.name || 'Wystawca Wyceny'}</h2>
+            <div style="font-size: 12px; color: #475569; margin-top: 4px;">
+              ${company.address ? company.address + '<br>' : ''}
+              ${company.nip ? 'NIP: ' + company.nip + ' | ' : ''}
+              ${company.phone ? 'Tel: ' + company.phone : ''}
+              ${company.email ? '<br>Email: ' + company.email : ''}
+              ${company.bank ? '<br>Konto: ' + company.bank : ''}
+            </div>
+          </div>
+
+          <div style="text-align: right;">
+            <h1 style="font-size: 22px; font-weight: 900; color: #7c3aed; margin: 0; tracking-tight;">WYCENA / KOSZTORYS</h1>
+            <div style="font-size: 14px; font-weight: bold; color: #dc2626; margin-top: 4px;">
+              Nr: ${quote.number || 'WYC/2026/01'}
+            </div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 6px;">
+              Data wystawienia: <strong>${quote.issueDate || '-'}</strong><br>
+              Termin ważności: <strong>${quote.validDate || '-'}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+          <div>
+            <h4 style="font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; margin: 0 0 4px 0;">Wystawca:</h4>
+            <strong style="font-size: 13px; color: #0f172a;">${company.name || 'Wystawca'}</strong>
+            <div style="font-size: 11px; color: #475569;">${company.address || ''}</div>
+          </div>
+          <div>
+            <h4 style="font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; margin: 0 0 4px 0;">Zamawiający / Klient:</h4>
+            <strong style="font-size: 13px; color: #0f172a;">${quote.clientName || 'Klient'}</strong>
+            <div style="font-size: 11px; color: #475569;">
+              ${quote.clientAddress ? quote.clientAddress + '<br>' : ''}
+              ${quote.clientPhone ? 'Tel: ' + quote.clientPhone : ''}
+            </div>
+          </div>
+        </div>
+
+        ${quote.projectTitle ? `<div style="margin-bottom: 20px; font-size: 14px; font-weight: bold; color: #0f172a;">Projekt: ${quote.projectTitle}</div>` : ''}
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
+          <thead>
+            <tr style="background: #f1f5f9; text-align: left; font-weight: bold; color: #334155; border-bottom: 2px solid #cbd5e1;">
+              <th style="padding: 10px; text-align: center;">Lp.</th>
+              <th style="padding: 10px;">Opis pozycji / usługi / materiału</th>
+              <th style="padding: 10px; text-align: center;">Ilość</th>
+              <th style="padding: 10px; text-align: right;">Cena jedn.</th>
+              <th style="padding: 10px; text-align: right;">Wartość</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHTML}
+          </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 25px;">
+          <div style="background: #f8fafc; border: 2px solid #7c3aed; padding: 12px 25px; border-radius: 12px; text-align: right;">
+            <span style="font-size: 12px; font-weight: bold; color: #475569;">RAZEM DO ZAPŁATY:</span>
+            <span style="font-size: 20px; font-weight: 900; color: #7c3aed; margin-left: 10px;">${totalSum.toFixed(2)} zł</span>
+          </div>
+        </div>
+
+        ${quote.notes ? `
+          <div style="margin-bottom: 35px; padding: 12px; background: #fff5f5; border-left: 4px solid #dc2626; border-radius: 6px; font-size: 11px;">
+            <strong style="color: #991b1b; text-transform: uppercase;">Uwagi i Warunki Wyceny:</strong>
+            <div style="color: #475569; margin-top: 4px; white-space: pre-line;">${quote.notes}</div>
+          </div>
+        ` : ''}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 60px; text-align: center; font-size: 11px; color: #64748b;">
+          <div>
+            <div style="border-bottom: 1px solid #cbd5e1; height: 35px; margin-bottom: 6px;"></div>
+            Podpis Wystawcy Wyceny
+          </div>
+          <div>
+            <div style="border-bottom: 1px solid #cbd5e1; height: 35px; margin-bottom: 6px;"></div>
+            Podpis Klienta (Akceptacja Wyceny)
+          </div>
+        </div>
+      `;
     }
 
     async function loadWycenyData() {
@@ -1192,16 +1782,16 @@
       }
 
       grid.innerHTML = list.map(w => {
-        const itemsList = (w.items || []).map(i => `<li class="flex justify-between text-xs py-0.5"><span>• ${i.description} (x${i.qty})</span> <b class="font-mono text-slate-800">${(i.unit_price * i.qty).toFixed(2)} PLN</b></li>`).join('');
+        const itemsList = (w.items || []).map(i => `<li class="flex justify-between text-xs py-0.5"><span>• ${i.description} (x${i.quantity || i.qty || 1} ${i.unit || 'szt.'})</span> <b class="font-mono text-slate-800">${((i.unitPrice || i.unit_price || 0) * (i.quantity || i.qty || 1)).toFixed(2)} PLN</b></li>`).join('');
 
         return `
           <div class="clean-card p-6 rounded-3xl space-y-4">
             <div class="flex justify-between items-start border-b border-slate-100 pb-3">
               <div>
-                <h4 class="text-base font-bold text-slate-900">${w.project_title}</h4>
-                <p class="text-xs text-purple-700 font-semibold">Klient: ${w.client_name}</p>
+                <h4 class="text-base font-bold text-slate-900">${w.projectTitle || w.project_title || 'Wycena'}</h4>
+                <p class="text-xs text-purple-700 font-semibold">Klient: ${w.clientName || w.client_name}</p>
               </div>
-              <span class="bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded text-[10px] font-bold">${w.status || 'Wysłano'}</span>
+              <span class="bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded font-bold text-[10px]">${w.number || 'WYC'}</span>
             </div>
 
             <ul class="space-y-1 bg-slate-50 p-3 rounded-2xl border border-slate-200 text-slate-600">
@@ -1210,56 +1800,86 @@
 
             <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
               <div>
-                <p class="text-slate-500">Netto: <b class="font-mono text-slate-900">${(w.total_netto || 0).toFixed(2)} PLN</b></p>
-                <p class="text-slate-500">Brutto (23%): <b class="font-mono text-slate-900">${(w.total_brutto || 0).toFixed(2)} PLN</b></p>
+                <p class="text-slate-500">Wartość Razem: <b class="font-mono text-slate-900 text-sm font-bold">${(w.total_netto || w.total_brutto || 0).toFixed(2)} PLN</b></p>
               </div>
-              <button onclick="handleDeleteWycena('${w.id}')" class="btn-anim text-rose-600 hover:text-rose-800 font-bold text-[11px]">Usuń Wycenę</button>
+              <div class="flex items-center gap-2">
+                <button onclick="previewSavedWycenaPdf('${w.id}')" class="btn-anim bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-xl font-bold text-[11px] flex items-center gap-1">
+                  <i data-lucide="printer" class="w-3.5 h-3.5"></i> PDF
+                </button>
+                <button onclick="handleDeleteWycena('${w.id}')" class="btn-anim text-rose-600 hover:text-rose-800 font-bold text-[11px]">Usuń</button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
+      lucide.createIcons();
     }
 
     async function handleAddWycenaSubmit(e) {
       e.preventDefault();
-      const client = document.getElementById('wyc-client').value.trim();
-      const project = document.getElementById('wyc-project').value.trim();
-      const taxRate = parseFloat(document.getElementById('wyc-tax').value || 23);
+      const qNum = document.getElementById('wyc-number').value;
+      const issueDate = document.getElementById('wyc-issue-date').value;
+      const validDate = document.getElementById('wyc-valid-date').value;
+      const clientName = document.getElementById('wyc-client').value.trim();
+      const clientPhone = document.getElementById('wyc-client-phone').value.trim();
+      const clientAddress = document.getElementById('wyc-client-address').value.trim();
+      const projectTitle = document.getElementById('wyc-project').value.trim();
+      const notes = document.getElementById('wyc-notes').value.trim();
 
       const rows = document.querySelectorAll('.wycena-item-row');
       const items = [];
-      let totalNetto = 0;
+      let totalSum = 0;
 
       rows.forEach(r => {
-        const desc = r.querySelector('.wyc-item-desc').value.trim();
-        const qty = parseFloat(r.querySelector('.wyc-item-qty').value || 1);
-        const price = parseFloat(r.querySelector('.wyc-item-price').value || 0);
+        const desc = r.querySelector('.wyc-item-desc')?.value.trim();
+        const qty = parseFloat(r.querySelector('.wyc-item-qty')?.value || 1);
+        const unit = r.querySelector('.wyc-item-unit')?.value || 'szt.';
+        const price = parseFloat(r.querySelector('.wyc-item-price')?.value || 0);
         if (desc) {
-          items.push({ description: desc, qty: qty, unit_price: price });
-          totalNetto += (qty * price);
+          items.push({ description: desc, quantity: qty, unit: unit, unitPrice: price });
+          totalSum += (qty * price);
         }
       });
-
-      const totalBrutto = totalNetto * (1 + (taxRate / 100));
 
       try {
         await fetch('/api/wyceny', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            client_name: client,
-            project_title: project,
+            number: qNum,
+            issueDate: issueDate,
+            validDate: validDate,
+            clientName: clientName,
+            clientPhone: clientPhone,
+            clientAddress: clientAddress,
+            projectTitle: projectTitle,
             items: items,
-            tax_rate: taxRate,
-            total_netto: totalNetto,
-            total_brutto: totalBrutto,
+            notes: notes,
+            total_netto: totalSum,
+            total_brutto: totalSum,
             status: "Wysłano",
-            date: new Date().toISOString().split('T')[0]
+            date: issueDate
           })
         });
         document.getElementById('wyc-client').value = '';
         document.getElementById('wyc-project').value = '';
+        generateNewQuoteNumberUI();
         loadWycenyData();
+      } catch (e) {}
+    }
+
+    async function previewSavedWycenaPdf(id) {
+      try {
+        const res = await fetch('/api/wyceny');
+        const list = await res.json();
+        const target = list.find(x => x.id === id);
+        if (target) {
+          const paper = document.getElementById('pdf-paper-content');
+          const modal = document.getElementById('pdf-preview-modal');
+          paper.innerHTML = generatePdfA4HTML(target, companyData);
+          modal.classList.remove('hidden');
+          lucide.createIcons();
+        }
       } catch (e) {}
     }
 
@@ -1273,36 +1893,126 @@
 
     // ==================== MODULE 4: ✉️ STOPKI E-MAIL LOGIC ====================
     function updateEmailSignaturePreview() {
-      const name = document.getElementById('sig-name').value || 'Adrian Chrom';
+      const templateStyleEl = document.querySelector('input[name="sigTemplateStyle"]:checked');
+      const templateStyle = templateStyleEl ? templateStyleEl.value : 'top-line';
+
+      const greeting = document.getElementById('sig-greeting').value || 'Pozdrawiam serdecznie / Best regards';
+      const name = document.getElementById('sig-name').value || 'Adrian Chromiańczuk';
       const role = document.getElementById('sig-role').value || 'Executive Manager';
-      const phone = document.getElementById('sig-phone').value || '+48 500 000 000';
-      const email = document.getElementById('sig-email').value || 'adrian@kontakt.pl';
-      const website = document.getElementById('sig-website').value || 'www.strona.pl';
-      const color = document.getElementById('sig-color').value || '#2563eb';
+      const phone = document.getElementById('sig-phone').value || '+48 605 595 049';
+      const email = document.getElementById('sig-email').value || 'adrian.chrom@gmail.com';
+      const website = document.getElementById('sig-website').value || 'www.vanstev.pl';
 
-      const htmlCode = `<table cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; font-size: 13px; color: #1e293b; line-height: 1.4;">
-  <tr>
-    <td style="padding-right: 15px; border-right: 3px solid ${color};">
-      <strong style="font-size: 15px; color: #0f172a; display: block;">${name}</strong>
-      <span style="color: ${color}; font-weight: 600; font-size: 12px;">${role}</span>
-    </td>
-    <td style="padding-left: 15px;">
-      <div style="color: #475569;">📞 ${phone}</div>
-      <div style="color: #475569;">✉️ <a href="mailto:${email}" style="color: ${color}; text-decoration: none;">${email}</a></div>
-      <div style="color: #475569;">🌐 <a href="https://${website}" target="_blank" style="color: ${color}; text-decoration: none;">${website}</a></div>
-    </td>
-  </tr>
-</table>`;
+      const lineColor = document.getElementById('sig-line-color').value || '#c0d600';
+      const accentColor = document.getElementById('sig-accent-color').value || '#1e88e5';
+      const lineWidth = document.getElementById('sig-line-width').value || '3';
+      const iconStyle = document.getElementById('sig-icon-style').value || 'emoji';
 
-      document.getElementById('email-sig-preview-box').innerHTML = htmlCode;
-      document.getElementById('email-sig-code-output').value = htmlCode;
+      const enableClause = document.getElementById('sig-enable-clause').checked;
+      const langPL = document.getElementById('sig-lang-pl').checked;
+      const langEN = document.getElementById('sig-lang-en').checked;
+      const langDE = document.getElementById('sig-lang-de').checked;
+
+      let contactRowsHtml = '';
+      if (phone) {
+        contactRowsHtml += `<tr><td style="padding-bottom: 4px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">${iconStyle === 'emoji' ? '📞 ' : ''}<a href="tel:${phone.replace(/\s+/g, '')}" style="color: ${accentColor}; font-weight: bold; text-decoration: none;">${phone}</a></td></tr>`;
+      }
+      if (email) {
+        contactRowsHtml += `<tr><td style="padding-bottom: 4px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">${iconStyle === 'emoji' ? '✉️ ' : ''}<a href="mailto:${email}" style="color: ${accentColor}; text-decoration: none;">${email}</a></td></tr>`;
+      }
+      if (website) {
+        contactRowsHtml += `<tr><td style="padding-bottom: 4px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">${iconStyle === 'emoji' ? '🌐 ' : ''}<a href="https://${website}" target="_blank" style="color: ${accentColor}; text-decoration: none;">${website}</a></td></tr>`;
+      }
+
+      let clauseHtml = '';
+      if (enableClause && (langPL || langEN || langDE)) {
+        let texts = [];
+        if (langPL) texts.push('<strong>PL:</strong> Niniejsza wiadomość i wszelkie załączniki są przeznaczone wyłącznie dla adresata i mogą zawierać informacje poufne. Jeśli otrzymałeś tę wiadomość omyłkowo, prosimy o niezwłoczne poinformowanie nadawcy.');
+        if (langEN) texts.push('<strong>EN:</strong> This message and any attachments are intended solely for the recipient and may contain confidential information.');
+        if (langDE) texts.push('<strong>DE:</strong> Diese Nachricht und etwaige Anhänge sind ausschließlich für den Adressaten bestimmt und können vertrauliche Informationen enthalten.');
+
+        clauseHtml = `
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 14px; padding-top: 8px;">
+            <tr>
+              <td style="font-family: Arial, sans-serif; font-size: 11px; line-height: 1.4; color: #64748b;">
+                ${texts.join('<br><br>')}
+              </td>
+            </tr>
+          </table>
+        `;
+      }
+
+      let signatureInnerHtml = '';
+      if (templateStyle === 'top-line') {
+        signatureInnerHtml = `
+          <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; max-width: 600px;">
+            <tr>
+              <td style="border-top: ${lineWidth}px solid ${lineColor}; padding-top: 12px;">
+                ${greeting ? `<div style="font-size: 13px; font-weight: bold; color: #0f172a; margin-bottom: 10px;">${greeting}</div>` : ''}
+                ${name ? `<div style="font-size: 17px; font-weight: bold; color: #0f172a;">${name}</div>` : ''}
+                ${role ? `<div style="font-size: 14px; color: ${accentColor}; font-weight: 600; margin-bottom: 10px;">${role}</div>` : ''}
+                <table cellpadding="0" cellspacing="0" border="0">${contactRowsHtml}</table>
+                ${clauseHtml}
+              </td>
+            </tr>
+          </table>
+        `;
+      } else if (templateStyle === 'left-line') {
+        signatureInnerHtml = `
+          <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; max-width: 600px;">
+            <tr>
+              <td style="border-left: ${lineWidth}px solid ${lineColor}; padding-left: 14px;">
+                ${greeting ? `<div style="font-size: 13px; font-weight: bold; color: #0f172a; margin-bottom: 10px;">${greeting}</div>` : ''}
+                ${name ? `<div style="font-size: 17px; font-weight: bold; color: #0f172a;">${name}</div>` : ''}
+                ${role ? `<div style="font-size: 14px; color: ${accentColor}; font-weight: 600; margin-bottom: 10px;">${role}</div>` : ''}
+                <table cellpadding="0" cellspacing="0" border="0">${contactRowsHtml}</table>
+                ${clauseHtml}
+              </td>
+            </tr>
+          </table>
+        `;
+      } else {
+        signatureInnerHtml = `
+          <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; max-width: 600px;">
+            <tr>
+              <td style="padding-top: 8px;">
+                ${greeting ? `<div style="font-size: 13px; font-weight: bold; color: #0f172a; margin-bottom: 10px;">${greeting}</div>` : ''}
+                ${name ? `<div style="font-size: 17px; font-weight: bold; color: #0f172a;">${name}</div>` : ''}
+                ${role ? `<div style="font-size: 14px; color: ${accentColor}; font-weight: 600; margin-bottom: 10px;">${role}</div>` : ''}
+                <table cellpadding="0" cellspacing="0" border="0">${contactRowsHtml}</table>
+                ${clauseHtml}
+              </td>
+            </tr>
+          </table>
+        `;
+      }
+
+      document.getElementById('email-sig-preview-box').innerHTML = signatureInnerHtml;
+      document.getElementById('email-sig-code-output').value = `<!-- START EMAIL SIGNATURE -->\n${signatureInnerHtml.trim()}\n<!-- END EMAIL SIGNATURE -->`;
     }
 
-    function copyEmailSignatureHtml() {
-      const copyText = document.getElementById('email-sig-code-output');
-      copyText.select();
-      navigator.clipboard.writeText(copyText.value);
-      alert('✓ Kod HTML stopki został skopiowany do schowka!');
+    function copyFormattedSignatureVisual() {
+      const previewArea = document.getElementById('email-sig-preview-box');
+      if (!previewArea) return;
+      const range = document.createRange();
+      range.selectNode(previewArea);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
+      alert('✓ Skopiowano sformatowaną stopkę! Wklej (Ctrl+V / Cmd+V) bezpośrednio w ustawieniach podpisu Gmail / Outlook.');
+    }
+
+    function downloadEmailSignatureHtml() {
+      const code = document.getElementById('email-sig-code-output').value;
+      const blob = new Blob([code], { type: 'text/html;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'stopka_email.html';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
 
