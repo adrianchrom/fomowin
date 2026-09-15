@@ -3943,6 +3943,40 @@
       } catch (e) {}
     }
 
+    function exportPoiBackup() {
+      try {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(poiState || {}, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `wyceny_backup_${Date.now()}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showToast("Eksport bazy wycen zakończony pomyślnie!", "success");
+      } catch (e) {
+        showToast("Błąd podczas eksportu bazy wycen", "error");
+      }
+    }
+
+    async function importPoiBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        if (json && typeof json === 'object') {
+          poiState = json;
+          await saveWycenyData();
+          renderAllPoiUI();
+          showToast("Import bazy wycen zakończony pomyślnie!", "success");
+        } else {
+          showToast("Nieprawidłowy format pliku JSON", "error");
+        }
+      } catch (err) {
+        showToast("Błąd podczas importu pliku wycen", "error");
+      }
+    }
+
     function renderAllPoiUI() {
       renderCompanyDataUI();
       renderQuoteItemsUI();

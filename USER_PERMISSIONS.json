@@ -16,7 +16,7 @@
     "fomo": true,
     "wydatki": true,
     "wyceny": true,
-    "stopki_email": false,
+    "stopki_email": true,
     "kalendarz": true,
     "is_admin": false,
     "ai_chat": true,
