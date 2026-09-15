@@ -5,7 +5,8 @@
     "wyceny": true,
     "stopki_email": true,
     "kalendarz": true,
-    "is_admin": true
+    "is_admin": true,
+    "ai_chat": true
   },
   "Maciek": {
     "fomo": true,
@@ -13,6 +14,7 @@
     "wyceny": true,
     "stopki_email": false,
     "kalendarz": true,
-    "is_admin": false
+    "is_admin": false,
+    "ai_chat": true
   }
 }

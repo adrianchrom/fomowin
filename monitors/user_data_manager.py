@@ -119,9 +119,13 @@ class UserDataManager:
             }
             self._save_json(PERMISSIONS_FILE, self.permissions)
         
-        # Ensure kalendarz key exists
+        # Ensure kalendarz & ai_chat keys exist
         if "kalendarz" not in self.permissions[canonical]:
             self.permissions[canonical]["kalendarz"] = (canonical == "Adrian")
+            self._save_json(PERMISSIONS_FILE, self.permissions)
+
+        if "ai_chat" not in self.permissions[canonical]:
+            self.permissions[canonical]["ai_chat"] = True
             self._save_json(PERMISSIONS_FILE, self.permissions)
 
         # Adrian always retains super admin access
@@ -132,6 +136,7 @@ class UserDataManager:
                 "wyceny": True,
                 "stopki_email": True,
                 "kalendarz": True,
+                "ai_chat": True,
                 "is_admin": True
             }
         return self.permissions[canonical]
@@ -141,7 +146,7 @@ class UserDataManager:
         if target not in self.permissions:
             self.permissions[target] = {}
         
-        for k in ["wydatki", "wyceny", "stopki_email", "kalendarz"]:
+        for k in ["wydatki", "wyceny", "stopki_email", "kalendarz", "ai_chat"]:
             if k in new_perms:
                 self.permissions[target][k] = bool(new_perms[k])
         

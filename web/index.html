@@ -2003,6 +2003,20 @@
             </label>
           </div>
 
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="bot" class="w-5 h-5 text-rose-600"></i>
+              <div>
+                <span class="font-bold text-slate-900 block text-sm">🤖 ASYSTENT AI (LLM)</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do czatu AI, generowania pism, ofert wycen i skanera</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="admin-perm-ai_chat" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
         </div>
 
         <div class="pt-3 flex items-center justify-between border-t border-slate-100">
@@ -4254,45 +4268,7 @@
     }
 
 
-    // ==================== MODULE 5: ⚙️ PANEL ADMINA LOGIC ====================
-    async function loadAdminPermissions() {
-      try {
-        const res = await fetch('/api/admin/permissions');
-        if (!res.ok) return;
-        const data = await res.json();
-        const p = data.maciek || {};
 
-        document.getElementById('admin-perm-wydatki').checked = !!p.wydatki;
-        document.getElementById('admin-perm-wyceny').checked = !!p.wyceny;
-        document.getElementById('admin-perm-stopki_email').checked = !!p.stopki_email;
-      } catch (e) {}
-    }
-
-    async function handleSaveAdminPermissions() {
-      const wydatki = document.getElementById('admin-perm-wydatki').checked;
-      const wyceny = document.getElementById('admin-perm-wyceny').checked;
-      const stopki_email = document.getElementById('admin-perm-stopki_email').checked;
-
-      try {
-        const res = await fetch('/api/admin/permissions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            wydatki: wydatki,
-            wyceny: wyceny,
-            stopki_email: stopki_email
-          })
-        });
-        if (res.ok) {
-          const toast = document.getElementById('admin-save-toast');
-          if (toast) {
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-          }
-          fetchUser();
-        }
-      } catch (e) {}
-    }
 
     // INSIDER FEED & ALERTS FOR FOMO ENGINE
     async function loadInsiderSignalsFeed() {
@@ -4429,10 +4405,12 @@
           const wy = document.getElementById('admin-perm-wyceny');
           const s = document.getElementById('admin-perm-stopki_email');
           const k = document.getElementById('admin-perm-kalendarz');
+          const ai = document.getElementById('admin-perm-ai_chat');
           if (w) w.checked = !!perms.wydatki;
           if (wy) wy.checked = !!perms.wyceny;
           if (s) s.checked = !!perms.stopki_email;
           if (k) k.checked = !!perms.kalendarz;
+          if (ai) ai.checked = !!perms.ai_chat;
         }
       } catch (e) {}
     }
@@ -4442,12 +4420,14 @@
       const wy = document.getElementById('admin-perm-wyceny');
       const s = document.getElementById('admin-perm-stopki_email');
       const k = document.getElementById('admin-perm-kalendarz');
+      const ai = document.getElementById('admin-perm-ai_chat');
 
       const payload = {
         wydatki: w ? w.checked : false,
         wyceny: wy ? wy.checked : false,
         stopki_email: s ? s.checked : false,
-        kalendarz: k ? k.checked : false
+        kalendarz: k ? k.checked : false,
+        ai_chat: ai ? ai.checked : false
       };
 
       try {
@@ -4462,8 +4442,14 @@
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
           }
+          showToast("Uprawnienia zostały pomyślnie zapisane!", "success");
+          fetchUser();
+        } else {
+          showToast("Błąd podczas zapisywania uprawnień", "error");
         }
-      } catch (e) {}
+      } catch (e) {
+        showToast("Błąd połączenia podczas zapisywania uprawnień", "error");
+      }
     }
 
     // ==================== MODULE 5: 📅 KALENDARZ & PRZYPOMNIENIA LOGIC ====================
