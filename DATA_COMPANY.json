@@ -1,20 +1,20 @@
 {
   "Adrian": {
-    "name": "Van Stev Sp. z o.o. Sp. k.",
-    "address": "ul. Prosta 20, 00-001 Warszawa",
-    "nip": "8992782026",
-    "phone": "+48 605 595 049",
-    "email": "adrian.chrom@gmail.com",
-    "bank": "00 1234 5678 9012 3456 7890 1234",
+    "name": "Biuro Usługowe / Twoja Firma",
+    "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+    "nip": "0000000000",
+    "phone": "+48 000 000 000",
+    "email": "biuro@firma.pl",
+    "bank": "00 0000 0000 0000 0000 0000 0000",
     "logo_base64": ""
   },
   "Maciek": {
-    "name": "MHF Trading Group",
-    "address": "Rynek Główny 1, 30-001 Kraków",
-    "nip": "1234567890",
-    "phone": "+48 500 123 456",
-    "email": "maciek@fomo.win",
-    "bank": "11 2222 3333 4444 5555 6666 7777",
+    "name": "Biuro Usługowe / Twoja Firma",
+    "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+    "nip": "0000000000",
+    "phone": "+48 000 000 000",
+    "email": "biuro@firma.pl",
+    "bank": "00 0000 0000 0000 0000 0000 0000",
     "logo_base64": ""
   }
 }

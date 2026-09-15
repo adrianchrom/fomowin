@@ -198,10 +198,10 @@ async def get_wyceny_route(request: Request):
     return user_data_mgr.get_user_wyceny(user)
 
 @app.post("/api/wyceny")
-async def add_wyceny_route(request: Request, data: Dict[str, Any] = Body(...)):
+async def save_wyceny_route(request: Request, data: Dict[str, Any] = Body(...)):
     user = getattr(request.state, "user", "Maciek")
-    res = user_data_mgr.add_user_wyceny(user, data)
-    return {"success": True, "entry": res}
+    res = user_data_mgr.save_user_wyceny(user, data)
+    return {"success": True, "data": res}
 
 @app.delete("/api/wyceny/{entry_id}")
 async def delete_wyceny_route(request: Request, entry_id: str):

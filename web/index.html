@@ -967,194 +967,453 @@
     </div>
 
 
-    <!-- ==================== MODULE 3: 🏷️ WYCENY (POI SYSTEM) ==================== -->
+    <!-- ==================== MODULE 3: 🏷️ WYCENY (SYSTEM POI) ==================== -->
     <div id="app-container-wyceny" class="hidden space-y-6 animate-emerge">
       
-      <!-- Module Header -->
+      <!-- Module Header with 4 Sub-Tabs Navigation -->
       <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="file-text" class="w-6 h-6 text-purple-600"></i>
-            🏷️ WYCENY & KOSZTORYSY (SYSTEM POI)
-          </h2>
-          <p class="text-xs text-slate-500 mt-1">Ustawienia Wystawcy, dane firmowe, kalkulator kosztorysów i generator ofert PDF</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">🏷️ POI — Wyceny, Magazyn & Finanse</h2>
+            <p class="text-xs text-slate-500 font-medium">Kosztorysy PDF, gospodarka magazynowa i ewidencja zleceń</p>
+          </div>
         </div>
+
+        <!-- Sub-Tabs Navigation for POI Wyceny -->
+        <nav class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+          <button onclick="switchWycenySubtab('wyceny')" id="wyceny-subtab-wyceny" class="btn-anim px-3.5 py-2 rounded-xl transition bg-white text-purple-600 shadow-sm">
+            <i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1"></i> Wyceny (PDF)
+          </button>
+          <button onclick="switchWycenySubtab('magazyn')" id="wyceny-subtab-magazyn" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="package" class="w-3.5 h-3.5 inline mr-1"></i> Magazyn
+          </button>
+          <button onclick="switchWycenySubtab('finanse')" id="wyceny-subtab-finanse" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 inline mr-1"></i> Finanse & Zlecenia
+          </button>
+          <button onclick="switchWycenySubtab('ustawienia')" id="wyceny-subtab-ustawienia" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="settings" class="w-3.5 h-3.5 inline mr-1"></i> Kopia & Ustawienia
+          </button>
+        </nav>
       </div>
 
-      <!-- 1. DANE FIRMY / WYSTAWCE I LOGO FIRMOWE -->
-      <div class="clean-card p-6 rounded-3xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="building" class="w-4 h-4 text-purple-600"></i>
-            🏛️ Dane Wystawcy i Logo Firmowe (Zapamiętywane Automatycznie)
-          </h3>
-          <span id="company-save-status" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">Auto-save aktywny</span>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 text-xs">
-          <div class="lg:col-span-2 space-y-3">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block font-semibold mb-1 text-slate-700">Nazwa Firmy / Wystawca:</label>
-                <input type="text" id="company-name" oninput="saveCompanyDataFromForm()" placeholder="np. Van Stev Sp. z o.o." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-              </div>
-              <div>
-                <label class="block font-semibold mb-1 text-slate-700">NIP:</label>
-                <input type="text" id="company-nip" oninput="saveCompanyDataFromForm()" placeholder="np. 8992782026" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block font-semibold mb-1 text-slate-700">Telefon kontaktowy:</label>
-                <input type="text" id="company-phone" oninput="saveCompanyDataFromForm()" placeholder="np. +48 605 595 049" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-              </div>
-              <div>
-                <label class="block font-semibold mb-1 text-slate-700">E-mail kontaktowy:</label>
-                <input type="email" id="company-email" oninput="saveCompanyDataFromForm()" placeholder="np. kontakt@vanstev.pl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-              </div>
-            </div>
-
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Adres (Ulica, Kod i Miasto):</label>
-              <input type="text" id="company-address" oninput="saveCompanyDataFromForm()" placeholder="np. ul. Prosta 20, 00-001 Warszawa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-            </div>
-
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Numer konta bankowego (opcjonalnie):</label>
-              <input type="text" id="company-bank" oninput="saveCompanyDataFromForm()" placeholder="np. 00 1234 5678 9012 3456 7890 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-mono">
-            </div>
+      <!-- SUB-TAB 1: WYCENY (PDF GENERATOR & FORM) -->
+      <div id="wyceny-content-wyceny" class="space-y-6">
+        
+        <!-- 1. DANE FIRMY / WYSTAWCE I LOGO FIRMOWE -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="building" class="w-4 h-4 text-purple-600"></i>
+              🏛️ Dane Wystawcy i Logo Firmowe (Zapamiętywane Automatycznie)
+            </h3>
+            <span id="company-save-status" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">Auto-save aktywny</span>
           </div>
 
-          <!-- Logo Upload Box -->
-          <div class="space-y-3">
-            <label class="block font-semibold text-slate-700">Logo Firmy (Wyświetlane w rogu PDF):</label>
-            <div onclick="document.getElementById('company-logo-input').click()" class="border-2 border-dashed border-slate-300 rounded-2xl p-5 text-center cursor-pointer hover:bg-slate-50 transition flex flex-col items-center justify-center space-y-2 min-h-[180px]">
-              <img id="company-logo-preview" src="" class="hidden max-h-20 max-w-[180px] object-contain mb-2" alt="Logo firmy">
-              <i data-lucide="image" class="w-8 h-8 text-purple-600"></i>
-              <p class="text-xs font-bold text-purple-700">Kliknij, aby dodać lub zmienić Logo</p>
-              <span class="text-[11px] text-slate-400">(Formaty: PNG, JPG, SVG)</span>
-              <input type="file" id="company-logo-input" accept="image/*" onchange="handleCompanyLogoUpload(event)" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 text-xs">
+            <div class="lg:col-span-2 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-semibold mb-1 text-slate-700">Nazwa Firmy / Wystawca:</label>
+                  <input type="text" id="company-name" oninput="saveCompanyDataFromForm()" placeholder="np. Biuro Usługowe / Twoja Firma" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                </div>
+                <div>
+                  <label class="block font-semibold mb-1 text-slate-700">NIP:</label>
+                  <input type="text" id="company-nip" oninput="saveCompanyDataFromForm()" placeholder="np. 0000000000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-semibold mb-1 text-slate-700">Telefon kontaktowy:</label>
+                  <input type="text" id="company-phone" oninput="saveCompanyDataFromForm()" placeholder="np. +48 000 000 000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                </div>
+                <div>
+                  <label class="block font-semibold mb-1 text-slate-700">E-mail kontaktowy:</label>
+                  <input type="email" id="company-email" oninput="saveCompanyDataFromForm()" placeholder="np. biuro@firma.pl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Adres (Ulica, Kod i Miasto):</label>
+                <input type="text" id="company-address" oninput="saveCompanyDataFromForm()" placeholder="np. ul. Przykładowa 12/3, 00-001 Warszawa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Numer konta bankowego (opcjonalnie):</label>
+                <input type="text" id="company-bank" oninput="saveCompanyDataFromForm()" placeholder="np. 00 0000 0000 0000 0000 0000 0000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-mono">
+              </div>
             </div>
-            <button id="btn-remove-company-logo" onclick="removeCompanyLogo()" class="hidden w-full btn-anim bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Usuń Logo Firmy
+
+            <!-- Logo Upload Box -->
+            <div class="space-y-3">
+              <label class="block font-semibold text-slate-700">Logo Firmy (Wyświetlane w rogu PDF):</label>
+              <div onclick="document.getElementById('company-logo-input').click()" class="border-2 border-dashed border-slate-300 rounded-2xl p-5 text-center cursor-pointer hover:bg-slate-50 transition flex flex-col items-center justify-center space-y-2 min-h-[180px]">
+                <img id="company-logo-preview" src="" class="hidden max-h-20 max-w-[180px] object-contain mb-2" alt="Logo firmy">
+                <i data-lucide="image" class="w-8 h-8 text-purple-600"></i>
+                <p class="text-xs font-bold text-purple-700">Kliknij, aby dodać lub zmienić Logo</p>
+                <span class="text-[11px] text-slate-400">(Formaty: PNG, JPG, SVG)</span>
+                <input type="file" id="company-logo-input" accept="image/*" onchange="handleCompanyLogoUpload(event)" class="hidden">
+              </div>
+              <button id="btn-remove-company-logo" onclick="removeCompanyLogo()" class="hidden w-full btn-anim bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Usuń Logo Firmy
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. DANE KLIENTA I PARAMETRY WYCENY -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="user-check" class="w-4 h-4 text-purple-600"></i>
+              👤 Dane Klienta (Zamawiającego) & Parametry Wyceny
+            </h3>
+            <button type="button" onclick="generateNewQuoteNumberUI()" class="btn-anim text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-xl border border-slate-200 font-semibold flex items-center gap-1">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Nowy Numer Wyceny
             </button>
           </div>
-        </div>
-      </div>
 
-      <!-- 2. FORMULARZ STWORZENIA DEDYKOWANEJ WYCENY -->
-      <div class="clean-card p-6 rounded-3xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="user-check" class="w-4 h-4 text-purple-600"></i>
-            👤 Dane Klienta (Zamawiającego) & Parametry Wyceny
-          </h3>
-          <button type="button" onclick="generateNewQuoteNumberUI()" class="btn-anim text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-xl border border-slate-200 font-semibold flex items-center gap-1">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Nowy Numer Wyceny
-          </button>
-        </div>
-
-        <form onsubmit="handleAddWycenaSubmit(event)" class="space-y-4 text-xs">
-          
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Numer Wyceny:</label>
-              <input type="text" id="wyc-number" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-purple-700 font-bold font-mono">
-            </div>
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Data wystawienia:</label>
-              <input type="date" id="wyc-issue-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
-            </div>
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Termin ważności:</label>
-              <input type="date" id="wyc-valid-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Zamawiający / Klient:</label>
-              <input type="text" id="wyc-client" placeholder="np. Jan Kowalski / Firma ABC" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-            </div>
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Telefon Klienta:</label>
-              <input type="text" id="wyc-client-phone" placeholder="np. +48 500 600 700" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-            </div>
-            <div>
-              <label class="block font-semibold mb-1 text-slate-700">Adres wykonania usługi / klienta:</label>
-              <input type="text" id="wyc-client-address" placeholder="np. ul. Leśna 10, Poznań" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-            </div>
-          </div>
-
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Tytuł Projektu / Usługi:</label>
-            <input type="text" id="wyc-project" placeholder="np. Kompleksowy Montaż Instalacji Elektrycznej" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-          </div>
-
-          <!-- Dynamic Items List Table -->
-          <div class="space-y-2 pt-2">
-            <div class="flex justify-between items-center">
-              <label class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                <i data-lucide="list" class="w-4 h-4 text-purple-600"></i> Pozycje Kosztorysowe Wyceny:
-              </label>
-              <button type="button" onclick="addWycenaItemRow()" class="btn-anim text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded-xl border border-purple-200 flex items-center gap-1 font-bold">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Dodaj Pozycję
-              </button>
-            </div>
-
-            <div id="wycena-items-container" class="space-y-2">
-              <!-- Item Row 1 default -->
-              <div class="grid grid-cols-1 sm:grid-cols-7 gap-2 wycena-item-row bg-slate-50 p-2.5 rounded-2xl border border-slate-200 items-center">
-                <input type="text" placeholder="Opis pozycji / usługi / materiału..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc" oninput="updateQuoteLiveTotal()">
-                <input type="number" value="1" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty" oninput="updateQuoteLiveTotal()">
-                <select class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
-                  <option value="szt.">szt.</option>
-                  <option value="kpl.">kpl.</option>
-                  <option value="m">m</option>
-                  <option value="m²">m²</option>
-                  <option value="mb">mb</option>
-                  <option value="godz.">godz.</option>
-                  <option value="kg">kg</option>
-                </select>
-                <input type="number" step="0.01" placeholder="Cena jedn. PLN" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold wyc-item-price" oninput="updateQuoteLiveTotal()">
-                <button type="button" onclick="this.parentElement.remove(); updateQuoteLiveTotal();" class="bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
+          <form onsubmit="handleAddWycenaSubmit(event)" class="space-y-4 text-xs">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Numer Wyceny:</label>
+                <input type="text" id="wyc-number" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-purple-700 font-bold font-mono">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Data wystawienia:</label>
+                <input type="date" id="wyc-issue-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Termin ważności:</label>
+                <input type="date" id="wyc-valid-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
               </div>
             </div>
-          </div>
 
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Uwagi i Warunki Wyceny / Płatności:</label>
-            <textarea id="wyc-notes" rows="2" placeholder="np. Wycena ważna 14 dni. Płatność przelewem po akceptacji prac..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"></textarea>
-          </div>
-
-          <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-slate-100">
-            <div class="text-xs">
-              <span class="text-slate-500">Suma Wyceny:</span>
-              <strong id="wyc-live-total" class="text-lg font-black text-purple-900 ml-1">0.00 PLN</strong>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Zamawiający / Klient:</label>
+                <input type="text" id="wyc-client" placeholder="np. Jan Kowalski" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Telefon Klienta:</label>
+                <input type="text" id="wyc-client-phone" placeholder="np. 500 600 700" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Adres wykonania usługi / klienta:</label>
+                <input type="text" id="wyc-client-address" placeholder="np. ul. Leśna 10, Poznań" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="openCurrentQuotePdfModal()" class="btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm">
-                <i data-lucide="printer" class="w-4 h-4"></i> Generuj / Podgląd PDF & Wydruk
-              </button>
-              <button type="submit" class="btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
-                <i data-lucide="check" class="w-4 h-4"></i> Zapisz Wycenę
-              </button>
-            </div>
-          </div>
+            <!-- Dynamic Items List Table -->
+            <div class="space-y-2 pt-2">
+              <div class="flex justify-between items-center">
+                <label class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                  <i data-lucide="list" class="w-4 h-4 text-purple-600"></i> Pozycje Kosztorysowe Wyceny:
+                </label>
+                <div class="flex gap-2">
+                  <button type="button" onclick="addWycenaItemRow()" class="btn-anim text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded-xl border border-purple-200 flex items-center gap-1 font-bold">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Dodaj Pozycję
+                  </button>
+                  <button type="button" onclick="openInventoryPickerModal()" class="btn-anim text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1.5 rounded-xl border border-rose-200 flex items-center gap-1 font-bold">
+                    <i data-lucide="package" class="w-3.5 h-3.5"></i> Dodaj z Magazynu
+                  </button>
+                </div>
+              </div>
 
-        </form>
+              <div id="wycena-items-container" class="space-y-2">
+                <!-- Item Rows rendered by JS -->
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Uwagi i Warunki Wyceny / Płatności:</label>
+              <textarea id="wyc-notes" rows="2" placeholder="Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"></textarea>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-slate-100">
+              <div class="text-xs">
+                <span class="text-slate-500">Suma Wyceny:</span>
+                <strong id="wyc-live-total" class="text-lg font-black text-purple-900 ml-1">0.00 PLN</strong>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="openCurrentQuotePdfModal()" class="btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm">
+                  <i data-lucide="printer" class="w-4 h-4"></i> Generuj / Podgląd PDF & Wydruk
+                </button>
+                <button type="submit" class="btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="check" class="w-4 h-4"></i> Zapisz Wycenę
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Zapisane Wyceny Grid -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="folder" class="w-4 h-4 text-purple-600"></i>
+            Zapisane Wyceny Projektowe
+          </h3>
+          <div id="wyceny-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
       </div>
 
-      <!-- Existing Quotes Grid -->
-      <div class="space-y-3">
-        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <i data-lucide="folder" class="w-4 h-4 text-purple-600"></i>
-          Zapisane Wyceny Projektowe
-        </h3>
-        <div id="wyceny-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Rendered by JS -->
+      <!-- SUB-TAB 2: MAGAZYN -->
+      <div id="wyceny-content-magazyn" class="hidden space-y-6">
+        
+        <!-- Statystyki Magazynu -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold border border-blue-100">
+              <i data-lucide="package" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Liczba przedmiotów na stanie</p>
+              <p id="inv-stat-count" class="text-xl font-extrabold text-slate-900">0</p>
+            </div>
+          </div>
+
+          <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold border border-purple-100">
+              <i data-lucide="coins" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Szacunkowa wartość magazynu</p>
+              <p id="inv-stat-value" class="text-xl font-extrabold text-purple-700">0.00 PLN</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formularz Dodawania Przedmiotu do Magazynu -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-purple-600"></i> Dodaj nowy przedmiot / materiał do Magazynu
+          </h3>
+
+          <form id="poi-inventory-form" onsubmit="handleAddInventorySubmit(event)" class="space-y-3.5 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Nazwa narzędzia / materiału:*</label>
+                <input type="text" id="inv-name" required placeholder="np. Wkrętarka DeWalt / Kabel YDYp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Kategoria:</label>
+                <select id="inv-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+                  <option value="Elektryka">Elektryka</option>
+                  <option value="Hydraulika">Hydraulika</option>
+                  <option value="Budowlane">Budowlane</option>
+                  <option value="Narzędzia">Narzędzia</option>
+                  <option value="Elektronika">Elektronika</option>
+                  <option value="Inne">Inne</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Cena zakupu (PLN):</label>
+                <input type="number" id="inv-price" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Ilość na stanie:</label>
+                <input type="number" id="inv-stock" value="1" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Link do sklepu (opcjonalnie):</label>
+                <input type="url" id="inv-link" placeholder="https://allegro.pl/..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Uwagi / Opis:</label>
+                <input type="text" id="inv-notes" placeholder="np. Zakup w hurtowni" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+            </div>
+
+            <button type="submit" class="w-full btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 rounded-xl shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> Dodaj do Magazynu
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabela Przedmiotów w Magazynie -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Przedmioty w Magazynie</h3>
+              <p class="text-xs text-slate-500">Zarządzaj stanem magazynowym i przenoś pozycje bezpośrednio do kosztorysów.</p>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto text-xs">
+              <input type="text" id="inventory-search" onkeyup="renderInventoryUI()" placeholder="🔍 Szukaj..." class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 w-full sm:w-48">
+              <select id="inventory-cat-filter" onchange="renderInventoryUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
+                <option value="all">Wszystkie kategorie</option>
+                <option value="Elektryka">Elektryka</option>
+                <option value="Hydraulika">Hydraulika</option>
+                <option value="Budowlane">Budowlane</option>
+                <option value="Narzędzia">Narzędzia</option>
+                <option value="Elektronika">Elektronika</option>
+                <option value="Inne">Inne</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Nazwa przedmiotu</th>
+                  <th class="p-3">Kategoria</th>
+                  <th class="p-3">Cena jedn. PLN</th>
+                  <th class="p-3 text-center">Stan</th>
+                  <th class="p-3">Link do sklepu</th>
+                  <th class="p-3 text-center">Akcje</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody" class="divide-y divide-slate-100">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SUB-TAB 3: FINANSE & ZLECENIA -->
+      <div id="wyceny-content-finanse" class="hidden space-y-6">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="clean-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Przychody (w tym miesiącu)</p>
+            <p id="stat-month-income" class="text-xl font-extrabold text-emerald-600">0.00 PLN</p>
+          </div>
+
+          <div class="clean-card p-5 rounded-2xl border-l-4 border-l-rose-500">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Wydatki (w tym miesiącu)</p>
+            <p id="stat-month-expense" class="text-xl font-extrabold text-rose-600">0.00 PLN</p>
+          </div>
+
+          <div class="clean-card p-5 rounded-2xl border-l-4 border-l-blue-500">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Zysk Netto (w tym miesiącu)</p>
+            <p id="stat-month-profit" class="text-xl font-extrabold text-blue-600">0.00 PLN</p>
+          </div>
+
+          <div class="clean-card p-5 rounded-2xl border-l-4 border-l-purple-500">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Zrealizowane Zlecenia</p>
+            <p id="stat-month-orders" class="text-xl font-extrabold text-slate-900">0</p>
+          </div>
+        </div>
+
+        <!-- Monthly Finance Chart -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <i data-lucide="line-chart" class="w-4 h-4 text-purple-600"></i> Monitor Finansowy — Zestawienie Miesięczne
+          </h3>
+          <div class="relative h-64 sm:h-72 w-full">
+            <canvas id="poiFinanceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Add Transaction Form -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Dodaj wpis (Przychód ze zlecenia / Wydatek)
+          </h3>
+
+          <form id="poi-finance-form" onsubmit="handleAddTransactionSubmit(event)" class="space-y-3.5 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Typ wpisu:</label>
+                <select id="fin-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                  <option value="income" class="text-emerald-600">+ Przychód (Zlecenie / Wycena)</option>
+                  <option value="expense" class="text-rose-600">- Wydatek (Zakup / Materiały)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Tytuł zlecenia lub zakupu:*</label>
+                <input type="text" id="fin-title" required placeholder="np. Wykończenie wnętrza / Zakup kabli" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Kwota (PLN):*</label>
+                <input type="number" id="fin-amount" step="0.01" min="0.01" required placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Kategoria:</label>
+                <input type="text" id="fin-category" placeholder="np. Montaż, Hurtownia, Paliwo, Narzędzia" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              </div>
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Data transakcji:</label>
+                <input type="date" id="fin-date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+              </div>
+            </div>
+
+            <button type="submit" class="w-full btn-anim bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-sm flex items-center justify-center gap-2">
+              <i data-lucide="save" class="w-4 h-4"></i> Zapisz Transakcję
+            </button>
+          </form>
+        </div>
+
+        <!-- Transactions History Table -->
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3">Rejestr Zleceń i Wydatków</h3>
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Data</th>
+                  <th class="p-3">Tytuł transakcji</th>
+                  <th class="p-3">Typ</th>
+                  <th class="p-3">Kategoria</th>
+                  <th class="p-3 text-right">Kwota PLN</th>
+                  <th class="p-3 text-center">Usuń</th>
+                </tr>
+              </thead>
+              <tbody id="finance-tbody" class="divide-y divide-slate-100">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SUB-TAB 4: KOPIA & USTAWIENIA -->
+      <div id="wyceny-content-ustawienia" class="hidden space-y-6">
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="border-b border-slate-100 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="hard-drive" class="w-4 h-4 text-purple-600"></i> Kopia Zapasowa i Przenoszenie Danych
+            </h3>
+            <p class="text-xs text-slate-500">Wszystkie dane zapisują się automatycznie na serwerze. Możesz pobrać kompletną kopię zapasową w pliku JSON.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            <div class="bg-purple-50/50 p-5 rounded-2xl border border-purple-100 space-y-3">
+              <h4 class="font-bold text-purple-900 text-sm">Pobierz kopię danych (.json)</h4>
+              <p class="text-slate-600">Eksportuj wszystkie wyceny, stan magazynowy oraz rejestr finansowy do pojedynczego pliku kopii.</p>
+              <button type="button" onclick="exportPoiBackup()" class="btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4"></i> Pobierz Kopię (.json)
+              </button>
+            </div>
+
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm">Wczytaj kopię z pliku</h4>
+              <p class="text-slate-600">Przywróć wcześniej pobrane dane z pliku kopii zapasowej na swoim koncie.</p>
+              <input type="file" id="import-poi-json-input" accept=".json" onchange="importPoiBackup(event)" class="hidden">
+              <button type="button" onclick="document.getElementById('import-poi-json-input').click()" class="btn-anim bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2">
+                <i data-lucide="upload" class="w-4 h-4"></i> Wczytaj Kopię z Pliku
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1220,28 +1479,28 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Imię i Nazwisko:</label>
-                <input type="text" id="sig-name" value="Adrian Chromiańczuk" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <input type="text" id="sig-name" value="Jan Kowalski" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Stanowisko / Rola:</label>
-                <input type="text" id="sig-role" value="Executive Manager" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="text" id="sig-role" value="Doradca Klienta" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Telefon kontaktowy:</label>
-                <input type="text" id="sig-phone" value="+48 605 595 049" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="text" id="sig-phone" value="+48 000 000 000" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">E-mail firmowy:</label>
-                <input type="email" id="sig-email" value="adrian.chrom@gmail.com" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="email" id="sig-email" value="biuro@firma.pl" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
             </div>
 
             <div>
               <label class="block font-semibold mb-1 text-slate-700">Strona WWW:</label>
-              <input type="text" id="sig-website" value="www.vanstev.pl" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+              <input type="text" id="sig-website" value="www.firma.pl" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
             </div>
           </div>
 
@@ -2881,11 +3140,11 @@
       const templateStyle = templateStyleEl ? templateStyleEl.value : 'top-line';
 
       const greeting = document.getElementById('sig-greeting').value || 'Pozdrawiam serdecznie / Best regards';
-      const name = document.getElementById('sig-name').value || 'Adrian Chromiańczuk';
-      const role = document.getElementById('sig-role').value || 'Executive Manager';
-      const phone = document.getElementById('sig-phone').value || '+48 605 595 049';
-      const email = document.getElementById('sig-email').value || 'adrian.chrom@gmail.com';
-      const website = document.getElementById('sig-website').value || 'www.vanstev.pl';
+      const name = document.getElementById('sig-name').value || 'Jan Kowalski';
+      const role = document.getElementById('sig-role').value || 'Doradca Klienta';
+      const phone = document.getElementById('sig-phone').value || '+48 000 000 000';
+      const email = document.getElementById('sig-email').value || 'biuro@firma.pl';
+      const website = document.getElementById('sig-website').value || 'www.firma.pl';
 
       const lineColor = document.getElementById('sig-line-color').value || '#c0d600';
       const accentColor = document.getElementById('sig-accent-color').value || '#1e88e5';

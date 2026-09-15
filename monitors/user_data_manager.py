@@ -30,21 +30,21 @@ DEFAULT_PERMISSIONS = {
 
 DEFAULT_COMPANY = {
     "Adrian": {
-        "name": "Van Stev Sp. z o.o. Sp. k.",
-        "address": "ul. Prosta 20, 00-001 Warszawa",
-        "nip": "8992782026",
-        "phone": "+48 605 595 049",
-        "email": "adrian.chrom@gmail.com",
-        "bank": "00 1234 5678 9012 3456 7890 1234",
+        "name": "Biuro Usługowe / Twoja Firma",
+        "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+        "nip": "0000000000",
+        "phone": "+48 000 000 000",
+        "email": "biuro@firma.pl",
+        "bank": "00 0000 0000 0000 0000 0000 0000",
         "logo_base64": ""
     },
     "Maciek": {
-        "name": "MHF Trading Group",
-        "address": "Rynek Główny 1, 30-001 Kraków",
-        "nip": "1234567890",
-        "phone": "+48 500 123 456",
-        "email": "maciek@fomo.win",
-        "bank": "11 2222 3333 4444 5555 6666 7777",
+        "name": "Biuro Usługowe / Twoja Firma",
+        "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+        "nip": "0000000000",
+        "phone": "+48 000 000 000",
+        "email": "biuro@firma.pl",
+        "bank": "00 0000 0000 0000 0000 0000 0000",
         "logo_base64": ""
     }
 }
@@ -241,28 +241,70 @@ class UserDataManager:
             return True
         return False
 
-    # WYCENY DATA (STRICT PER-USER ISOLATION)
-    def get_user_wyceny(self, username: str) -> List[dict]:
+    # WYCENY DATA (STRICT PER-USER ISOLATION & FULL POI PERSISTENCE)
+    def get_user_wyceny(self, username: str) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        return self.wyceny.get(canonical, [])
+        val = self.wyceny.get(canonical)
+        if isinstance(val, dict) and "quote" in val:
+            return val
+        
+        default_company = DEFAULT_COMPANY.get(canonical, {
+            "name": "Biuro Usługowe / Twoja Firma",
+            "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+            "nip": "0000000000",
+            "phone": "+48 000 000 000",
+            "email": "biuro@firma.pl",
+            "bank": "00 0000 0000 0000 0000 0000 0000",
+            "logoBase64": ""
+        })
+
+        return {
+            "company": default_company,
+            "quote": {
+                "number": "",
+                "issueDate": "",
+                "validDate": "",
+                "clientName": "",
+                "clientAddress": "",
+                "clientPhone": "",
+                "notes": "Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym.",
+                "items": [
+                    {"id": 1, "description": "Montaż instalacji / przykładowa pozycja usługi", "quantity": 1, "unit": "kpl.", "unitPrice": 450}
+                ]
+            },
+            "inventory": [
+                {"id": 1, "name": "Kabel YDYp 3x2.5 100m", "category": "Elektryka", "price": 340, "stock": 3, "link": "https://allegro.pl", "notes": "Zapas do punktów"},
+                {"id": 2, "name": "Wkrętarka akumulatorowa 18V", "category": "Narzędzia", "price": 650, "stock": 1, "link": "", "notes": "Główny zestaw narzędzi"}
+            ],
+            "transactions": [
+                {"id": 1, "date": "2026-09-15", "type": "income", "title": "Zlecenie u klienta (przykładowe)", "amount": 3500, "category": "Montaż"},
+                {"id": 2, "date": "2026-09-15", "type": "expense", "title": "Zakup materiałów budowlanych", "amount": 840, "category": "Materiały"}
+            ]
+        }
+
+    def save_user_wyceny(self, username: str, data: dict) -> dict:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        self.wyceny[canonical] = data
+        self._save_json(WYCENY_FILE, self.wyceny)
+        return self.wyceny[canonical]
 
     def add_user_wyceny(self, username: str, entry: dict) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        if canonical not in self.wyceny:
-            self.wyceny[canonical] = []
-        
-        entry["id"] = f"wyc-{len(self.wyceny[canonical]) + 101}"
-        self.wyceny[canonical].insert(0, entry)
-        self._save_json(WYCENY_FILE, self.wyceny)
+        current = self.get_user_wyceny(canonical)
+        if "items" in current.get("quote", {}):
+            entry["id"] = f"wyc-{Date.now() if 'Date' in globals() else 101}"
+            current["quote"]["items"].append(entry)
+            self.save_user_wyceny(canonical, current)
         return entry
 
     def delete_user_wyceny(self, username: str, entry_id: str) -> bool:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        items = self.wyceny.get(canonical, [])
-        filtered = [x for x in items if x.get("id") != entry_id]
+        current = self.get_user_wyceny(canonical)
+        items = current.get("quote", {}).get("items", [])
+        filtered = [x for x in items if str(x.get("id")) != str(entry_id)]
         if len(filtered) < len(items):
-            self.wyceny[canonical] = filtered
-            self._save_json(WYCENY_FILE, self.wyceny)
+            current["quote"]["items"] = filtered
+            self.save_user_wyceny(canonical, current)
             return True
         return False
 

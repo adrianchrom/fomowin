@@ -1,47 +1,112 @@
 {
-  "Adrian": [
-    {
-      "id": "wyc-101",
-      "client_name": "Crypto Fund Alpha",
-      "project_title": "Dedykowany Bot Sygnałowy FOMO Engine",
+  "Adrian": {
+    "company": {
+      "name": "Biuro Usługowe / Twoja Firma",
+      "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+      "nip": "0000000000",
+      "phone": "+48 000 000 000",
+      "email": "biuro@firma.pl",
+      "bank": "00 0000 0000 0000 0000 0000 0000",
+      "logoBase64": ""
+    },
+    "quote": {
+      "number": "",
+      "issueDate": "",
+      "validDate": "",
+      "clientName": "",
+      "clientAddress": "",
+      "clientPhone": "",
+      "notes": "Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym.",
       "items": [
         {
-          "description": "Moduł skanera 0-30m",
-          "qty": 1,
-          "unit_price": 8000.0
-        },
-        {
-          "description": "Integracja RPC & Insiders Feed",
-          "qty": 1,
-          "unit_price": 4500.0
+          "id": 1,
+          "description": "Montaż instalacji / przykładowa pozycja usługi",
+          "quantity": 1,
+          "unit": "kpl.",
+          "unitPrice": 450
         }
-      ],
-      "tax_rate": 23.0,
-      "total_netto": 12500.0,
-      "total_brutto": 15375.0,
-      "status": "Zaakceptowano",
-      "date": "2026-09-11",
-      "notes": "Warunki płatności 50/50"
-    }
-  ],
-  "Maciek": [
-    {
-      "id": "wyc-201",
-      "client_name": "MHF Trading Group",
-      "project_title": "Audyt Bezpieczeństwa Kontraktów CA",
+      ]
+    },
+    "inventory": [
+      {
+        "id": 1,
+        "name": "Kabel YDYp 3x2.5 100m",
+        "category": "Elektryka",
+        "price": 340,
+        "stock": 3,
+        "link": "https://allegro.pl",
+        "notes": "Zapas do punktów"
+      },
+      {
+        "id": 2,
+        "name": "Wkrętarka akumulatorowa 18V",
+        "category": "Narzędzia",
+        "price": 650,
+        "stock": 1,
+        "link": "",
+        "notes": "Główny zestaw narzędzi"
+      }
+    ],
+    "transactions": [
+      {
+        "id": 1,
+        "date": "2026-09-15",
+        "type": "income",
+        "title": "Zlecenie u klienta (przykładowe)",
+        "amount": 3500,
+        "category": "Montaż"
+      },
+      {
+        "id": 2,
+        "date": "2026-09-15",
+        "type": "expense",
+        "title": "Zakup materiałów budowlanych",
+        "amount": 840,
+        "category": "Materiały"
+      }
+    ],
+    "historyQuotes": []
+  },
+  "Maciek": {
+    "company": {
+      "name": "Biuro Usługowe / Twoja Firma",
+      "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+      "nip": "0000000000",
+      "phone": "+48 000 000 000",
+      "email": "biuro@firma.pl",
+      "bank": "00 0000 0000 0000 0000 0000 0000",
+      "logoBase64": ""
+    },
+    "quote": {
+      "number": "",
+      "issueDate": "",
+      "validDate": "",
+      "clientName": "",
+      "clientAddress": "",
+      "clientPhone": "",
+      "notes": "Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym.",
       "items": [
         {
-          "description": "Analiza Honeypot & Anti-rug",
-          "qty": 1,
-          "unit_price": 3500.0
+          "id": 1,
+          "description": "Montaż instalacji / przykładowa pozycja usługi",
+          "quantity": 1,
+          "unit": "kpl.",
+          "unitPrice": 450
         }
-      ],
-      "tax_rate": 23.0,
-      "total_netto": 3500.0,
-      "total_brutto": 4305.0,
-      "status": "Wysłano do Klienta",
-      "date": "2026-09-13",
-      "notes": "Oczekuje na akceptację dyrektora"
-    }
-  ]
+      ]
+    },
+    "inventory": [
+      {
+        "id": 1,
+        "name": "Kabel YDYp 3x2.5 100m",
+        "category": "Elektryka",
+        "price": 340,
+        "stock": 3,
+        "link": "https://allegro.pl",
+        "notes": "Zapas do punktów"
+      }
+    ],
+    "transactions": [],
+    "historyQuotes": []
+  }
 }
