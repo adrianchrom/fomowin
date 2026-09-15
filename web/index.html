@@ -2843,6 +2843,7 @@
           }
         });
       } catch (e) {}
+    }
     function safeGetStorage(key, defaultVal = '') {
       try {
         return sessionStorage.getItem(key) || localStorage.getItem(key) || defaultVal;
@@ -5695,6 +5696,8 @@
       const c2 = document.getElementById('ai-mini-chat-messages');
       if (c1) c1.innerHTML = initialHtml;
       if (c2) c2.innerHTML = initialHtml;
+    }
+
     // ==================== MODULE 7: 👥 CRM LOGIC ====================
     let crmClients = [];
 
