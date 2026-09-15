@@ -287,7 +287,7 @@
     <div id="app-container-dashboard" class="space-y-6 animate-emerge">
       
       <!-- Welcome Header Card -->
-      <div class="clean-card p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-6 sm:p-8 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 id="greeting-title" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">HEJ...</h1>
           <p class="text-xs sm:text-sm text-slate-500 mt-1">Wybierz moduł z poniższych kafelków lub użyj menu bocznego.</p>
@@ -430,8 +430,8 @@
     <div id="app-container-fomo" class="hidden space-y-6">
       
       <!-- Sub-Tabs Navigation for FOMO -->
-      <div class="clean-card p-2 rounded-2xl flex flex-wrap justify-between items-center gap-2 bg-white">
-        <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+      <div class="clean-card p-2.5 rounded-2xl flex flex-wrap justify-between items-center gap-3">
+        <div class="flex flex-wrap items-center gap-1.5">
           <button id="tab-live-btn" onclick="switchTab('live')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm">
             <i data-lucide="activity" class="w-4 h-4"></i>
             <span>Sygnały Live (0-30m)</span>
@@ -454,12 +454,12 @@
         </div>
 
         <!-- ENGINE ON / OFF TOGGLE & STATUS BADGE -->
-        <div class="flex items-center gap-3 ml-auto pr-2">
+        <div class="flex items-center gap-2.5">
           <span id="fomo-engine-status-badge" class="px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            SILNIK: AKTYWNY 🟢
+            AKTYWNY 🟢
           </span>
-          <button id="btn-toggle-fomo" onclick="handleToggleFomoEngine()" class="btn-anim flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md">
+          <button id="btn-toggle-fomo" onclick="handleToggleFomoEngine()" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md">
             <i data-lucide="power" class="w-4 h-4"></i>
             <span>Wyłącz Silnik</span>
           </button>
@@ -2000,17 +2000,9 @@
 
     // Wydatki Full Data State (1:1 Standalone App)
     let wydatkiFullData = {
-      baseIncomes: [
-        { id: 1, month: "2026-08", adrian: 9500, patrycja: 8000 },
-        { id: 2, month: "2026-09", adrian: 9500, patrycja: 8500 }
-      ],
-      gigs: [
-        { id: 1, person: "Adrian", title: "Zlecenie projektowe www", amount: 2500, month: "2026-09", date: "2026-09-15" }
-      ],
-      expenses: [
-        { id: 1, person: "Adrian", title: "Kafle gresowe łazienka & hol", amount: 11000, category: "Kafle & Płytki", date: "2026-09-10", month: "2026-09" },
-        { id: 2, person: "Patrycja", title: "Zaliczka na robociznę (Ekipa remontowa)", amount: 8000, category: "Robocizna & Fachowcy", date: "2026-09-12", month: "2026-09" }
-      ]
+      baseIncomes: [],
+      gigs: [],
+      expenses: []
     };
 
     let earningsChartInstance = null;
@@ -2314,19 +2306,19 @@
       if (badge) {
         if (enabled) {
           badge.className = "px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm";
-          badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> SILNIK: AKTYWNY 🟢`;
+          badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> AKTYWNY 🟢`;
         } else {
           badge.className = "px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-rose-50 text-rose-700 border-rose-200 shadow-sm";
-          badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> SILNIK: WYŁĄCZONY 🔴 (0% CPU / RPC OFF)`;
+          badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> WYŁĄCZONY 🔴`;
         }
       }
 
       if (btn) {
         if (enabled) {
-          btn.className = "btn-anim flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md";
+          btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md";
           btn.innerHTML = `<i data-lucide="power" class="w-4 h-4"></i><span>Wyłącz Silnik</span>`;
         } else {
-          btn.className = "btn-anim flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition text-white bg-emerald-600 hover:bg-emerald-700 shadow-md";
+          btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-white bg-emerald-600 hover:bg-emerald-700 shadow-md";
           btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i><span>Włącz Silnik</span>`;
         }
         if (window.lucide) lucide.createIcons();
@@ -3054,18 +3046,10 @@
         clientAddress: "",
         clientPhone: "",
         notes: "Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym.",
-        items: [
-          { id: 1, description: "Montaż instalacji / przykładowa pozycja usługi", quantity: 1, unit: "kpl.", unitPrice: 450 }
-        ]
+        items: []
       },
-      inventory: [
-        { id: 1, name: "Kabel YDYp 3x2.5 100m", category: "Elektryka", price: 340, stock: 3, link: "https://allegro.pl", notes: "Zapas do punktów" },
-        { id: 2, name: "Wkrętarka akumulatorowa 18V", category: "Narzędzia", price: 650, stock: 1, link: "", notes: "Główny zestaw narzędzi" }
-      ],
-      transactions: [
-        { id: 1, date: "2026-09-15", type: "income", title: "Zlecenie u klienta (przykładowe)", amount: 3500, category: "Montaż" },
-        { id: 2, date: "2026-09-15", type: "expense", title: "Zakup materiałów budowlanych", amount: 840, category: "Materiały" }
-      ],
+      inventory: [],
+      transactions: [],
       historyQuotes: []
     };
 
