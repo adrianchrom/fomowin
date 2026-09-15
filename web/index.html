@@ -10,8 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Lucide Icons (jsDelivr + unpkg fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -1978,7 +1979,7 @@
     function safeCreateIcons() {
       try {
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.safeCreateIcons();
+          window.lucide.createIcons();
         }
       } catch (e) {}
     }
@@ -4598,14 +4599,22 @@
     }
 
     // INITIALIZATION ON LOAD
-    window.addEventListener('DOMContentLoaded', () => {
+    function initAppMain() {
       try { initTheme(); } catch (e) {}
       try { fetchUser(); } catch (e) {}
       try { checkFomoEngineStatus(); } catch (e) {}
       try { connectWebSocket(); } catch (e) {}
       try { updateEmailSignaturePreview(); } catch (e) {}
       safeCreateIcons();
-    });
+      setTimeout(safeCreateIcons, 200);
+      setTimeout(safeCreateIcons, 800);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAppMain);
+    } else {
+      initAppMain();
+    }
   </script>
 </body>
 </html>

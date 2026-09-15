@@ -9,7 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Lucide Icons (jsDelivr + unpkg fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
   <style>
     body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; }
     
@@ -104,7 +106,7 @@
 
   <script>
     function safeCreateIcons() {
-      try { if (window.lucide && typeof window.lucide.createIcons === "function") window.safeCreateIcons(); } catch(e) {}
+      try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch(e) {}
     }
 
     window.addEventListener('DOMContentLoaded', () => {
