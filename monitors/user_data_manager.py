@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import time
 from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger("UserDataManager")
@@ -10,6 +11,7 @@ PERMISSIONS_FILE = os.path.join(BASE_DIR, "USER_PERMISSIONS.json")
 WYDATKI_FILE = os.path.join(BASE_DIR, "DATA_WYDATKI.json")
 WYCENY_FILE = os.path.join(BASE_DIR, "DATA_WYCENY.json")
 COMPANY_FILE = os.path.join(BASE_DIR, "DATA_COMPANY.json")
+KALENDARZ_FILE = os.path.join(BASE_DIR, "DATA_KALENDARZ.json")
 
 DEFAULT_PERMISSIONS = {
     "Adrian": {
@@ -17,6 +19,7 @@ DEFAULT_PERMISSIONS = {
         "wydatki": True,
         "wyceny": True,
         "stopki_email": True,
+        "kalendarz": True,
         "is_admin": True
     },
     "Maciek": {
@@ -24,6 +27,7 @@ DEFAULT_PERMISSIONS = {
         "wydatki": False,
         "wyceny": False,
         "stopki_email": False,
+        "kalendarz": False,
         "is_admin": False
     }
 }
@@ -50,73 +54,26 @@ DEFAULT_COMPANY = {
 }
 
 DEFAULT_WYDATKI = {
-    "Adrian": [
-        {
-            "id": "wyd-101",
-            "type": "PRZYCHÓD",
-            "title": "Realizacja Wdrożenia FOMO Platform",
-            "category": "Usługi",
-            "amount_pln": 14500.0,
-            "date": "2026-09-12",
-            "note": "Płatność końcowa za moduł analizy ryzyka"
-        },
-        {
-            "id": "wyd-102",
-            "type": "WYDATEK",
-            "title": "Hosting Cloud & Node Infrastructure",
-            "category": "Biuro/Sprzęt",
-            "amount_pln": 1250.0,
-            "date": "2026-09-10",
-            "note": "Opłata za serwery RPC Solana & Base"
-        }
-    ],
-    "Maciek": [
-        {
-            "id": "wyd-201",
-            "type": "PRZYCHÓD",
-            "title": "Konsultacje Sygnałowe Krypto",
-            "category": "Krypto/Inwestycje",
-            "amount_pln": 3200.0,
-            "date": "2026-09-14",
-            "note": "Płatność za doradztwo on-chain"
-        }
-    ]
+    "Adrian": {
+        "baseIncomes": [],
+        "gigs": [],
+        "expenses": []
+    },
+    "Maciek": {
+        "baseIncomes": [],
+        "gigs": [],
+        "expenses": []
+    }
 }
 
 DEFAULT_WYCENY = {
-    "Adrian": [
-        {
-            "id": "wyc-101",
-            "client_name": "Crypto Fund Alpha",
-            "project_title": "Dedykowany Bot Sygnałowy FOMO Engine",
-            "items": [
-                {"description": "Moduł skanera 0-30m", "qty": 1, "unit_price": 8000.0},
-                {"description": "Integracja RPC & Insiders Feed", "qty": 1, "unit_price": 4500.0}
-            ],
-            "tax_rate": 23.0,
-            "total_netto": 12500.0,
-            "total_brutto": 15375.0,
-            "status": "Zaakceptowano",
-            "date": "2026-09-11",
-            "notes": "Warunki płatności 50/50"
-        }
-    ],
-    "Maciek": [
-        {
-            "id": "wyc-201",
-            "client_name": "MHF Trading Group",
-            "project_title": "Audyt Bezpieczeństwa Kontraktów CA",
-            "items": [
-                {"description": "Analiza Honeypot & Anti-rug", "qty": 1, "unit_price": 3500.0}
-            ],
-            "tax_rate": 23.0,
-            "total_netto": 3500.0,
-            "total_brutto": 4305.0,
-            "status": "Wysłano do Klienta",
-            "date": "2026-09-13",
-            "notes": "Oczekuje na akceptację dyrektora"
-        }
-    ]
+    "Adrian": {},
+    "Maciek": {}
+}
+
+DEFAULT_KALENDARZ = {
+    "Adrian": [],
+    "Maciek": []
 }
 
 class UserDataManager:
@@ -127,6 +84,7 @@ class UserDataManager:
         self.wydatki = self._load_json(WYDATKI_FILE, DEFAULT_WYDATKI)
         self.wyceny = self._load_json(WYCENY_FILE, DEFAULT_WYCENY)
         self.company = self._load_json(COMPANY_FILE, DEFAULT_COMPANY)
+        self.kalendarz = self._load_json(KALENDARZ_FILE, DEFAULT_KALENDARZ)
 
     def _load_json(self, filepath: str, default_data: dict) -> dict:
         if os.path.exists(filepath):
@@ -154,10 +112,16 @@ class UserDataManager:
                 "wydatki": False,
                 "wyceny": False,
                 "stopki_email": False,
+                "kalendarz": False,
                 "is_admin": False
             }
             self._save_json(PERMISSIONS_FILE, self.permissions)
         
+        # Ensure kalendarz key exists
+        if "kalendarz" not in self.permissions[canonical]:
+            self.permissions[canonical]["kalendarz"] = (canonical == "Adrian")
+            self._save_json(PERMISSIONS_FILE, self.permissions)
+
         # Adrian always retains super admin access
         if canonical == "Adrian":
             return {
@@ -165,6 +129,7 @@ class UserDataManager:
                 "wydatki": True,
                 "wyceny": True,
                 "stopki_email": True,
+                "kalendarz": True,
                 "is_admin": True
             }
         return self.permissions[canonical]
@@ -174,7 +139,7 @@ class UserDataManager:
         if target not in self.permissions:
             self.permissions[target] = {}
         
-        for k in ["wydatki", "wyceny", "stopki_email"]:
+        for k in ["wydatki", "wyceny", "stopki_email", "kalendarz"]:
             if k in new_perms:
                 self.permissions[target][k] = bool(new_perms[k])
         
@@ -191,28 +156,11 @@ class UserDataManager:
             return val
         
         expenses_list = val if isinstance(val, list) else []
-        if canonical == "Adrian":
-            return {
-                "baseIncomes": [
-                    {"id": 1, "month": "2026-08", "p1": 9500, "p2": 8000, "adrian": 9500, "patrycja": 8000},
-                    {"id": 2, "month": "2026-09", "p1": 9500, "p2": 8500, "adrian": 9500, "patrycja": 8500}
-                ],
-                "gigs": [
-                    {"id": 1, "person": "Adrian", "title": "Zlecenie projektowe www", "amount": 2500, "month": "2026-09", "date": "2026-09-15"}
-                ],
-                "expenses": expenses_list
-            }
-        else:
-            return {
-                "baseIncomes": [
-                    {"id": 1, "month": "2026-08", "p1": 8500, "p2": 7500, "maciek": 8500, "karolina": 7500},
-                    {"id": 2, "month": "2026-09", "p1": 9000, "p2": 8000, "maciek": 9000, "karolina": 8000}
-                ],
-                "gigs": [
-                    {"id": 1, "person": "Maciek", "title": "Projekt graficzny logo", "amount": 1800, "month": "2026-09", "date": "2026-09-14"}
-                ],
-                "expenses": expenses_list
-            }
+        return {
+            "baseIncomes": [],
+            "gigs": [],
+            "expenses": expenses_list
+        }
 
     def save_user_wydatki(self, username: str, data: dict) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
@@ -225,7 +173,7 @@ class UserDataManager:
         data = self.get_user_wydatki(canonical)
         if "expenses" not in data:
             data["expenses"] = []
-        entry["id"] = f"wyd-{len(data['expenses']) + 101}"
+        entry["id"] = f"wyd-{int(time.time() * 1000)}"
         data["expenses"].insert(0, entry)
         self.save_user_wydatki(canonical, data)
         return entry
@@ -279,7 +227,8 @@ class UserDataManager:
             "transactions": [
                 {"id": 1, "date": "2026-09-15", "type": "income", "title": "Zlecenie u klienta (przykładowe)", "amount": 3500, "category": "Montaż"},
                 {"id": 2, "date": "2026-09-15", "type": "expense", "title": "Zakup materiałów budowlanych", "amount": 840, "category": "Materiały"}
-            ]
+            ],
+            "historyQuotes": []
         }
 
     def save_user_wyceny(self, username: str, data: dict) -> dict:
@@ -292,7 +241,7 @@ class UserDataManager:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
         current = self.get_user_wyceny(canonical)
         if "items" in current.get("quote", {}):
-            entry["id"] = f"wyc-{Date.now() if 'Date' in globals() else 101}"
+            entry["id"] = f"wyc-{int(time.time() * 1000)}"
             current["quote"]["items"].append(entry)
             self.save_user_wyceny(canonical, current)
         return entry
@@ -320,5 +269,37 @@ class UserDataManager:
         self.company[canonical].update(data)
         self._save_json(COMPANY_FILE, self.company)
         return self.company[canonical]
+
+    # KALENDARZ DATA (STRICT PER-USER ISOLATION)
+    def get_user_kalendarz(self, username: str) -> List[dict]:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        val = self.kalendarz.get(canonical)
+        if isinstance(val, list):
+            return val
+        return []
+
+    def save_user_kalendarz(self, username: str, events: List[dict]) -> List[dict]:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        self.kalendarz[canonical] = events
+        self._save_json(KALENDARZ_FILE, self.kalendarz)
+        return self.kalendarz[canonical]
+
+    def add_user_kalendarz_event(self, username: str, event: dict) -> dict:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        events = self.get_user_kalendarz(canonical)
+        if "id" not in event or not event["id"]:
+            event["id"] = f"ev-{int(time.time() * 1000)}"
+        events.append(event)
+        self.save_user_kalendarz(canonical, events)
+        return event
+
+    def delete_user_kalendarz_event(self, username: str, event_id: str) -> bool:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        events = self.get_user_kalendarz(canonical)
+        filtered = [x for x in events if str(x.get("id")) != str(event_id)]
+        if len(filtered) < len(events):
+            self.save_user_kalendarz(canonical, filtered)
+            return True
+        return False
 
 user_data_mgr = UserDataManager()

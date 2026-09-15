@@ -112,5 +112,28 @@ class TestNewFeatures(unittest.TestCase):
         user_data_mgr.delete_user_wydatki("Adrian", adrian_entry["id"])
         user_data_mgr.delete_user_wydatki("Maciek", maciek_entry["id"])
 
+    def test_kalendarz_isolation(self):
+        from monitors.user_data_manager import user_data_mgr
+        ev1 = user_data_mgr.add_user_kalendarz_event("Adrian", {
+            "title": "Spotkanie Adrian", "date": "2026-10-01", "priority": "HIGH"
+        })
+        ev2 = user_data_mgr.add_user_kalendarz_event("Maciek", {
+            "title": "Spotkanie Maciek", "date": "2026-10-05", "priority": "LOW"
+        })
+
+        adrian_events = user_data_mgr.get_user_kalendarz("Adrian")
+        maciek_events = user_data_mgr.get_user_kalendarz("Maciek")
+
+        self.assertTrue(any(x["title"] == "Spotkanie Adrian" for x in adrian_events))
+        self.assertFalse(any(x["title"] == "Spotkanie Maciek" for x in adrian_events))
+
+        self.assertTrue(any(x["title"] == "Spotkanie Maciek" for x in maciek_events))
+        self.assertFalse(any(x["title"] == "Spotkanie Adrian" for x in maciek_events))
+
+        # Cleanup
+        user_data_mgr.delete_user_kalendarz_event("Adrian", ev1["id"])
+        user_data_mgr.delete_user_kalendarz_event("Maciek", ev2["id"])
+
 if __name__ == "__main__":
     unittest.main()
+

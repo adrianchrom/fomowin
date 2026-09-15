@@ -1,85 +1,12 @@
 {
   "Adrian": {
-    "baseIncomes": [
-      {
-        "id": 1,
-        "month": "2026-08",
-        "adrian": 9500,
-        "maciek": 8000
-      },
-      {
-        "id": 2,
-        "month": "2026-09",
-        "adrian": 9500,
-        "maciek": 8500
-      }
-    ],
-    "gigs": [
-      {
-        "id": 1,
-        "person": "Adrian",
-        "title": "Zlecenie projektowe www",
-        "amount": 2500,
-        "month": "2026-09",
-        "date": "2026-09-15"
-      }
-    ],
-    "expenses": [
-      {
-        "id": "wyd-101",
-        "type": "PRZYCHÓD",
-        "title": "Realizacja Wdrożenia FOMO Platform",
-        "category": "Usługi",
-        "amount_pln": 14500.0,
-        "date": "2026-09-12",
-        "note": "Płatność końcowa za moduł analizy ryzyka"
-      },
-      {
-        "id": "wyd-102",
-        "type": "WYDATEK",
-        "title": "Hosting Cloud & Node Infrastructure",
-        "category": "Biuro/Sprzęt",
-        "amount_pln": 1250.0,
-        "date": "2026-09-10",
-        "note": "Opłata za serwery RPC Solana & Base"
-      }
-    ]
+    "baseIncomes": [],
+    "gigs": [],
+    "expenses": []
   },
   "Maciek": {
-    "baseIncomes": [
-      {
-        "id": 1,
-        "month": "2026-08",
-        "adrian": 9500,
-        "maciek": 8000
-      },
-      {
-        "id": 2,
-        "month": "2026-09",
-        "adrian": 9500,
-        "maciek": 8500
-      }
-    ],
-    "gigs": [
-      {
-        "id": 1,
-        "person": "Adrian",
-        "title": "Zlecenie projektowe www",
-        "amount": 2500,
-        "month": "2026-09",
-        "date": "2026-09-15"
-      }
-    ],
-    "expenses": [
-      {
-        "id": "wyd-201",
-        "type": "PRZYCHÓD",
-        "title": "Konsultacje Sygnałowe Krypto",
-        "category": "Krypto/Inwestycje",
-        "amount_pln": 3200.0,
-        "date": "2026-09-14",
-        "note": "Płatność za doradztwo on-chain"
-      }
-    ]
+    "baseIncomes": [],
+    "gigs": [],
+    "expenses": []
   }
 }

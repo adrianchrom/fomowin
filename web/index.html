@@ -246,6 +246,14 @@
         <span id="lock-badge-stopki_email" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
+      <button onclick="switchApp('kalendarz')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+          <span>📅 KALENDARZ & PRZYPOMNIENIA</span>
+        </div>
+        <span id="lock-badge-kalendarz" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+      </button>
+
       <!-- Admin Panel Section (Only for Adrian) -->
       <div id="admin-panel-nav-box" class="hidden pt-4 border-t border-slate-100 mt-2">
         <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pb-1 tracking-wider">Administracja</p>
@@ -365,6 +373,26 @@
             <div>
               <h3 class="text-lg font-bold text-slate-900">✉️ STOPKI E-MAIL</h3>
               <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kreator eleganckich stopek HTML z kolorowymi ikonami SVG, RODO PL/EN/DE i podglądem na żywo.</p>
+            </div>
+          </div>
+          <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
+            <span>Otwórz Moduł</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Tile 5: KALENDARZ -->
+        <div onclick="switchApp('kalendarz')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold border border-indigo-200">
+                <i data-lucide="calendar" class="w-6 h-6"></i>
+              </div>
+              <span id="tile-status-kalendarz" class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">Moduł</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">📅 KALENDARZ & PRZYPOMNIENIA</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Planowanie wydarzeń na wybrane dni, notatki, rangi wagi (priorytety) oraz częstotliwość przypomnień.</p>
             </div>
           </div>
           <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
@@ -1614,7 +1642,186 @@
     </div>
 
 
-    <!-- ==================== MODULE 5: ⚙️ PANEL ADMINA ==================== -->
+    <!-- ==================== MODULE 5: 📅 KALENDARZ & PRZYPOMNIENIA ==================== -->
+    <div id="app-container-kalendarz" class="hidden space-y-6 animate-emerge">
+      
+      <!-- Module Header -->
+      <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">📅 Kalendarz & Terminarz Przypomnień</h2>
+            <p class="text-xs text-slate-500 font-medium">Planowanie zdarzeń na wybrane dni, notatki, rangi wagi oraz przypomnienia</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span id="kalendarz-user-profile" class="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl">
+            Profil: Użytkownik
+          </span>
+        </div>
+      </div>
+
+      <!-- Metrics Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="clean-card p-5 rounded-3xl border border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] uppercase font-bold text-slate-400">Wszystkie Wydarzenia</p>
+            <p id="cal-metric-total" class="text-2xl font-black text-slate-900 mt-1">0</p>
+          </div>
+          <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <i data-lucide="calendar-days" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="clean-card p-5 rounded-3xl border border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] uppercase font-bold text-slate-400">Wysoki Priorytet (🔴)</p>
+            <p id="cal-metric-high" class="text-2xl font-black text-rose-600 mt-1">0</p>
+          </div>
+          <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+            <i data-lucide="alert-circle" class="w-5 h-5"></i>
+          </div>
+        </div>
+
+        <div class="clean-card p-5 rounded-3xl border border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] uppercase font-bold text-slate-400">Aktywne Przypomnienia</p>
+            <p id="cal-metric-reminders" class="text-2xl font-black text-amber-600 mt-1">0</p>
+          </div>
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Event Form Card -->
+      <div class="clean-card p-6 rounded-3xl space-y-4">
+        <div class="border-b border-slate-100 pb-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-600"></i>
+            ➕ Dodaj Nowe Wydarzenie do Kalendarza
+          </h3>
+        </div>
+
+        <form onsubmit="handleAddKalendarzEvent(event)" class="space-y-4 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Data wydarzenia:</label>
+              <input type="date" id="cal-event-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Godzina (opcjonalnie):</label>
+              <input type="time" id="cal-event-time" value="12:00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Waga / Priorytet:</label>
+              <select id="cal-event-priority" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <option value="HIGH">🔴 Wysoki / Pilne</option>
+                <option value="MEDIUM" selected>🟡 Średni / Standard</option>
+                <option value="LOW">🟢 Niski / Info</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Przypomnienie:</label>
+              <select id="cal-event-reminder" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <option value="NONE">Brak przypomnienia</option>
+                <option value="ONCE">🔔 Jednorazowo w dniu zdarzenia</option>
+                <option value="MIN15">🔔 15 minut przed</option>
+                <option value="HOUR1">🔔 Co 1 godzinę</option>
+                <option value="DAILY">🔔 Codziennie</option>
+                <option value="WEEKLY">🔔 Co tydzień</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Tytuł wydarzenia / Zadania:</label>
+            <input type="text" id="cal-event-title" required placeholder="np. Spotkanie z klientem, Przegląd techniczny, Płatność faktury..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Szczegółowe notatki i ustalenia:</label>
+            <textarea id="cal-event-notes" rows="2" placeholder="Wpisz wszelkie notatki, adres, numery telefonów lub wytyczne..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 text-xs"></textarea>
+          </div>
+
+          <button type="submit" class="w-full btn-anim bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1.5">
+            <i data-lucide="calendar-plus" class="w-4 h-4"></i> Zapisz Wydarzenie w Kalendarzu
+          </button>
+        </form>
+      </div>
+
+      <!-- Calendar View & Agenda Grid Split -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Month Calendar Grid (7 cols) -->
+        <div class="lg:col-span-7 clean-card p-6 rounded-3xl space-y-4">
+          
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <button onclick="changeCalMonth(-1)" class="btn-anim px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-xs">◀ Poprzedni</button>
+              <h3 id="cal-month-title" class="text-sm font-black text-slate-900 text-center min-w-[140px]">Wrzesień 2026</h3>
+              <button onclick="changeCalMonth(1)" class="btn-anim px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-xs">Następny ▶</button>
+            </div>
+            <button onclick="resetCalToToday()" class="btn-anim px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-bold">
+              Idź do Dziś
+            </button>
+          </div>
+
+          <!-- Days Header (Pon - Nie) -->
+          <div class="grid grid-cols-7 gap-1 text-center font-bold text-[11px] text-slate-400 uppercase py-1">
+            <span>Pon</span>
+            <span>Wt</span>
+            <span>Śr</span>
+            <span>Czw</span>
+            <span>Pt</span>
+            <span>Sob</span>
+            <span>Nie</span>
+          </div>
+
+          <!-- Dynamic Grid Days Container -->
+          <div id="cal-grid-days" class="grid grid-cols-7 gap-1.5">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Agenda & Event List (5 cols) -->
+        <div class="lg:col-span-5 clean-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="list" class="w-4 h-4 text-indigo-600"></i> Agenda Wydarzeń
+            </h3>
+            <span id="cal-active-filter-badge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-lg"></span>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="space-y-2 text-xs">
+            <input type="text" id="cal-search-input" onkeyup="renderKalendarzUI()" placeholder="Szukaj wydarzenia lub notatki..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900">
+            <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[11px] font-bold">
+              <button onclick="setCalFilterPriority('ALL')" class="btn-anim px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">Wszystkie</button>
+              <button onclick="setCalFilterPriority('HIGH')" class="btn-anim px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200">🔴 Wysokie</button>
+              <button onclick="setCalFilterPriority('MEDIUM')" class="btn-anim px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200">🟡 Średnie</button>
+              <button onclick="setCalFilterPriority('LOW')" class="btn-anim px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200">🟢 Niskie</button>
+            </div>
+          </div>
+
+          <!-- Agenda List Container -->
+          <div id="cal-agenda-list" class="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 6: ⚙️ PANEL ADMINA ==================== -->
     <div id="app-container-admin" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
@@ -1674,6 +1881,20 @@
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" id="admin-perm-stopki_email" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="calendar" class="w-5 h-5 text-indigo-600"></i>
+              <div>
+                <span class="font-bold text-slate-900 block text-sm">📅 KALENDARZ & PRZYPOMNIENIA</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do zdarzeń, terminów, wag wydarzeń i przypomnień</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="admin-perm-kalendarz" class="sr-only peer">
               <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
             </label>
           </div>
@@ -1923,7 +2144,7 @@
         else adminTile.classList.add('hidden');
       }
 
-      ['wydatki', 'wyceny', 'stopki_email'].forEach(m => {
+      ['wydatki', 'wyceny', 'stopki_email', 'kalendarz'].forEach(m => {
         const drawerBadge = document.getElementById(`lock-badge-${m}`);
         const tileStatus = document.getElementById(`tile-status-${m}`);
         const isUnlocked = isAdrian || userPermissions[m];
@@ -1965,7 +2186,7 @@
         toggleBurgerDrawer();
       }
 
-      const apps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'admin'];
+      const apps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'admin'];
       
       apps.forEach(a => {
         const container = document.getElementById(`app-container-${a}`);
@@ -1993,6 +2214,7 @@
         'wydatki': '💰 WYDATKI & ZAROBKI',
         'wyceny': '🏷️ WYCENY (POI)',
         'stopki_email': '✉️ STOPKI E-MAIL',
+        'kalendarz': '📅 KALENDARZ',
         'admin': '⚙️ PANEL ADMINA'
       };
       updateAppTitle(titlesMap[appName] || 'Aplikacja');
@@ -2005,6 +2227,7 @@
         loadWycenyData();
       }
       if (appName === 'stopki_email') updateEmailSignaturePreview();
+      if (appName === 'kalendarz') loadKalendarzData();
       if (appName === 'admin') loadAdminPermissions();
 
       lucide.createIcons();
@@ -3441,6 +3664,327 @@
         await fetch(`/api/alerts/${id}`, { method: 'DELETE' });
         loadAlertsList();
       } catch (e) {}
+    }
+
+    // ==================== MODULE 6: ⚙️ ADMIN PERMISSIONS LOGIC ====================
+    async function loadAdminPermissions() {
+      try {
+        const res = await fetch('/api/admin/permissions');
+        if (res.ok) {
+          const data = await res.json();
+          const perms = data.maciek || {};
+          const w = document.getElementById('admin-perm-wydatki');
+          const wy = document.getElementById('admin-perm-wyceny');
+          const s = document.getElementById('admin-perm-stopki_email');
+          const k = document.getElementById('admin-perm-kalendarz');
+          if (w) w.checked = !!perms.wydatki;
+          if (wy) wy.checked = !!perms.wyceny;
+          if (s) s.checked = !!perms.stopki_email;
+          if (k) k.checked = !!perms.kalendarz;
+        }
+      } catch (e) {}
+    }
+
+    async function handleSaveAdminPermissions() {
+      const w = document.getElementById('admin-perm-wydatki');
+      const wy = document.getElementById('admin-perm-wyceny');
+      const s = document.getElementById('admin-perm-stopki_email');
+      const k = document.getElementById('admin-perm-kalendarz');
+
+      const payload = {
+        wydatki: w ? w.checked : false,
+        wyceny: wy ? wy.checked : false,
+        stopki_email: s ? s.checked : false,
+        kalendarz: k ? k.checked : false
+      };
+
+      try {
+        const res = await fetch('/api/admin/permissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          const toast = document.getElementById('admin-save-toast');
+          if (toast) {
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+          }
+        }
+      } catch (e) {}
+    }
+
+    // ==================== MODULE 5: 📅 KALENDARZ & PRZYPOMNIENIA LOGIC ====================
+    let kalendarzEvents = [];
+    let calCurrentYear = new Date().getFullYear();
+    let calCurrentMonth = new Date().getMonth();
+    let calFilterPriority = 'ALL';
+    let calFilterDate = '';
+
+    async function loadKalendarzData() {
+      try {
+        const res = await fetch('/api/kalendarz');
+        if (res.ok) {
+          kalendarzEvents = await res.json();
+          if (!Array.isArray(kalendarzEvents)) kalendarzEvents = [];
+        }
+      } catch (e) {
+        kalendarzEvents = [];
+      }
+      renderKalendarzUI();
+    }
+
+    async function saveKalendarzData() {
+      try {
+        await fetch('/api/kalendarz', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(kalendarzEvents)
+        });
+      } catch (e) {}
+    }
+
+    async function handleAddKalendarzEvent(e) {
+      e.preventDefault();
+      const date = document.getElementById('cal-event-date').value;
+      const time = document.getElementById('cal-event-time').value || '12:00';
+      const title = document.getElementById('cal-event-title').value.trim();
+      const priority = document.getElementById('cal-event-priority').value || 'MEDIUM';
+      const reminder = document.getElementById('cal-event-reminder').value || 'NONE';
+      const notes = document.getElementById('cal-event-notes').value.trim();
+
+      if (!title || !date) return;
+
+      const newEv = {
+        id: 'ev-' + Date.now(),
+        title,
+        date,
+        time,
+        priority,
+        reminder,
+        notes,
+        createdAt: new Date().toISOString()
+      };
+
+      kalendarzEvents.push(newEv);
+      await saveKalendarzData();
+
+      document.getElementById('cal-event-title').value = '';
+      document.getElementById('cal-event-notes').value = '';
+
+      renderKalendarzUI();
+    }
+
+    async function deleteKalendarzEvent(id) {
+      kalendarzEvents = kalendarzEvents.filter(x => String(x.id) !== String(id));
+      try {
+        await fetch(`/api/kalendarz/${id}`, { method: 'DELETE' });
+      } catch (e) {}
+      renderKalendarzUI();
+    }
+
+    function changeCalMonth(delta) {
+      calCurrentMonth += delta;
+      if (calCurrentMonth > 11) {
+        calCurrentMonth = 0;
+        calCurrentYear += 1;
+      } else if (calCurrentMonth < 0) {
+        calCurrentMonth = 11;
+        calCurrentYear -= 1;
+      }
+      renderKalendarzUI();
+    }
+
+    function resetCalToToday() {
+      const now = new Date();
+      calCurrentYear = now.getFullYear();
+      calCurrentMonth = now.getMonth();
+      calFilterDate = '';
+      renderKalendarzUI();
+    }
+
+    function setCalFilterPriority(p) {
+      calFilterPriority = p;
+      renderKalendarzUI();
+    }
+
+    function selectCalDate(dateStr) {
+      if (calFilterDate === dateStr) {
+        calFilterDate = '';
+      } else {
+        calFilterDate = dateStr;
+      }
+      renderKalendarzUI();
+    }
+
+    function renderKalendarzUI() {
+      const user = currentUser || 'Użytkownik';
+      const profileLabel = document.getElementById('kalendarz-user-profile');
+      if (profileLabel) profileLabel.innerText = `Profil: ${user}`;
+
+      const totalEv = kalendarzEvents.length;
+      const highEv = kalendarzEvents.filter(e => e.priority === 'HIGH').length;
+      const remindersEv = kalendarzEvents.filter(e => e.reminder && e.reminder !== 'NONE').length;
+
+      const totalEl = document.getElementById('cal-metric-total');
+      if (totalEl) totalEl.innerText = totalEv;
+      const highEl = document.getElementById('cal-metric-high');
+      if (highEl) highEl.innerText = highEv;
+      const remEl = document.getElementById('cal-metric-reminders');
+      if (remEl) remEl.innerText = remindersEv;
+
+      const monthNames = [
+        'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+        'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+      ];
+      const monthTitleEl = document.getElementById('cal-month-title');
+      if (monthTitleEl) monthTitleEl.innerText = `${monthNames[calCurrentMonth]} ${calCurrentYear}`;
+
+      const gridContainer = document.getElementById('cal-grid-days');
+      if (gridContainer) {
+        const firstDayIndex = new Date(calCurrentYear, calCurrentMonth, 1).getDay();
+        const offset = (firstDayIndex === 0 ? 6 : firstDayIndex - 1);
+        const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        let gridHtml = '';
+        for (let i = 0; i < offset; i++) {
+          gridHtml += `<div class="bg-slate-50/50 rounded-2xl h-16 sm:h-20 border border-slate-100"></div>`;
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const monthFormatted = String(calCurrentMonth + 1).padStart(2, '0');
+          const dayFormatted = String(d).padStart(2, '0');
+          const dateStr = `${calCurrentYear}-${monthFormatted}-${dayFormatted}`;
+
+          const dayEvents = kalendarzEvents.filter(e => e.date === dateStr);
+          const isToday = dateStr === todayStr;
+          const isSelected = dateStr === calFilterDate;
+
+          let borderClass = 'border-slate-200 hover:border-indigo-300';
+          if (isSelected) borderClass = 'border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-500/20';
+          else if (isToday) borderClass = 'border-amber-400 bg-amber-50/40 font-bold';
+
+          let dotsHtml = '';
+          if (dayEvents.length > 0) {
+            dotsHtml = `<div class="flex flex-wrap gap-1 mt-1 justify-center">`;
+            dayEvents.slice(0, 3).forEach(ev => {
+              let dotColor = 'bg-emerald-500';
+              if (ev.priority === 'HIGH') dotColor = 'bg-rose-500 pulse-red';
+              else if (ev.priority === 'MEDIUM') dotColor = 'bg-amber-500';
+              dotsHtml += `<span class="w-2 h-2 rounded-full ${dotColor}"></span>`;
+            });
+            if (dayEvents.length > 3) {
+              dotsHtml += `<span class="text-[9px] font-bold text-slate-500">+${dayEvents.length - 3}</span>`;
+            }
+            dotsHtml += `</div>`;
+          }
+
+          gridHtml += `
+            <div onclick="selectCalDate('${dateStr}')" class="clean-card cursor-pointer p-1.5 sm:p-2 rounded-2xl h-16 sm:h-20 border ${borderClass} flex flex-col justify-between transition">
+              <div class="flex justify-between items-center text-xs">
+                <span class="${isToday ? 'bg-amber-500 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[11px]' : 'text-slate-700 font-semibold'}">${d}</span>
+                ${dayEvents.length > 0 ? `<span class="text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 rounded-full">${dayEvents.length}</span>` : ''}
+              </div>
+              ${dotsHtml}
+            </div>
+          `;
+        }
+
+        gridContainer.innerHTML = gridHtml;
+      }
+
+      const agendaContainer = document.getElementById('cal-agenda-list');
+      if (agendaContainer) {
+        let filtered = [...kalendarzEvents];
+
+        if (calFilterDate) {
+          filtered = filtered.filter(e => e.date === calFilterDate);
+        }
+        if (calFilterPriority !== 'ALL') {
+          filtered = filtered.filter(e => e.priority === calFilterPriority);
+        }
+
+        const searchVal = (document.getElementById('cal-search-input')?.value || '').toLowerCase();
+        if (searchVal) {
+          filtered = filtered.filter(e => (e.title || '').toLowerCase().includes(searchVal) || (e.notes || '').toLowerCase().includes(searchVal));
+        }
+
+        filtered.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+        const filterBadge = document.getElementById('cal-active-filter-badge');
+        if (filterBadge) {
+          if (calFilterDate) {
+            filterBadge.classList.remove('hidden');
+            filterBadge.innerText = `Dzień: ${calFilterDate}`;
+          } else {
+            filterBadge.classList.add('hidden');
+          }
+        }
+
+        if (filtered.length === 0) {
+          agendaContainer.innerHTML = `
+            <div class="text-center py-10 text-slate-400 text-xs">
+              <i data-lucide="calendar-x" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+              Brak wydarzeń dla wybranych kryteriów.
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        const priorityMap = {
+          'HIGH': { text: '🔴 Wysoki', class: 'bg-rose-100 text-rose-800 border-rose-200' },
+          'MEDIUM': { text: '🟡 Średni', class: 'bg-amber-100 text-amber-800 border-amber-200' },
+          'LOW': { text: '🟢 Niski', class: 'bg-emerald-100 text-emerald-800 border-emerald-200' }
+        };
+
+        const reminderMap = {
+          'NONE': 'Brak przypomnienia',
+          'ONCE': '🔔 W dniu zdarzenia',
+          'MIN15': '🔔 15 min przed',
+          'HOUR1': '🔔 Co 1 godzinę',
+          'DAILY': '🔔 Codziennie',
+          'WEEKLY': '🔔 Co tydzień'
+        };
+
+        agendaContainer.innerHTML = filtered.map(ev => {
+          const pObj = priorityMap[ev.priority] || priorityMap['MEDIUM'];
+          const rText = reminderMap[ev.reminder] || 'Brak';
+
+          return `
+            <div class="p-4 bg-white border border-slate-200 rounded-2xl space-y-2 hover:border-slate-300 transition">
+              <div class="flex justify-between items-start gap-2">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-lg">
+                      📅 ${ev.date} ⏰ ${ev.time}
+                    </span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg border ${pObj.class}">
+                      ${pObj.text}
+                    </span>
+                  </div>
+                  <h4 class="font-bold text-slate-900 text-sm mt-1.5">${ev.title}</h4>
+                </div>
+                <button onclick="deleteKalendarzEvent('${ev.id}')" class="btn-anim text-slate-400 hover:text-rose-600 p-1">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              ${ev.notes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed">${ev.notes}</p>` : ''}
+
+              <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-500">
+                <span class="flex items-center gap-1 font-medium text-slate-600">
+                  <i data-lucide="bell" class="w-3.5 h-3.5 text-amber-500"></i> ${rText}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        lucide.createIcons();
+      }
     }
 
     // INITIALIZATION ON LOAD

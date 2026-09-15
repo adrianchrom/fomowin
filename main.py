@@ -221,6 +221,29 @@ async def save_company_route(request: Request, data: Dict[str, Any] = Body(...))
     res = user_data_mgr.save_user_company(user, data)
     return {"success": True, "company": res}
 
+# KALENDARZ ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/kalendarz")
+async def get_kalendarz_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_kalendarz(user)
+
+@app.post("/api/kalendarz")
+async def save_kalendarz_route(request: Request, data: Any = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    if isinstance(data, list):
+        res = user_data_mgr.save_user_kalendarz(user, data)
+        return {"success": True, "events": res}
+    elif isinstance(data, dict):
+        res = user_data_mgr.add_user_kalendarz_event(user, data)
+        return {"success": True, "event": res}
+    return {"success": False, "error": "Invalid format"}
+
+@app.delete("/api/kalendarz/{event_id}")
+async def delete_kalendarz_route(request: Request, event_id: str):
+    user = getattr(request.state, "user", "Maciek")
+    success = user_data_mgr.delete_user_kalendarz_event(user, event_id)
+    return {"success": success}
+
 # Main Application Routes
 @app.get("/", response_class=HTMLResponse)
 async def serve_dashboard():

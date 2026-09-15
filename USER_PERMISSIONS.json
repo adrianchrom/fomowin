@@ -4,6 +4,7 @@
     "wydatki": true,
     "wyceny": true,
     "stopki_email": true,
+    "kalendarz": true,
     "is_admin": true
   },
   "Maciek": {
@@ -11,6 +12,7 @@
     "wydatki": true,
     "wyceny": true,
     "stopki_email": false,
+    "kalendarz": true,
     "is_admin": false
   }
 }
