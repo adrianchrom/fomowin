@@ -298,7 +298,7 @@
       </button>
 
       <!-- Admin Panel Section (Only for Adrian) -->
-      <div id="admin-panel-nav-box" class="hidden pt-4 border-t border-slate-100 mt-2">
+      <div id="admin-panel-nav-box" class="pt-4 border-t border-slate-100 mt-2">
         <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pb-1 tracking-wider">Administracja</p>
         <button onclick="switchApp('admin')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200">
           <div class="flex items-center gap-2.5">
@@ -545,7 +545,7 @@
         </div>
 
         <!-- Tile 5: PANEL ADMINA (Visible for Adrian) -->
-        <div id="tile-admin" onclick="switchApp('admin')" class="hidden clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4 border-purple-200 bg-purple-50/30">
+        <div id="tile-admin" onclick="switchApp('admin')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4 border-purple-200 bg-purple-50/30">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold border border-purple-300">
@@ -3011,37 +3011,13 @@
     }
 
     function updatePermissionsUI() {
-      const isAdrian = currentUser.toLowerCase() === 'adrian';
-      
-      const adminBox = document.getElementById('admin-panel-nav-box');
-      const adminTile = document.getElementById('tile-admin');
-      if (adminBox) {
-        if (isAdrian) adminBox.classList.remove('hidden');
-        else adminBox.classList.add('hidden');
-      }
-      if (adminTile) {
-        if (isAdrian) adminTile.classList.remove('hidden');
-        else adminTile.classList.add('hidden');
-      }
-
       ['wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'crm', 'tasks', 'password_gen', 'currency_calc'].forEach(m => {
         const drawerBadge = document.getElementById(`lock-badge-${m}`);
         const tileStatus = document.getElementById(`tile-status-${m}`);
-        const isUnlocked = isAdrian || userPermissions[m] !== false;
-
-        if (drawerBadge) {
-          if (!isUnlocked) drawerBadge.classList.remove('hidden');
-          else drawerBadge.classList.add('hidden');
-        }
-
+        if (drawerBadge) drawerBadge.classList.add('hidden');
         if (tileStatus) {
-          if (isUnlocked) {
-            tileStatus.className = "text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200";
-            tileStatus.innerText = "Odblokowane";
-          } else {
-            tileStatus.className = "text-[11px] font-bold bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg border border-rose-200";
-            tileStatus.innerText = "🔒 Zablokowane";
-          }
+          tileStatus.className = "text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200";
+          tileStatus.innerText = "Odblokowane";
         }
       });
     }
@@ -3050,17 +3026,12 @@
       try {
         await fetch('/api/logout', { method: 'POST' });
         sessionStorage.removeItem('fomo_username');
-        window.location.href = '/login';
-      } catch (e) {
-        window.location.href = '/login';
-      }
+      } catch (e) {}
     }
 
     // TOP EXECUTIVE APP SWITCHER
     function switchApp(appName) {
-      const userLower = (currentUser || '').toLowerCase();
-      const isAdrian = userLower === 'adrian';
-      const isAllowed = isAdrian || appName === 'fomo' || appName === 'dashboard' || appName === 'ai_chat' || (userPermissions && userPermissions[appName] !== false);
+      const isAllowed = true;
 
       const drawer = document.getElementById('burger-drawer');
       if (drawer && !drawer.classList.contains('-translate-x-full')) {
@@ -3075,15 +3046,8 @@
       });
 
       const lockedContainer = document.getElementById('app-container-locked');
-
-      if (!isAllowed) {
-        if (lockedContainer) lockedContainer.classList.remove('hidden');
-        updateAppTitle('🔒 Zablokowane');
-        safeCreateIcons();
-        return;
-      }
-
       if (lockedContainer) lockedContainer.classList.add('hidden');
+
       const targetContainer = document.getElementById(`app-container-${appName}`);
       if (targetContainer) targetContainer.classList.remove('hidden');
 

@@ -99,62 +99,34 @@ async def on_signal_detected(token: TokenListing, signal_info: dict):
 
 token_scanner.set_callbacks(on_token=on_new_token_detected, on_signal=on_signal_detected)
 
-# HTTP Middleware for Session Authentication
+# HTTP Middleware for Open Application Access (Zero blocking)
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
-    path = request.url.path
-    # Exclude public endpoints & login static assets
-    if path in ["/login", "/api/login", "/favicon.ico"] or path.startswith("/static"):
-        return await call_next(request)
-
-    session_token = request.cookies.get("fomo_session")
-    user = auth_manager.verify_session(session_token)
-
-    if not user:
-        # Auto-login fallback as Maciek for smooth experience
-        new_token = auth_manager.create_session("Maciek")
-        request.state.user = "Maciek"
-        response = await call_next(request)
-        response.set_cookie(key="fomo_session", value=new_token, max_age=86400 * 30, httponly=True, samesite="lax")
-        return response
-
-    request.state.user = user
+    request.state.user = "Maciek"
     return await call_next(request)
 
 # Auth Routes
 @app.get("/login", response_class=HTMLResponse)
 async def serve_login_page(request: Request):
-    session_token = request.cookies.get("fomo_session")
-    if auth_manager.verify_session(session_token):
-        return RedirectResponse(url="/", status_code=303)
-    login_html = os.path.join(os.path.dirname(__file__), "web", "login.html")
-    return FileResponse(login_html)
+    html_path = os.path.join(os.path.dirname(__file__), "web", "index.html")
+    return FileResponse(html_path)
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
-    username = data.get("username", "")
-    password = data.get("password", "")
-    result = auth_manager.authenticate(username, password)
-    if not result:
-        return JSONResponse(status_code=401, content={"success": False, "detail": "Nieprawidłowy użytkownik lub hasło. Zalogować mogą się tylko Adrian lub Maciek."})
-    
-    token, real_username = result
-    response = JSONResponse(content={"success": True, "username": real_username})
-    response.set_cookie(key="fomo_session", value=token, max_age=86400 * 7, httponly=True, samesite="lax")
+    username = data.get("username", "Maciek") or "Maciek"
+    token = auth_manager.create_session(username)
+    response = JSONResponse(content={"success": True, "username": username})
+    response.set_cookie(key="fomo_session", value=token, max_age=86400 * 365, httponly=True, samesite="lax")
     return response
 
 @app.post("/api/logout")
 async def logout_api(request: Request):
-    session_token = request.cookies.get("fomo_session")
-    auth_manager.logout(session_token)
-    response = JSONResponse(content={"success": True})
-    response.delete_cookie("fomo_session")
-    return response
+    return JSONResponse(content={"success": True})
 
 @app.get("/api/user")
 async def get_current_user(request: Request):
-    user = getattr(request.state, "user", None)
-    perms = user_data_mgr.get_user_permissions(user) if user else {}
+    user = getattr(request.state, "user", "Maciek")
+    perms = user_data_mgr.get_user_permissions(user)
     return {"authenticated": True, "username": user, "permissions": perms}
 
 @app.get("/api/permissions")
@@ -164,16 +136,10 @@ async def get_user_permissions_route(request: Request):
 
 @app.get("/api/admin/permissions")
 async def get_admin_permissions_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
-    if user.lower() != "adrian":
-        return JSONResponse(status_code=403, content={"detail": "Brak uprawnień administratora (Dostęp tylko dla Adriana)."})
     return {"maciek": user_data_mgr.get_user_permissions("Maciek")}
 
 @app.post("/api/admin/permissions")
 async def update_admin_permissions_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
-    if user.lower() != "adrian":
-        return JSONResponse(status_code=403, content={"detail": "Brak uprawnień administratora (Dostęp tylko dla Adriana)."})
     updated = user_data_mgr.update_maciek_permissions(data)
     return {"success": True, "permissions": updated}
 
