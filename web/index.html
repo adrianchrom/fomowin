@@ -10,13 +10,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons (jsDelivr + unpkg fallback) -->
-  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-  <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
+  <!-- Lucide Icons -->
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
   <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Puter.js Free Open-Source LLM API -->
-  <script src="https://js.puter.com/v2/"></script>
+  <script defer src="https://js.puter.com/v2/"></script>
   <style>
     body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
@@ -2844,12 +2843,28 @@
           }
         });
       } catch (e) {}
+    function safeGetStorage(key, defaultVal = '') {
+      try {
+        return sessionStorage.getItem(key) || localStorage.getItem(key) || defaultVal;
+      } catch (e) {
+        return defaultVal;
+      }
+    }
+
+    function safeSetStorage(key, val) {
+      try { sessionStorage.setItem(key, val); } catch (e) {}
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+
+    function safeRemoveStorage(key) {
+      try { sessionStorage.removeItem(key); } catch (e) {}
+      try { localStorage.removeItem(key); } catch (e) {}
     }
 
     let soundEnabled = true;
     let currentTab = 'live';
     let currentApp = 'dashboard';
-    let currentUser = sessionStorage.getItem('fomo_username') || 'Maciek';
+    let currentUser = safeGetStorage('fomo_username', 'Maciek');
     let userPermissions = {
       fomo: true,
       wydatki: true,
@@ -3042,14 +3057,23 @@
       
       apps.forEach(a => {
         const container = document.getElementById(`app-container-${a}`);
-        if (container) container.classList.add('hidden');
+        if (container) {
+          container.classList.add('hidden');
+          container.style.display = 'none';
+        }
       });
 
       const lockedContainer = document.getElementById('app-container-locked');
-      if (lockedContainer) lockedContainer.classList.add('hidden');
+      if (lockedContainer) {
+        lockedContainer.classList.add('hidden');
+        lockedContainer.style.display = 'none';
+      }
 
       const targetContainer = document.getElementById(`app-container-${appName}`);
-      if (targetContainer) targetContainer.classList.remove('hidden');
+      if (targetContainer) {
+        targetContainer.classList.remove('hidden');
+        targetContainer.style.display = 'block';
+      }
 
       currentApp = appName;
 
