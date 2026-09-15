@@ -8,8 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
@@ -74,6 +78,11 @@
 
     .btn-anim { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
     .btn-anim:active { transform: scale(0.98); }
+
+    /* Badges Styling */
+    .badge-adrian { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-patrycja { background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
+    .badge-shared { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
 
     /* Pulse animation for active WebSocket */
     @keyframes pulse-dot {
@@ -216,7 +225,7 @@
       <button onclick="switchApp('wydatki')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
           <i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i>
-          <span>💰 WYDATKI</span>
+          <span>💰 WYDATKI & ZAROBKI</span>
         </div>
         <span id="lock-badge-wydatki" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
@@ -314,8 +323,8 @@
               <span id="tile-status-wydatki" class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">Moduł</span>
             </div>
             <div>
-              <h3 class="text-lg font-bold text-slate-900">💰 WYDATKI</h3>
-              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Prywatny menedżer finansowy — ewidencja przychodów, kosztów firmowych i bieżący bilans netto.</p>
+              <h3 class="text-lg font-bold text-slate-900">💰 WYDATKI & ZAROBKI</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Prywatny menedżer budżetu — ewidencja przychodów, zarobki ze zleceń, wykresy i bilans wykorzystania budżetu.</p>
             </div>
           </div>
           <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
@@ -517,107 +526,441 @@
     </div>
 
 
-    <!-- ==================== MODULE 2: 💰 WYDATKI ==================== -->
+    <!-- ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ==================== -->
     <div id="app-container-wydatki" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
       <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="wallet" class="w-6 h-6 text-emerald-600"></i>
-            💰 WYDATKI — Menedżer Finansowy
-          </h2>
-          <p class="text-xs text-slate-500 mt-1">Ewidencja przychodów i wydatków konta <b id="wydatki-user-name" class="text-slate-900">...</b></p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+            <i data-lucide="wallet" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">💰 Budżet, Wydatki & Zarobki</h2>
+            <p class="text-xs text-slate-500 font-medium">Śledzenie dochodów, wydatków remontowych i zysku netto</p>
+          </div>
+        </div>
+
+        <!-- Sub-Tabs Navigation for Wydatki -->
+        <nav class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+          <button onclick="switchWydatkiTab('wydatki')" id="wydatki-subtab-wydatki" class="btn-anim px-3.5 py-2 rounded-xl transition bg-white text-blue-600 shadow-sm">
+            <i data-lucide="receipt" class="w-3.5 h-3.5 inline mr-1"></i> Wydatki
+          </button>
+          <button onclick="switchWydatkiTab('zarobki')" id="wydatki-subtab-zarobki" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="wallet" class="w-3.5 h-3.5 inline mr-1"></i> Zarobki & Zlecenia
+          </button>
+          <button onclick="switchWydatkiTab('wykresy')" id="wydatki-subtab-wykresy" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="line-chart" class="w-3.5 h-3.5 inline mr-1"></i> Wykresy
+          </button>
+          <button onclick="switchWydatkiTab('podsumowanie')" id="wydatki-subtab-podsumowanie" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="scale" class="w-3.5 h-3.5 inline mr-1"></i> Podsumowanie Budżetu
+          </button>
+        </nav>
+      </div>
+
+      <!-- TOP METRICS BANNER (4 CARDS) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold border border-blue-100">
+            <i data-lucide="user" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Adriana</p>
+            <p id="topAdrianIncome" class="text-xl font-extrabold text-slate-900">0 PLN</p>
+            <span id="topAdrianExtra" class="text-xs text-blue-600 font-medium">+0 PLN zleceń</span>
+          </div>
+        </div>
+
+        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center text-xl font-bold border border-pink-100">
+            <i data-lucide="user" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Patrycji / Maćka</p>
+            <p id="topPatrycjaIncome" class="text-xl font-extrabold text-slate-900">0 PLN</p>
+            <span id="topPatrycjaExtra" class="text-xs text-pink-600 font-medium">+0 PLN zleceń</span>
+          </div>
+        </div>
+
+        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold border border-amber-100">
+            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Łączne Wydatki</p>
+            <p id="topTotalExpenses" class="text-xl font-extrabold text-slate-900">0 PLN</p>
+            <span id="topExpensesCount" class="text-xs text-slate-500">0 pozycji</span>
+          </div>
+        </div>
+
+        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold border border-emerald-100">
+            <i data-lucide="piggy-bank" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pozostały Budżet</p>
+            <p id="topRemainingBudget" class="text-xl font-extrabold text-slate-900">0 PLN</p>
+            <span id="topBudgetPercent" class="text-xs font-semibold text-emerald-600">100% zysk</span>
+          </div>
         </div>
       </div>
 
-      <!-- Financial Balance Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="clean-card p-5 rounded-2xl bg-emerald-50/50 border-emerald-200">
-          <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Suma Przychody</p>
-          <p id="wydatki-przychody-sum" class="text-2xl font-black text-emerald-800 mt-1">0.00 PLN</p>
-        </div>
-        <div class="clean-card p-5 rounded-2xl bg-rose-50/50 border-rose-200">
-          <p class="text-xs font-semibold text-rose-700 uppercase tracking-wider">Suma Wydatki</p>
-          <p id="wydatki-koszty-sum" class="text-2xl font-black text-rose-800 mt-1">0.00 PLN</p>
-        </div>
-        <div class="clean-card p-5 rounded-2xl bg-blue-50/50 border-blue-200">
-          <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">Bilans Netto</p>
-          <p id="wydatki-bilans" class="text-2xl font-black text-blue-900 mt-1">0.00 PLN</p>
+      <!-- SUB-TAB 1: WYDATKI REJESTR & DODAWANIE -->
+      <div id="wydatki-content-wydatki" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Formularz Dodawania Wydatku -->
+          <div class="clean-card p-6 rounded-3xl space-y-4 h-fit">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i> Dodaj Nowy Wydatek
+            </h3>
+            
+            <form id="expenseForm" onsubmit="handleAddExpense(event)" class="space-y-3.5 text-xs">
+              <input type="hidden" id="selectedExpensePayer" value="Adrian">
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">Kto płacił / na kogo wydatek?</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" onclick="selectExpensePayer('Adrian')" id="btn-payer-Adrian" class="py-2.5 px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition">Adrian</button>
+                  <button type="button" onclick="selectExpensePayer('Patrycja')" id="btn-payer-Patrycja" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Maciek/Patrycja</button>
+                  <button type="button" onclick="selectExpensePayer('Wspólne')" id="btn-payer-Wspólne" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Wspólne</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1" for="expenseTitle">Na co poszły pieniądze? (Opis)</label>
+                <input type="text" id="expenseTitle" required placeholder="np. Kafle w łazience, Panele, Armatura..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-semibold text-slate-600 mb-1" for="expenseAmount">Kwota (PLN)</label>
+                  <input type="number" id="expenseAmount" step="0.01" min="0.01" required placeholder="11000" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-bold">
+                </div>
+                <div>
+                  <label class="block font-semibold text-slate-600 mb-1" for="expenseCategory">Kategoria</label>
+                  <select id="expenseCategory" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-medium">
+                    <option value="Kafle & Płytki">Kafle & Płytki</option>
+                    <option value="Materiały Budowlane">Materiały Budowlane</option>
+                    <option value="Robocizna & Fachowcy">Robocizna & Fachowcy</option>
+                    <option value="Sprzęt & Narzędzia">Sprzęt & Narzędzia</option>
+                    <option value="Meble & Wykończenie">Meble & Wykończenie</option>
+                    <option value="Instalacje & Elektryka">Instalacje & Elektryka</option>
+                    <option value="AGD / RTV">AGD / RTV</option>
+                    <option value="Inne Wydatki">Inne Wydatki</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1" for="expenseDate">Data wydatku</label>
+                <input type="date" id="expenseDate" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
+              </div>
+
+              <button type="submit" class="w-full btn-anim bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-sm text-xs flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Wydatek
+              </button>
+            </form>
+          </div>
+
+          <!-- Tabela i Filtry Wydatków -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="clean-card p-6 rounded-3xl space-y-4">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                <div>
+                  <h3 class="text-sm font-bold text-slate-900">Rejestr Wydatków</h3>
+                  <p class="text-xs text-slate-500">Przeglądaj, filtruj i zarządzaj dokonanymi zakupami.</p>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto text-xs">
+                  <select id="filterPerson" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
+                    <option value="ALL">Wszyscy</option>
+                    <option value="Adrian">Tylko Adrian</option>
+                    <option value="Patrycja">Tylko Maciek/Patrycja</option>
+                    <option value="Wspólne">Tylko Wspólne</option>
+                  </select>
+                  <select id="filterCategory" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
+                    <option value="ALL">Wszystkie kategorie</option>
+                    <option value="Kafle & Płytki">Kafle & Płytki</option>
+                    <option value="Materiały Budowlane">Materiały Budowlane</option>
+                    <option value="Robocizna & Fachowcy">Robocizna & Fachowcy</option>
+                    <option value="Sprzęt & Narzędzia">Sprzęt & Narzędzia</option>
+                    <option value="Meble & Wykończenie">Meble & Wykończenie</option>
+                    <option value="Instalacje & Elektryka">Instalacje & Elektryka</option>
+                    <option value="AGD / RTV">AGD / RTV</option>
+                    <option value="Inne Wydatki">Inne Wydatki</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Search Bar -->
+              <input type="text" id="searchExpense" onkeyup="renderExpensesUI()" placeholder="Szukaj np. kafle, farby, fachowiec..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900">
+
+              <!-- Tabela -->
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
+                    <tr>
+                      <th class="p-3">Data</th>
+                      <th class="p-3">Kto</th>
+                      <th class="p-3">Opis</th>
+                      <th class="p-3">Kategoria</th>
+                      <th class="p-3 text-right">Kwota PLN</th>
+                      <th class="p-3 text-center">Usuń</th>
+                    </tr>
+                  </thead>
+                  <tbody id="expensesTableBody" class="divide-y divide-slate-100">
+                    <!-- Rendered by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- Add Expense Form -->
-      <div class="clean-card p-6 rounded-3xl space-y-4">
-        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-          <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Dodaj Nowy Wpis Finansowy
-        </h3>
-        <form onsubmit="handleAddWydatkiSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Typ Transakcji:</label>
-            <select id="wyd-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-              <option value="PRZYCHÓD">🟢 PRZYCHÓD</option>
-              <option value="WYDATEK">🔴 WYDATEK</option>
-            </select>
+      <!-- SUB-TAB 2: ZAROBKI & ZLECENIA -->
+      <div id="wydatki-content-zarobki" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Formularz Stałego Dochodu -->
+          <div class="clean-card p-6 rounded-3xl space-y-4">
+            <div class="border-b border-slate-100 pb-3">
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i> Stały Dochód Miesięczny
+              </h3>
+              <p class="text-xs text-slate-500">Wpisz pensję bazową na dany miesiąc.</p>
+            </div>
+
+            <form onsubmit="handleAddMonthlyIncome(event)" class="space-y-3.5 text-xs">
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">Miesiąc:</label>
+                <input type="month" id="incomeMonth" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100">
+                  <label class="block font-bold text-blue-700 mb-1">Adrian (Stała Pensja):</label>
+                  <input type="number" id="adrianBaseSalary" step="100" min="0" placeholder="8000" required class="w-full px-3 py-2 rounded-xl border border-blue-200 bg-white font-bold text-slate-900">
+                </div>
+
+                <div class="bg-pink-50/50 p-3 rounded-2xl border border-pink-100">
+                  <label class="block font-bold text-pink-700 mb-1">Maciek/Patrycja (Pensja):</label>
+                  <input type="number" id="patrycjaBaseSalary" step="100" min="0" placeholder="7500" required class="w-full px-3 py-2 rounded-xl border border-pink-200 bg-white font-bold text-slate-900">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full btn-anim bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1.5">
+                <i data-lucide="save" class="w-4 h-4"></i> Zapisz Stały Dochód
+              </button>
+            </form>
           </div>
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Osoba / Płatnik:</label>
-            <select id="wyd-payer" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-              <option value="Adrian">Adrian</option>
-              <option value="Maciek">Maciek</option>
-              <option value="Wspólne">Wspólne</option>
-            </select>
+
+          <!-- Formularz Dodatkowych Zleceń -->
+          <div class="clean-card p-6 rounded-3xl space-y-4">
+            <div class="border-b border-slate-100 pb-3">
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i> Dodatkowe Zlecenia & Premie
+              </h3>
+              <p class="text-xs text-slate-500">Zarobki z prac dorywczych, premii lub fakturowanych zleceń.</p>
+            </div>
+
+            <form onsubmit="handleAddGigIncome(event)" class="space-y-3.5 text-xs">
+              <input type="hidden" id="selectedGigPerson" value="Adrian">
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">Dla kogo wypracowany dochód?</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <button type="button" onclick="selectGigPerson('Adrian')" id="btn-gig-Adrian" class="py-2.5 px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition">Adrian</button>
+                  <button type="button" onclick="selectGigPerson('Patrycja')" id="btn-gig-Patrycja" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Maciek / Patrycja</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">Opis zlecenia / źródło:</label>
+                <input type="text" id="gigTitle" required placeholder="np. Projekt www, Premia kwartalna..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-semibold text-slate-600 mb-1">Kwota extra (PLN):</label>
+                  <input type="number" id="gigAmount" step="10" min="1" required placeholder="1500" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-bold">
+                </div>
+                <div>
+                  <label class="block font-semibold text-slate-600 mb-1">Dotyczy miesiąca:</label>
+                  <input type="month" id="gigMonth" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full btn-anim bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1.5">
+                <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Zlecenie Extra
+              </button>
+            </form>
           </div>
-          <div class="sm:col-span-2">
-            <label class="block font-semibold mb-1 text-slate-700">Tytuł / Nazwa operacji:</label>
-            <input type="text" id="wyd-title" placeholder="np. Zlecenie wdrożenia / Zakup sprzętu..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+
+        </div>
+
+        <!-- Tabele Historii Zarobków i Zleceń -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2">Historia Stałych Zarobków Miesięcznych</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
+                  <tr>
+                    <th class="p-2.5">Miesiąc</th>
+                    <th class="p-2.5 text-blue-600">Adrian</th>
+                    <th class="p-2.5 text-pink-600">Maciek/Patrycja</th>
+                    <th class="p-2.5 font-bold">Łącznie</th>
+                    <th class="p-2.5 text-center">Usuń</th>
+                  </tr>
+                </thead>
+                <tbody id="baseIncomeTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
           </div>
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Kwota (PLN):</label>
-            <input type="number" step="0.01" id="wyd-amount" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2">Dodatkowe Zlecenia & Premie</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
+                  <tr>
+                    <th class="p-2.5">Miesiąc</th>
+                    <th class="p-2.5">Kto</th>
+                    <th class="p-2.5">Opis</th>
+                    <th class="p-2.5 text-right">Kwota</th>
+                    <th class="p-2.5 text-center">Usuń</th>
+                  </tr>
+                </thead>
+                <tbody id="gigsTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
           </div>
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Kategoria:</label>
-            <input type="text" id="wyd-category" placeholder="np. Usługi, Biuro, Sprzęt..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Data:</label>
-            <input type="date" id="wyd-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-          </div>
-          <div>
-            <label class="block font-semibold mb-1 text-slate-700">Uwagi / Notatka:</label>
-            <input type="text" id="wyd-note" placeholder="Szczegóły płatności..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
-          </div>
-          <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
-            <button type="submit" class="btn-anim bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="check" class="w-4 h-4"></i> Zapisz Wpis
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
 
-      <!-- Financial Entries Table -->
-      <div class="clean-card rounded-3xl overflow-hidden">
-        <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-xs text-slate-700">
-          Historia Transakcji
+      <!-- SUB-TAB 3: WYKRESY LINOWE -->
+      <div id="wydatki-content-wykresy" class="hidden space-y-6">
+        <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="line-chart" class="w-4 h-4 text-blue-600"></i> Trend Zarobków Miesiąc po Miesiącu
+              </h3>
+              <p class="text-xs text-slate-500">Wykres liniowy przedstawiający sumaryczne dochody (pensja stała + zlecenia).</p>
+            </div>
+          </div>
+
+          <div class="relative h-72 sm:h-80 w-full pt-2">
+            <canvas id="earningsLineChart"></canvas>
+          </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100 text-slate-600 uppercase font-mono text-[11px] border-b border-slate-200">
-              <tr>
-                <th class="p-3.5">Typ</th>
-                <th class="p-3.5">Płatnik</th>
-                <th class="p-3.5">Tytuł</th>
-                <th class="p-3.5">Kategoria</th>
-                <th class="p-3.5">Data</th>
-                <th class="p-3.5 text-right">Kwota PLN</th>
-                <th class="p-3.5 text-center">Akcja</th>
-              </tr>
-            </thead>
-            <tbody id="wydatki-table-body" class="divide-y divide-slate-100">
-              <!-- Rendered by JS -->
-            </tbody>
-          </table>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <h4 class="text-xs font-bold text-slate-900">Struktura Wydatków wg Kategorii</h4>
+            <div class="relative h-60 w-full flex items-center justify-center">
+              <canvas id="expenseCategoryPieChart"></canvas>
+            </div>
+          </div>
+
+          <div class="clean-card p-6 rounded-3xl space-y-3">
+            <h4 class="text-xs font-bold text-slate-900">Porównanie Wydatków wg Osobistości</h4>
+            <div class="relative h-60 w-full">
+              <canvas id="expensePayerBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB 4: PODSUMOWANIE BUDŻETU I TROPHY BANNER -->
+      <div id="wydatki-content-podsumowanie" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Karta Adriana -->
+          <div class="clean-card p-6 rounded-3xl space-y-5 border-blue-200 bg-blue-50/20">
+            <div class="flex items-center gap-3 border-b border-blue-100 pb-3">
+              <div class="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-bold text-base shadow-sm">
+                <i data-lucide="user" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">Adrian</h3>
+                <p class="text-xs text-blue-600 font-semibold">Podsumowanie finansowe</p>
+              </div>
+            </div>
+
+            <div class="space-y-2.5 text-xs">
+              <div class="flex justify-between items-center"><span class="text-slate-500">Suma zarobków (pensje + zlecenia):</span><strong id="summaryAdrianIncome" class="text-slate-900">0 PLN</strong></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Wydatki bezpośrednie:</span><strong id="summaryAdrianExpenses" class="text-blue-600">0 PLN</strong></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Udział w wydatkach wspólnych (50%):</span><strong id="summaryAdrianShared" class="text-purple-600">0 PLN</strong></div>
+              <div class="border-t border-blue-100 pt-2 flex justify-between items-center font-bold text-sm"><span>Całkowite obciążenie:</span><strong id="summaryAdrianTotalSpent" class="text-blue-700">0 PLN</strong></div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-slate-600">Wykorzystanie własnego dochodu:</span>
+                <span id="summaryAdrianPercent" class="text-blue-600">0%</span>
+              </div>
+              <div class="w-full bg-blue-100 rounded-full h-2.5 overflow-hidden">
+                <div id="summaryAdrianProgressBar" class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Karta Maćka / Patrycji -->
+          <div class="clean-card p-6 rounded-3xl space-y-5 border-pink-200 bg-pink-50/20">
+            <div class="flex items-center gap-3 border-b border-pink-100 pb-3">
+              <div class="w-10 h-10 bg-pink-600 text-white rounded-2xl flex items-center justify-center font-bold text-base shadow-sm">
+                <i data-lucide="user" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">Maciek / Patrycja</h3>
+                <p class="text-xs text-pink-600 font-semibold">Podsumowanie finansowe</p>
+              </div>
+            </div>
+
+            <div class="space-y-2.5 text-xs">
+              <div class="flex justify-between items-center"><span class="text-slate-500">Suma zarobków (pensje + zlecenia):</span><strong id="summaryPatrycjaIncome" class="text-slate-900">0 PLN</strong></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Wydatki bezpośrednie:</span><strong id="summaryPatrycjaExpenses" class="text-pink-600">0 PLN</strong></div>
+              <div class="flex justify-between items-center"><span class="text-slate-500">Udział w wydatkach wspólnych (50%):</span><strong id="summaryPatrycjaShared" class="text-purple-600">0 PLN</strong></div>
+              <div class="border-t border-pink-100 pt-2 flex justify-between items-center font-bold text-sm"><span>Całkowite obciążenie:</span><strong id="summaryPatrycjaTotalSpent" class="text-pink-700">0 PLN</strong></div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-slate-600">Wykorzystanie własnego dochodu:</span>
+                <span id="summaryPatrycjaPercent" class="text-pink-600">0%</span>
+              </div>
+              <div class="w-full bg-pink-100 rounded-full h-2.5 overflow-hidden">
+                <div id="summaryPatrycjaProgressBar" class="bg-pink-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SPECJALNY BANNER NA DOLE: KTO WIĘCEJ BUDŻETU WYKORZYSTAŁ -->
+        <div id="budgetWinnerCard" class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
+          <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 text-center sm:text-left">
+              <div class="inline-flex items-center gap-2 bg-slate-800 text-amber-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                🏆 Podliczenie Budżetu
+              </div>
+              <h2 class="text-xl sm:text-2xl font-black tracking-tight">Kto wykorzystał więcej budżetu?</h2>
+              <p id="budgetResultDetails" class="text-slate-300 text-xs max-w-xl">
+                Trwa obliczanie dokładnych proporcji...
+              </p>
+            </div>
+
+            <div class="bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-slate-700 text-center min-w-[240px] space-y-1.5">
+              <span class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Większy udział w wydatkach:</span>
+              <div id="winnerBadge" class="text-xl font-black text-amber-400 flex items-center justify-center gap-1.5">
+                <!-- Winner Badge -->
+              </div>
+              <p id="winnerSubtext" class="text-xs text-slate-300 font-medium">
+                <!-- Subtext -->
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1038,8 +1381,8 @@
             <div class="flex items-center gap-3">
               <i data-lucide="wallet" class="w-5 h-5 text-emerald-600"></i>
               <div>
-                <span class="font-bold text-slate-900 block text-sm">💰 WYDATKI</span>
-                <span class="text-slate-500 text-[11px]">Dostęp do ewidencji przychodów i kosztów</span>
+                <span class="font-bold text-slate-900 block text-sm">💰 WYDATKI & ZAROBKI</span>
+                <span class="text-slate-500 text-[11px]">Dostęp do budżetu, przychodów, zleceń i bilansu</span>
               </div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
@@ -1162,6 +1505,25 @@
       bank: '00 1234 5678 9012 3456 7890 1234',
       logo_base64: ''
     };
+
+    // Wydatki Full Data State (1:1 Standalone App)
+    let wydatkiFullData = {
+      baseIncomes: [
+        { id: 1, month: "2026-08", adrian: 9500, patrycja: 8000 },
+        { id: 2, month: "2026-09", adrian: 9500, patrycja: 8500 }
+      ],
+      gigs: [
+        { id: 1, person: "Adrian", title: "Zlecenie projektowe www", amount: 2500, month: "2026-09", date: "2026-09-15" }
+      ],
+      expenses: [
+        { id: 1, person: "Adrian", title: "Kafle gresowe łazienka & hol", amount: 11000, category: "Kafle & Płytki", date: "2026-09-10", month: "2026-09" },
+        { id: 2, person: "Patrycja", title: "Zaliczka na robociznę (Ekipa remontowa)", amount: 8000, category: "Robocizna & Fachowcy", date: "2026-09-12", month: "2026-09" }
+      ]
+    };
+
+    let earningsChartInstance = null;
+    let categoryPieChartInstance = null;
+    let payerBarChartInstance = null;
 
     // SEED SAMPLE TOKENS
     const seedTokens = [
@@ -1369,7 +1731,7 @@
       const titlesMap = {
         'dashboard': '🏠 Dashboard',
         'fomo': '⚡ FOMO Engine',
-        'wydatki': '💰 WYDATKI',
+        'wydatki': '💰 WYDATKI & ZAROBKI',
         'wyceny': '🏷️ WYCENY (POI)',
         'stopki_email': '✉️ STOPKI E-MAIL',
         'admin': '⚙️ PANEL ADMINA'
@@ -1485,95 +1847,481 @@
       lucide.createIcons();
     }
 
-    // ==================== MODULE 2: 💰 WYDATKI LOGIC ====================
+
+    // ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ====================
+    function switchWydatkiTab(subtab) {
+      ['wydatki', 'zarobki', 'wykresy', 'podsumowanie'].forEach(st => {
+        const btn = document.getElementById(`wydatki-subtab-${st}`);
+        const content = document.getElementById(`wydatki-content-${st}`);
+        if (btn) {
+          if (st === subtab) {
+            btn.className = "btn-anim px-3.5 py-2 rounded-xl transition bg-white text-blue-600 shadow-sm font-bold";
+          } else {
+            btn.className = "btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900 font-bold";
+          }
+        }
+        if (content) {
+          if (st === subtab) content.classList.remove('hidden');
+          else content.classList.add('hidden');
+        }
+      });
+
+      if (subtab === 'wykresy' || subtab === 'podsumowanie') {
+        setTimeout(renderWydatkiChartsUI, 50);
+      }
+      lucide.createIcons();
+    }
+
+    function selectExpensePayer(payer) {
+      document.getElementById('selectedExpensePayer').value = payer;
+      ['Adrian', 'Patrycja', 'Wspólne'].forEach(opt => {
+        const btn = document.getElementById(`btn-payer-${opt}`);
+        if (!btn) return;
+        if (opt === payer) {
+          let classes = "py-2.5 px-2 font-bold rounded-xl border transition border-blue-500 bg-blue-100 text-blue-700";
+          if (opt === "Patrycja") classes = "py-2.5 px-2 font-bold rounded-xl border transition border-pink-500 bg-pink-100 text-pink-700";
+          if (opt === "Wspólne") classes = "py-2.5 px-2 font-bold rounded-xl border transition border-purple-500 bg-purple-100 text-purple-700";
+          btn.className = classes;
+        } else {
+          btn.className = "py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition";
+        }
+      });
+    }
+
+    function selectGigPerson(person) {
+      document.getElementById('selectedGigPerson').value = person;
+      ['Adrian', 'Patrycja'].forEach(opt => {
+        const btn = document.getElementById(`btn-gig-${opt}`);
+        if (!btn) return;
+        if (opt === person) {
+          const classes = opt === "Adrian" ? "border-blue-500 bg-blue-100 text-blue-700" : "border-pink-500 bg-pink-100 text-pink-700";
+          btn.className = `py-2.5 px-2 font-bold rounded-xl border ${classes} transition`;
+        } else {
+          btn.className = "py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition";
+        }
+      });
+    }
+
     async function loadWydatkiData() {
       try {
         const res = await fetch('/api/wydatki');
-        const list = await res.json();
-        renderWydatkiTable(list);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            wydatkiFullData = {
+              baseIncomes: data.baseIncomes || wydatkiFullData.baseIncomes,
+              gigs: data.gigs || wydatkiFullData.gigs,
+              expenses: data.expenses || wydatkiFullData.expenses
+            };
+          }
+        }
       } catch (e) {}
+      refreshWydatkiUI();
     }
 
-    function renderWydatkiTable(list) {
-      const tbody = document.getElementById('wydatki-table-body');
-      if (!tbody) return;
-
-      if (!list || list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">Brak zarejestrowanych transakcji... Dodaj swój pierwszy wpis.</td></tr>`;
-        document.getElementById('wydatki-przychody-sum').innerText = "0.00 PLN";
-        document.getElementById('wydatki-koszty-sum').innerText = "0.00 PLN";
-        document.getElementById('wydatki-bilans').innerText = "0.00 PLN";
-        return;
-      }
-
-      let sumIncome = 0;
-      let sumExpense = 0;
-
-      tbody.innerHTML = list.map(item => {
-        const isInc = item.type === 'PRZYCHÓD';
-        const amt = parseFloat(item.amount_pln || 0);
-        if (isInc) sumIncome += amt;
-        else sumExpense += amt;
-
-        const typeBadge = isInc 
-          ? `<span class="bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded font-bold text-[10px]">PRZYCHÓD</span>`
-          : `<span class="bg-rose-100 text-rose-800 border border-rose-200 px-2 py-0.5 rounded font-bold text-[10px]">WYDATEK</span>`;
-
-        const payerBadge = `<span class="bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded font-bold text-[10px]">${item.payer || 'Osobisty'}</span>`;
-
-        return `
-          <tr class="hover:bg-slate-50 font-medium text-slate-800">
-            <td class="p-3.5">${typeBadge}</td>
-            <td class="p-3.5">${payerBadge}</td>
-            <td class="p-3.5 font-bold">${item.title} ${item.note ? `<span class="block text-[11px] font-normal text-slate-400">${item.note}</span>` : ''}</td>
-            <td class="p-3.5 text-slate-500">${item.category || '-'}</td>
-            <td class="p-3.5 font-mono text-slate-500">${item.date}</td>
-            <td class="p-3.5 text-right font-mono font-bold ${isInc ? 'text-emerald-700' : 'text-rose-700'}">${isInc ? '+' : '-'}${amt.toFixed(2)} PLN</td>
-            <td class="p-3.5 text-center">
-              <button onclick="handleDeleteWydatki('${item.id}')" class="btn-anim text-rose-600 hover:text-rose-800 text-[11px] font-bold">Usuń</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      const balance = sumIncome - sumExpense;
-      document.getElementById('wydatki-przychody-sum').innerText = `+${sumIncome.toFixed(2)} PLN`;
-      document.getElementById('wydatki-koszty-sum').innerText = `-${sumExpense.toFixed(2)} PLN`;
-      
-      const bilansEl = document.getElementById('wydatki-bilans');
-      bilansEl.innerText = `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} PLN`;
-      bilansEl.className = `text-2xl font-black mt-1 ${balance >= 0 ? 'text-emerald-800' : 'text-rose-800'}`;
-    }
-
-    async function handleAddWydatkiSubmit(e) {
-      e.preventDefault();
-      const type = document.getElementById('wyd-type').value;
-      const payer = document.getElementById('wyd-payer').value;
-      const title = document.getElementById('wyd-title').value.trim();
-      const amount = parseFloat(document.getElementById('wyd-amount').value);
-      const category = document.getElementById('wyd-category').value.trim();
-      const date = document.getElementById('wyd-date').value;
-      const note = document.getElementById('wyd-note').value.trim();
-
+    async function saveWydatkiData() {
       try {
         await fetch('/api/wydatki', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type, payer, title, amount_pln: amount, category, date, note })
+          body: JSON.stringify(wydatkiFullData)
         });
-        document.getElementById('wyd-title').value = '';
-        document.getElementById('wyd-amount').value = '';
-        document.getElementById('wyd-category').value = '';
-        document.getElementById('wyd-note').value = '';
-        loadWydatkiData();
       } catch (e) {}
+      refreshWydatkiUI();
+    }
+
+    function refreshWydatkiUI() {
+      renderWydatkiTopMetrics();
+      renderExpensesUI();
+      renderIncomeTablesUI();
+      renderSummarySectionUI();
+    }
+
+    function formatPLN(val) {
+      return new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN', maximumFractionDigits: 0 }).format(val || 0);
+    }
+
+    function renderWydatkiTopMetrics() {
+      let adrianBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.adrian) || 0), 0);
+      let patrycjaBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.patrycja || curr.maciek) || 0), 0);
+
+      let adrianGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Adrian").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let patrycjaGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Patrycja" || g.person === "Maciek").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
+      let totalAdrianInc = adrianBaseTotal + adrianGigTotal;
+      let totalPatrycjaInc = patrycjaBaseTotal + patrycjaGigTotal;
+      let totalIncomeCombined = totalAdrianInc + totalPatrycjaInc;
+
+      let totalExpensesCombined = wydatkiFullData.expenses.reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+      let remainingBudget = totalIncomeCombined - totalExpensesCombined;
+
+      document.getElementById("topAdrianIncome").innerText = formatPLN(totalAdrianInc);
+      document.getElementById("topAdrianExtra").innerText = `+${formatPLN(adrianGigTotal)} zleceń`;
+
+      document.getElementById("topPatrycjaIncome").innerText = formatPLN(totalPatrycjaInc);
+      document.getElementById("topPatrycjaExtra").innerText = `+${formatPLN(patrycjaGigTotal)} zleceń`;
+
+      document.getElementById("topTotalExpenses").innerText = formatPLN(totalExpensesCombined);
+      document.getElementById("topExpensesCount").innerText = `${wydatkiFullData.expenses.length} pozycji`;
+
+      document.getElementById("topRemainingBudget").innerText = formatPLN(remainingBudget);
+
+      const budgetPercentEl = document.getElementById("topBudgetPercent");
+      if (totalIncomeCombined > 0) {
+        const percentLeft = Math.round((remainingBudget / totalIncomeCombined) * 100);
+        budgetPercentEl.innerText = `${percentLeft}% budżetu na plusie`;
+        budgetPercentEl.className = percentLeft >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-red-600";
+      } else {
+        budgetPercentEl.innerText = "Brak danych o dochodach";
+      }
+    }
+
+    async function handleAddExpense(e) {
+      e.preventDefault();
+      const payer = document.getElementById("selectedExpensePayer").value || "Adrian";
+      const title = document.getElementById("expenseTitle").value.trim();
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
+      const category = document.getElementById("expenseCategory").value;
+      const date = document.getElementById("expenseDate").value;
+
+      if (!title || isNaN(amount) || amount <= 0 || !date) return;
+
+      const newExpense = {
+        id: `wyd-${Date.now()}`,
+        person: payer,
+        payer: payer,
+        title: title,
+        amount_pln: amount,
+        amount: amount,
+        category: category,
+        date: date,
+        month: date.substring(0, 7)
+      };
+
+      wydatkiFullData.expenses.unshift(newExpense);
+      document.getElementById("expenseTitle").value = "";
+      document.getElementById("expenseAmount").value = "";
+
+      await saveWydatkiData();
     }
 
     async function handleDeleteWydatki(id) {
+      if (confirm("Czy na pewno chcesz usunąć ten wydatek?")) {
+        wydatkiFullData.expenses = wydatkiFullData.expenses.filter(e => strId(e.id) !== strId(id));
+        await saveWydatkiData();
+      }
+    }
+
+    function strId(val) { return String(val); }
+
+    function renderExpensesUI() {
+      const tbody = document.getElementById("expensesTableBody");
+      if (!tbody) return;
+
+      const personFilter = document.getElementById("filterPerson").value;
+      const categoryFilter = document.getElementById("filterCategory").value;
+      const searchQuery = (document.getElementById("searchExpense").value || "").toLowerCase();
+
+      let filtered = wydatkiFullData.expenses.filter(item => {
+        const p = item.person || item.payer || "Adrian";
+        const matchPerson = (personFilter === "ALL") || (p === personFilter);
+        const matchCategory = (categoryFilter === "ALL") || (item.category === categoryFilter);
+        const amt = item.amount_pln || item.amount || 0;
+        const matchSearch = item.title.toLowerCase().includes(searchQuery) ||
+                            (item.category || '').toLowerCase().includes(searchQuery) ||
+                            amt.toString().includes(searchQuery);
+        return matchPerson && matchCategory && matchSearch;
+      });
+
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">Brak zarejestrowanych wydatków spełniających kryteria...</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const p = item.person || item.payer || "Adrian";
+        let badgeClass = "badge-shared";
+        if (p === "Adrian") badgeClass = "badge-adrian";
+        if (p === "Patrycja" || p === "Maciek") badgeClass = "badge-patrycja";
+
+        const amt = parseFloat(item.amount_pln || item.amount || 0);
+
+        return `
+          <tr class="hover:bg-slate-50 transition text-slate-700">
+            <td class="p-3 text-xs text-slate-400 font-medium">${item.date}</td>
+            <td class="p-3"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${badgeClass}">${p}</span></td>
+            <td class="p-3 font-semibold text-slate-800">${item.title}</td>
+            <td class="p-3 text-xs text-slate-500"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${item.category || 'Ogólne'}</span></td>
+            <td class="p-3 text-right font-extrabold text-slate-900">${formatPLN(amt)}</td>
+            <td class="p-3 text-center">
+              <button onclick="handleDeleteWydatki('${item.id}')" class="text-rose-600 hover:text-rose-800 text-xs font-bold">Usuń</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function handleAddMonthlyIncome(e) {
+      e.preventDefault();
+      const month = document.getElementById("incomeMonth").value;
+      const adrianSal = parseFloat(document.getElementById("adrianBaseSalary").value) || 0;
+      const patrycjaSal = parseFloat(document.getElementById("patrycjaBaseSalary").value) || 0;
+
+      if (!month) return;
+
+      const idx = wydatkiFullData.baseIncomes.findIndex(item => item.month === month);
+      if (idx >= 0) {
+        wydatkiFullData.baseIncomes[idx].adrian = adrianSal;
+        wydatkiFullData.baseIncomes[idx].patrycja = patrycjaSal;
+        wydatkiFullData.baseIncomes[idx].maciek = patrycjaSal;
+      } else {
+        wydatkiFullData.baseIncomes.push({ id: Date.now(), month: month, adrian: adrianSal, patrycja: patrycjaSal, maciek: patrycjaSal });
+      }
+
+      wydatkiFullData.baseIncomes.sort((a, b) => a.month.localeCompare(b.month));
+      document.getElementById("adrianBaseSalary").value = "";
+      document.getElementById("patrycjaBaseSalary").value = "";
+      await saveWydatkiData();
+    }
+
+    async function deleteBaseIncome(id) {
+      if (confirm("Usunąć wpis o dochodzie stałym dla tego miesiąca?")) {
+        wydatkiFullData.baseIncomes = wydatkiFullData.baseIncomes.filter(i => strId(i.id) !== strId(id));
+        await saveWydatkiData();
+      }
+    }
+
+    async function handleAddGigIncome(e) {
+      e.preventDefault();
+      const person = document.getElementById("selectedGigPerson").value || "Adrian";
+      const title = document.getElementById("gigTitle").value.trim();
+      const amount = parseFloat(document.getElementById("gigAmount").value);
+      const month = document.getElementById("gigMonth").value;
+
+      if (!title || isNaN(amount) || amount <= 0 || !month) return;
+
+      const newGig = {
+        id: Date.now(),
+        person: person,
+        title: title,
+        amount: amount,
+        month: month,
+        date: `${month}-15`
+      };
+
+      wydatkiFullData.gigs.unshift(newGig);
+      document.getElementById("gigTitle").value = "";
+      document.getElementById("gigAmount").value = "";
+      await saveWydatkiData();
+    }
+
+    async function deleteGig(id) {
+      if (confirm("Usunąć ten wpis o dodatkowym zleceniu?")) {
+        wydatkiFullData.gigs = wydatkiFullData.gigs.filter(g => strId(g.id) !== strId(id));
+        await saveWydatkiData();
+      }
+    }
+
+    function renderIncomeTablesUI() {
+      const baseBody = document.getElementById("baseIncomeTableBody");
+      if (baseBody) {
+        baseBody.innerHTML = "";
+        const sortedBase = [...wydatkiFullData.baseIncomes].sort((a, b) => b.month.localeCompare(a.month));
+
+        sortedBase.forEach(item => {
+          const totalMonth = (item.adrian || 0) + (item.patrycja || item.maciek || 0);
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50 transition";
+          tr.innerHTML = `
+            <td class="p-2.5 font-bold text-slate-800">${item.month}</td>
+            <td class="p-2.5 font-semibold text-blue-600">${formatPLN(item.adrian)}</td>
+            <td class="p-2.5 font-semibold text-pink-600">${formatPLN(item.patrycja || item.maciek)}</td>
+            <td class="p-2.5 font-extrabold text-slate-900">${formatPLN(totalMonth)}</td>
+            <td class="p-2.5 text-center">
+              <button onclick="deleteBaseIncome('${item.id}')" class="text-rose-600 font-bold">Usuń</button>
+            </td>
+          `;
+          baseBody.appendChild(tr);
+        });
+      }
+
+      const gigsBody = document.getElementById("gigsTableBody");
+      if (gigsBody) {
+        gigsBody.innerHTML = "";
+        const sortedGigs = [...wydatkiFullData.gigs].sort((a, b) => b.month.localeCompare(a.month));
+
+        sortedGigs.forEach(gig => {
+          let badgeClass = gig.person === "Adrian" ? "badge-adrian" : "badge-patrycja";
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50 transition";
+          tr.innerHTML = `
+            <td class="p-2.5 text-slate-500 font-medium">${gig.month}</td>
+            <td class="p-2.5"><span class="px-2 py-0.5 rounded text-xs font-bold ${badgeClass}">${gig.person}</span></td>
+            <td class="p-2.5 font-medium text-slate-800">${gig.title}</td>
+            <td class="p-2.5 text-right font-extrabold text-emerald-600">+${formatPLN(gig.amount)}</td>
+            <td class="p-2.5 text-center">
+              <button onclick="deleteGig('${gig.id}')" class="text-rose-600 font-bold">Usuń</button>
+            </td>
+          `;
+          gigsBody.appendChild(tr);
+        });
+      }
+    }
+
+    function renderSummarySectionUI() {
+      let adrianBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.adrian) || 0), 0);
+      let patrycjaBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.patrycja || curr.maciek) || 0), 0);
+
+      let adrianGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Adrian").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let patrycjaGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Patrycja" || g.person === "Maciek").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
+      let adrianTotalIncome = adrianBaseTotal + adrianGigTotal;
+      let patrycjaTotalIncome = patrycjaBaseTotal + patrycjaGigTotal;
+
+      let adrianDirectExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Adrian").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+      let patrycjaDirectExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Patrycja" || (e.person || e.payer) === "Maciek").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+      let sharedExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Wspólne").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+
+      let sharedHalf = sharedExpenses / 2;
+
+      let adrianTotalSpent = adrianDirectExpenses + sharedHalf;
+      let patrycjaTotalSpent = patrycjaDirectExpenses + sharedHalf;
+
+      let adrianPercent = adrianTotalIncome > 0 ? Math.round((adrianTotalSpent / adrianTotalIncome) * 100) : 0;
+      let patrycjaPercent = patrycjaTotalIncome > 0 ? Math.round((patrycjaTotalSpent / patrycjaTotalIncome) * 100) : 0;
+
+      // Render Adrian Card
+      document.getElementById("summaryAdrianIncome").innerText = formatPLN(adrianTotalIncome);
+      document.getElementById("summaryAdrianExpenses").innerText = formatPLN(adrianDirectExpenses);
+      document.getElementById("summaryAdrianShared").innerText = formatPLN(sharedHalf);
+      document.getElementById("summaryAdrianTotalSpent").innerText = formatPLN(adrianTotalSpent);
+      document.getElementById("summaryAdrianPercent").innerText = `${adrianPercent}% dochodu`;
+      document.getElementById("summaryAdrianProgressBar").style.width = `${Math.min(adrianPercent, 100)}%`;
+
+      // Render Patrycja Card
+      document.getElementById("summaryPatrycjaIncome").innerText = formatPLN(patrycjaTotalIncome);
+      document.getElementById("summaryPatrycjaExpenses").innerText = formatPLN(patrycjaDirectExpenses);
+      document.getElementById("summaryPatrycjaShared").innerText = formatPLN(sharedHalf);
+      document.getElementById("summaryPatrycjaTotalSpent").innerText = formatPLN(patrycjaTotalSpent);
+      document.getElementById("summaryPatrycjaPercent").innerText = `${patrycjaPercent}% dochodu`;
+      document.getElementById("summaryPatrycjaProgressBar").style.width = `${Math.min(patrycjaPercent, 100)}%`;
+
+      // CALCULATE BUDGET WINNER AT THE BOTTOM
+      const winnerBadge = document.getElementById("winnerBadge");
+      const winnerSubtext = document.getElementById("winnerSubtext");
+      const resultDetails = document.getElementById("budgetResultDetails");
+
+      const diffPLN = Math.abs(adrianTotalSpent - patrycjaTotalSpent);
+
+      if (adrianTotalSpent > patrycjaTotalSpent) {
+        winnerBadge.innerHTML = `<span class="text-blue-400 font-black flex items-center gap-1.5"><i data-lucide="user" class="w-5 h-5"></i> ADRIAN</span> <span class="text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded-md font-mono">(+${formatPLN(diffPLN)})</span>`;
+        winnerSubtext.innerText = `Adrian sfinansował ${formatPLN(adrianTotalSpent)} (${adrianPercent}% swojego dochodu).`;
+        resultDetails.innerText = `Adrian wykorzystał więcej budżetu kwotowo o ${formatPLN(diffPLN)} w porównaniu do drugiej osoby. Bezpośrednio wydał ${formatPLN(adrianDirectExpenses)}, a druga osoba ${formatPLN(patrycjaDirectExpenses)}.`;
+      } else if (patrycjaTotalSpent > adrianTotalSpent) {
+        winnerBadge.innerHTML = `<span class="text-pink-400 font-black flex items-center gap-1.5"><i data-lucide="user" class="w-5 h-5"></i> MACIEK / PATRYCJA</span> <span class="text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded-md font-mono">(+${formatPLN(diffPLN)})</span>`;
+        winnerSubtext.innerText = `Druga osoba sfinansowała ${formatPLN(patrycjaTotalSpent)} (${patrycjaPercent}% swojego dochodu).`;
+        resultDetails.innerText = `Druga osoba wykorzystała więcej budżetu kwotowo o ${formatPLN(diffPLN)} w porównaniu do Adriana. Bezpośrednio wydała ${formatPLN(patrycjaDirectExpenses)}, a Adrian ${formatPLN(adrianDirectExpenses)}.`;
+      } else {
+        winnerBadge.innerHTML = `<span class="text-emerald-400 font-black flex items-center gap-1.5"><i data-lucide="award" class="w-5 h-5"></i> REMIS</span>`;
+        winnerSubtext.innerText = `Oboje wydali dokładnie tyle samo: ${formatPLN(adrianTotalSpent)}.`;
+        resultDetails.innerText = `Wydatki obu partnerów są idealnie zrównoważone!`;
+      }
+      lucide.createIcons();
+    }
+
+    function renderWydatkiChartsUI() {
+      if (typeof Chart === 'undefined') return;
+
       try {
-        await fetch(`/api/wydatki/${id}`, { method: 'DELETE' });
-        loadWydatkiData();
-      } catch (e) {}
+        const allMonthsSet = new Set();
+        wydatkiFullData.baseIncomes.forEach(i => allMonthsSet.add(i.month));
+        wydatkiFullData.gigs.forEach(g => allMonthsSet.add(g.month));
+        const sortedMonths = Array.from(allMonthsSet).sort();
+
+        const adrianData = [];
+        const patrycjaData = [];
+        const combinedData = [];
+
+        sortedMonths.forEach(m => {
+          const baseItem = wydatkiFullData.baseIncomes.find(b => b.month === m) || { adrian: 0, patrycja: 0, maciek: 0 };
+          const adrianGigs = wydatkiFullData.gigs.filter(g => g.month === m && g.person === "Adrian").reduce((acc, curr) => acc + curr.amount, 0);
+          const patrycjaGigs = wydatkiFullData.gigs.filter(g => g.month === m && (g.person === "Patrycja" || g.person === "Maciek")).reduce((acc, curr) => acc + curr.amount, 0);
+
+          const adTotal = (baseItem.adrian || 0) + adrianGigs;
+          const patTotal = (baseItem.patrycja || baseItem.maciek || 0) + patrycjaGigs;
+
+          adrianData.push(adTotal);
+          patrycjaData.push(patTotal);
+          combinedData.push(adTotal + patTotal);
+        });
+
+        // 1. Line Chart
+        const lineCtx = document.getElementById("earningsLineChart");
+        if (lineCtx) {
+          if (earningsChartInstance) earningsChartInstance.destroy();
+          earningsChartInstance = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+              labels: sortedMonths,
+              datasets: [
+                { label: 'Adrian', data: adrianData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Maciek/Patrycja', data: patrycjaData, borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.1)', fill: true, tension: 0.3 },
+                { label: 'Łącznie', data: combinedData, borderColor: '#8b5cf6', borderDash: [5, 5], fill: false, tension: 0.3 }
+              ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+        }
+
+        // 2. Category Pie Chart
+        const categoryTotals = {};
+        wydatkiFullData.expenses.forEach(e => {
+          const cat = e.category || 'Inne';
+          const amt = parseFloat(e.amount_pln || e.amount || 0);
+          categoryTotals[cat] = (categoryTotals[cat] || 0) + amt;
+        });
+
+        const pieCtx = document.getElementById("expenseCategoryPieChart");
+        if (pieCtx) {
+          if (categoryPieChartInstance) categoryPieChartInstance.destroy();
+          categoryPieChartInstance = new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+              labels: Object.keys(categoryTotals),
+              datasets: [{
+                data: Object.values(categoryTotals),
+                backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6', '#10b981', '#f59e0b', '#06b6d4', '#6366f1', '#64748b']
+              }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+        }
+
+        // 3. Payer Bar Chart
+        const adrianExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Adrian").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+        const patrycjaExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Patrycja" || (e.person || e.payer) === "Maciek").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+        const sharedExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Wspólne").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+
+        const barCtx = document.getElementById("expensePayerBarChart");
+        if (barCtx) {
+          if (payerBarChartInstance) payerBarChartInstance.destroy();
+          payerBarChartInstance = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+              labels: ['Adrian', 'Maciek/Patrycja', 'Wspólne'],
+              datasets: [{
+                label: 'Suma wydatków (PLN)',
+                data: [adrianExpSum, patrycjaExpSum, sharedExpSum],
+                backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6'],
+                borderRadius: 8
+              }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+        }
+      } catch (err) {}
     }
 
 
@@ -1983,7 +2731,6 @@
 
 
     // ==================== MODULE 4: ✉️ STOPKI E-MAIL LOGIC ====================
-    // Base64 SVG Icon Generator for guaranteed rendering across browsers & mail clients
     function getBase64Icon(type, colorHex) {
       const color = colorHex || '#1e88e5';
       let svg = '';

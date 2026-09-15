@@ -97,8 +97,10 @@ class TestNewFeatures(unittest.TestCase):
             "type": "PRZYCHÓD", "title": "Secret Maciek Income", "amount_pln": 10000.0
         })
 
-        adrian_items = user_data_mgr.get_user_wydatki("Adrian")
-        maciek_items = user_data_mgr.get_user_wydatki("Maciek")
+        adrian_data = user_data_mgr.get_user_wydatki("Adrian")
+        maciek_data = user_data_mgr.get_user_wydatki("Maciek")
+        adrian_items = adrian_data.get("expenses", []) if isinstance(adrian_data, dict) else adrian_data
+        maciek_items = maciek_data.get("expenses", []) if isinstance(maciek_data, dict) else maciek_data
 
         self.assertTrue(any(x["title"] == "Secret Adrian Income" for x in adrian_items))
         self.assertFalse(any(x["title"] == "Secret Maciek Income" for x in adrian_items))

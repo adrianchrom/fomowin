@@ -184,27 +184,57 @@ class UserDataManager:
         return self.permissions[target]
 
     # WYDATKI DATA (STRICT PER-USER ISOLATION)
-    def get_user_wydatki(self, username: str) -> List[dict]:
+    def get_user_wydatki(self, username: str) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        return self.wydatki.get(canonical, [])
+        val = self.wydatki.get(canonical)
+        if isinstance(val, list):
+            return {
+                "baseIncomes": [
+                    {"id": 1, "month": "2026-08", "adrian": 9500, "maciek": 8000},
+                    {"id": 2, "month": "2026-09", "adrian": 9500, "maciek": 8500}
+                ],
+                "gigs": [
+                    {"id": 1, "person": "Adrian", "title": "Zlecenie projektowe www", "amount": 2500, "month": "2026-09", "date": "2026-09-15"}
+                ],
+                "expenses": val
+            }
+        elif isinstance(val, dict):
+            return val
+        return {
+            "baseIncomes": [
+                {"id": 1, "month": "2026-08", "adrian": 9500, "maciek": 8000},
+                {"id": 2, "month": "2026-09", "adrian": 9500, "maciek": 8500}
+            ],
+            "gigs": [
+                {"id": 1, "person": "Adrian", "title": "Zlecenie projektowe www", "amount": 2500, "month": "2026-09", "date": "2026-09-15"}
+            ],
+            "expenses": []
+        }
+
+    def save_user_wydatki(self, username: str, data: dict) -> dict:
+        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        self.wydatki[canonical] = data
+        self._save_json(WYDATKI_FILE, self.wydatki)
+        return self.wydatki[canonical]
 
     def add_user_wydatki(self, username: str, entry: dict) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        if canonical not in self.wydatki:
-            self.wydatki[canonical] = []
-        
-        entry["id"] = f"wyd-{len(self.wydatki[canonical]) + 101}"
-        self.wydatki[canonical].insert(0, entry)
-        self._save_json(WYDATKI_FILE, self.wydatki)
+        data = self.get_user_wydatki(canonical)
+        if "expenses" not in data:
+            data["expenses"] = []
+        entry["id"] = f"wyd-{len(data['expenses']) + 101}"
+        data["expenses"].insert(0, entry)
+        self.save_user_wydatki(canonical, data)
         return entry
 
     def delete_user_wydatki(self, username: str, entry_id: str) -> bool:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        items = self.wydatki.get(canonical, [])
-        filtered = [x for x in items if x.get("id") != entry_id]
+        data = self.get_user_wydatki(canonical)
+        items = data.get("expenses", [])
+        filtered = [x for x in items if str(x.get("id")) != str(entry_id)]
         if len(filtered) < len(items):
-            self.wydatki[canonical] = filtered
-            self._save_json(WYDATKI_FILE, self.wydatki)
+            data["expenses"] = filtered
+            self.save_user_wydatki(canonical, data)
             return True
         return False
 
