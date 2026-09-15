@@ -3876,54 +3876,22 @@
 
             <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
               <div>
-      const issueDate = document.getElementById('wyc-issue-date').value;
-      const validDate = document.getElementById('wyc-valid-date').value;
-      const clientName = document.getElementById('wyc-client').value.trim();
-      const clientPhone = document.getElementById('wyc-client-phone').value.trim();
-      const clientAddress = document.getElementById('wyc-client-address').value.trim();
-      const projectTitle = document.getElementById('wyc-project').value.trim();
-      const notes = document.getElementById('wyc-notes').value.trim();
-
-      const rows = document.querySelectorAll('.wycena-item-row');
-      const items = [];
-      let totalSum = 0;
-
-      rows.forEach(r => {
-        const desc = r.querySelector('.wyc-item-desc')?.value.trim();
-        const qty = parseFloat(r.querySelector('.wyc-item-qty')?.value || 1);
-        const unit = r.querySelector('.wyc-item-unit')?.value || 'szt.';
-        const price = parseFloat(r.querySelector('.wyc-item-price')?.value || 0);
-        if (desc) {
-          items.push({ description: desc, quantity: qty, unit: unit, unitPrice: price });
-          totalSum += (qty * price);
-        }
-      });
-
-      try {
-        await fetch('/api/wyceny', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            number: qNum,
-            issueDate: issueDate,
-            validDate: validDate,
-            clientName: clientName,
-            clientPhone: clientPhone,
-            clientAddress: clientAddress,
-            projectTitle: projectTitle,
-            items: items,
-            notes: notes,
-            total_netto: totalSum,
-            total_brutto: totalSum,
-            status: "Wysłano",
-            date: issueDate
-          })
-        });
-        document.getElementById('wyc-client').value = '';
-        document.getElementById('wyc-project').value = '';
-        generateNewQuoteNumberUI();
-        loadWycenyData();
-      } catch (e) {}
+                <span class="text-slate-400">Suma:</span>
+                <span class="font-bold text-slate-900 ml-1 font-mono">${((q.items || []).reduce((sum, item) => sum + ((item.unitPrice || item.unit_price || 0) * (item.quantity || item.qty || 1)), 0)).toFixed(2)} PLN</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="previewSavedWycenaPdf('${q.id}')" class="btn-anim bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded-xl font-bold border border-purple-200">
+                  📄 PDF
+                </button>
+                <button onclick="handleDeleteWycena('${q.id}')" class="btn-anim text-rose-500 hover:text-rose-700 p-1.5">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      safeCreateIcons();
     }
 
     async function previewSavedWycenaPdf(id) {
