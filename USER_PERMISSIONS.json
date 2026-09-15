@@ -1,0 +1,18 @@
+{
+  "Adrian": {
+    "fomo": true,
+    "wydatki": true,
+    "poi": true,
+    "wyceny": true,
+    "stopki_email": true,
+    "is_admin": true
+  },
+  "Maciek": {
+    "fomo": true,
+    "wydatki": true,
+    "poi": false,
+    "wyceny": true,
+    "stopki_email": false,
+    "is_admin": false
+  }
+}

@@ -70,5 +70,45 @@ class TestNewFeatures(unittest.TestCase):
         removed = alerts_manager.remove_alert(added["id"])
         self.assertTrue(removed)
 
+    def test_user_permissions(self):
+        from monitors.user_data_manager import user_data_mgr
+        adrian_perms = user_data_mgr.get_user_permissions("Adrian")
+        self.assertTrue(adrian_perms["is_admin"])
+        self.assertTrue(adrian_perms["wydatki"])
+        self.assertTrue(adrian_perms["wyceny"])
+
+        maciek_perms = user_data_mgr.get_user_permissions("Maciek")
+        self.assertFalse(maciek_perms["is_admin"])
+        self.assertTrue(maciek_perms["fomo"])
+
+        # Update Maciek's permissions
+        updated = user_data_mgr.update_maciek_permissions({"wydatki": True, "wyceny": True})
+        self.assertTrue(updated["wydatki"])
+        self.assertTrue(updated["wyceny"])
+
+    def test_data_privacy_isolation(self):
+        from monitors.user_data_manager import user_data_mgr
+        # Add Adrian entry
+        adrian_entry = user_data_mgr.add_user_wydatki("Adrian", {
+            "type": "PRZYCHÓD", "title": "Secret Adrian Income", "amount_pln": 50000.0
+        })
+        # Add Maciek entry
+        maciek_entry = user_data_mgr.add_user_wydatki("Maciek", {
+            "type": "PRZYCHÓD", "title": "Secret Maciek Income", "amount_pln": 10000.0
+        })
+
+        adrian_items = user_data_mgr.get_user_wydatki("Adrian")
+        maciek_items = user_data_mgr.get_user_wydatki("Maciek")
+
+        self.assertTrue(any(x["title"] == "Secret Adrian Income" for x in adrian_items))
+        self.assertFalse(any(x["title"] == "Secret Maciek Income" for x in adrian_items))
+
+        self.assertTrue(any(x["title"] == "Secret Maciek Income" for x in maciek_items))
+        self.assertFalse(any(x["title"] == "Secret Adrian Income" for x in maciek_items))
+
+        # Cleanup
+        user_data_mgr.delete_user_wydatki("Adrian", adrian_entry["id"])
+        user_data_mgr.delete_user_wydatki("Maciek", maciek_entry["id"])
+
 if __name__ == "__main__":
     unittest.main()

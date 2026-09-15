@@ -1,0 +1,47 @@
+{
+  "Adrian": [
+    {
+      "id": "wyc-101",
+      "client_name": "Crypto Fund Alpha",
+      "project_title": "Dedykowany Bot Sygnałowy FOMO Engine",
+      "items": [
+        {
+          "description": "Moduł skanera 0-30m",
+          "qty": 1,
+          "unit_price": 8000.0
+        },
+        {
+          "description": "Integracja RPC & Insiders Feed",
+          "qty": 1,
+          "unit_price": 4500.0
+        }
+      ],
+      "tax_rate": 23.0,
+      "total_netto": 12500.0,
+      "total_brutto": 15375.0,
+      "status": "Zaakceptowano",
+      "date": "2026-09-11",
+      "notes": "Warunki płatności 50/50"
+    }
+  ],
+  "Maciek": [
+    {
+      "id": "wyc-201",
+      "client_name": "MHF Trading Group",
+      "project_title": "Audyt Bezpieczeństwa Kontraktów CA",
+      "items": [
+        {
+          "description": "Analiza Honeypot & Anti-rug",
+          "qty": 1,
+          "unit_price": 3500.0
+        }
+      ],
+      "tax_rate": 23.0,
+      "total_netto": 3500.0,
+      "total_brutto": 4305.0,
+      "status": "Wysłano do Klienta",
+      "date": "2026-09-13",
+      "notes": "Oczekuje na akceptację dyrektora"
+    }
+  ]
+}

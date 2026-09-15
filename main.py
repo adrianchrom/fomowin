@@ -13,6 +13,7 @@ from monitors.whale_tracker import whale_tracker
 from monitors.risk_analysis_engine import risk_engine
 from monitors.auth_manager import auth_manager
 from monitors.alerts_manager import alerts_manager
+from monitors.user_data_manager import user_data_mgr
 from notifiers.telegram_notifier import telegram_notifier
 from notifiers.discord_notifier import discord_notifier
 from notifiers.console_notifier import console_notifier
@@ -149,7 +150,82 @@ async def logout_api(request: Request):
 @app.get("/api/user")
 async def get_current_user(request: Request):
     user = getattr(request.state, "user", None)
-    return {"authenticated": True, "username": user}
+    perms = user_data_mgr.get_user_permissions(user) if user else {}
+    return {"authenticated": True, "username": user, "permissions": perms}
+
+@app.get("/api/permissions")
+async def get_user_permissions_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_permissions(user)
+
+@app.get("/api/admin/permissions")
+async def get_admin_permissions_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    if user.lower() != "adrian":
+        return JSONResponse(status_code=403, content={"detail": "Brak uprawnień administratora (Dostęp tylko dla Adriana)."})
+    return {"maciek": user_data_mgr.get_user_permissions("Maciek")}
+
+@app.post("/api/admin/permissions")
+async def update_admin_permissions_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    if user.lower() != "adrian":
+        return JSONResponse(status_code=403, content={"detail": "Brak uprawnień administratora (Dostęp tylko dla Adriana)."})
+    updated = user_data_mgr.update_maciek_permissions(data)
+    return {"success": True, "permissions": updated}
+
+# WYDATKI ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/wydatki")
+async def get_wydatki_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_wydatki(user)
+
+@app.post("/api/wydatki")
+async def add_wydatki_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    res = user_data_mgr.add_user_wydatki(user, data)
+    return {"success": True, "entry": res}
+
+@app.delete("/api/wydatki/{entry_id}")
+async def delete_wydatki_route(request: Request, entry_id: str):
+    user = getattr(request.state, "user", "Maciek")
+    success = user_data_mgr.delete_user_wydatki(user, entry_id)
+    return {"success": success}
+
+# POI ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/poi")
+async def get_poi_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_poi(user)
+
+@app.post("/api/poi")
+async def add_poi_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    res = user_data_mgr.add_user_poi(user, data)
+    return {"success": True, "entry": res}
+
+@app.delete("/api/poi/{entry_id}")
+async def delete_poi_route(request: Request, entry_id: str):
+    user = getattr(request.state, "user", "Maciek")
+    success = user_data_mgr.delete_user_poi(user, entry_id)
+    return {"success": success}
+
+# WYCENY ENDPOINTS (STRICT PER-USER ISOLATION)
+@app.get("/api/wyceny")
+async def get_wyceny_route(request: Request):
+    user = getattr(request.state, "user", "Maciek")
+    return user_data_mgr.get_user_wyceny(user)
+
+@app.post("/api/wyceny")
+async def add_wyceny_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", "Maciek")
+    res = user_data_mgr.add_user_wyceny(user, data)
+    return {"success": True, "entry": res}
+
+@app.delete("/api/wyceny/{entry_id}")
+async def delete_wyceny_route(request: Request, entry_id: str):
+    user = getattr(request.state, "user", "Maciek")
+    success = user_data_mgr.delete_user_wyceny(user, entry_id)
+    return {"success": success}
 
 # Main Application Routes
 @app.get("/", response_class=HTMLResponse)

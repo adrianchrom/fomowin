@@ -1,0 +1,24 @@
+{
+  "Adrian": [
+    {
+      "id": "poi-101",
+      "name": "Główna Serwerownia RPC",
+      "category": "Serwerownia",
+      "address": "Warszawa, ul. Prosta 20",
+      "coords": "52.2300, 20.9900",
+      "status": "Aktywny",
+      "notes": "Węzeł dedykowany dla skanera Solana & Base"
+    }
+  ],
+  "Maciek": [
+    {
+      "id": "poi-201",
+      "name": "Biuro Klienta FOMO Trade",
+      "category": "Klient",
+      "address": "Kraków, Rynek Główny 1",
+      "coords": "50.0614, 19.9365",
+      "status": "Planowany",
+      "notes": "Spotkanie w sprawie wdrożenia alertów"
+    }
+  ]
+}

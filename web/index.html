@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FOMO Whale & Signal Engine</title>
+  <title>FOMO Executive Suite • Signal & Enterprise Platform</title>
   <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,36 +88,16 @@
       <div class="w-full lg:w-auto flex flex-col sm:flex-row items-center sm:items-start lg:items-center text-center sm:text-left gap-3">
         <div>
           <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <h1 class="text-base font-extrabold tracking-tight text-white">FOMO Signal Engine</h1>
+            <h1 class="text-base font-extrabold tracking-tight text-white">FOMO Executive Suite</h1>
             <span class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full font-mono font-semibold">
-              0-30 MIN AGE • &ge; 1 HOLDER • $2,500+ BUY
+              ENTERPRISE PLATFORM
             </span>
           </div>
           <p class="text-xs text-blue-300 font-semibold flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-0.5">
             <span id="header-greeting" onclick="toggleUserProfileModal()" class="cursor-pointer hover:text-blue-200 hover:underline transition">👋 HEJ...</span>
-            <span class="text-slate-400 font-normal">| Monitoring coinów &le; 30m, Insiderzy, Skaner CA, Trade Risk Engine</span>
+            <span class="text-slate-400 font-normal">| Integrated Apps: FOMO, Wydatki, POI, Wyceny, Stopki E-mail</span>
           </p>
         </div>
-      </div>
-
-      <!-- 4 Tab Navigation Buttons -->
-      <div class="w-full lg:w-auto flex flex-wrap justify-center items-center gap-1.5 sm:gap-2 bg-slate-950/90 p-1.5 rounded-xl border border-blue-900/40">
-        <button id="tab-live-btn" onclick="switchTab('live')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition bg-blue-600/30 text-blue-200 border border-blue-500/50 shadow">
-          <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
-          🔥 Sygnały Live
-        </button>
-        <button id="tab-insiders-btn" onclick="switchTab('insiders')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
-          <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
-          🕵️ Insiderzy
-        </button>
-        <button id="tab-scanner-btn" onclick="switchTab('scanner')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
-          <i data-lucide="search" class="w-4 h-4 text-cyan-400"></i>
-          🔍 Skaner Tokena
-        </button>
-        <button id="tab-alerts-btn" onclick="switchTab('alerts')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
-          <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i>
-          🔔 Alerty Market Cap
-        </button>
       </div>
 
       <!-- Right Header Actions -->
@@ -157,20 +137,804 @@
 
   <main class="max-w-7xl mx-auto px-3 sm:px-6 mt-6 space-y-6">
 
+    <!-- TOP EXECUTIVE SUITE APP NAVIGATION BAR -->
+    <div class="glass-card p-2 rounded-2xl flex flex-wrap justify-between items-center gap-2 border border-blue-900/60 shadow-xl bg-slate-950/90 animate-emerge">
+      <div class="flex flex-wrap items-center gap-1.5 w-full lg:w-auto">
+        <button id="app-btn-fomo" onclick="switchApp('fomo')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-lg border border-blue-400/50">
+          <i data-lucide="zap" class="w-4 h-4 text-yellow-300"></i>
+          <span>⚡ FOMO</span>
+        </button>
+
+        <button id="app-btn-wydatki" onclick="switchApp('wydatki')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+          <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+          <span>💰 WYDATKI</span>
+          <span id="lock-badge-wydatki" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+        </button>
+
+        <button id="app-btn-poi" onclick="switchApp('poi')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+          <i data-lucide="map-pin" class="w-4 h-4 text-amber-400"></i>
+          <span>📍 POI</span>
+          <span id="lock-badge-poi" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+        </button>
+
+        <button id="app-btn-wyceny" onclick="switchApp('wyceny')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+          <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
+          <span>🏷️ WYCENY</span>
+          <span id="lock-badge-wyceny" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+        </button>
+
+        <button id="app-btn-stopki_email" onclick="switchApp('stopki_email')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+          <i data-lucide="mail" class="w-4 h-4 text-cyan-400"></i>
+          <span>✉️ STOPKI E-MAIL</span>
+          <span id="lock-badge-stopki_email" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
+        </button>
+      </div>
+
+      <!-- Admin Panel Access (Only for Adrian) -->
+      <div id="admin-panel-nav-box" class="hidden flex items-center">
+        <button id="app-btn-admin" onclick="switchApp('admin')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-purple-600/30 text-purple-200 border border-purple-500/40 hover:bg-purple-600 hover:text-white">
+          <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+          <span>⚙️ PANEL ADMINA</span>
+        </button>
+      </div>
+    </div>
+
     <!-- GREETING TOP BANNER WITH ENTRANCE ANIMATION -->
     <div id="greeting-banner" class="animate-emerge p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-4 border border-blue-900/40 shadow-2xl backdrop-blur-2xl bg-slate-950/80 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-800/10 to-slate-950 pointer-events-none"></div>
       <div class="relative z-10 flex items-center gap-4 text-center sm:text-left">
         <div>
           <h2 id="greeting-title" class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 tracking-tight drop-shadow-md">HEJ...</h2>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1">FOMO Signal Engine • Wiek tokenów: 0-30m • Min. Buy: $2,500 USD • Opisy Traderów</p>
+          <p id="greeting-subtitle" class="text-xs sm:text-sm text-slate-300 mt-1">FOMO Signal Engine • Moduły: Wydatki, POI, Wyceny, Stopki E-mail, Panel Admina</p>
         </div>
       </div>
       <div class="relative z-10 flex items-center gap-2 text-xs font-mono bg-slate-950 px-4 py-2 rounded-xl border border-blue-900/60 text-blue-400 shrink-0">
         <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
-        <span>SYSTEM AKTYWNY</span>
+        <span id="system-status-text">SYSTEM AKTYWNY</span>
       </div>
     </div>
+
+
+    <!-- ==================== MODULE 1: ⚡ FOMO ==================== -->
+    <div id="app-container-fomo" class="space-y-6">
+      
+      <!-- FOMO Sub-Tab Navigation Toolbar -->
+      <div class="glass-card p-2 rounded-2xl flex flex-wrap justify-center sm:justify-start items-center gap-2 border border-blue-900/50 bg-slate-950/80">
+        <button id="tab-live-btn" onclick="switchTab('live')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition bg-blue-600/30 text-blue-200 border border-blue-500/50 shadow">
+          <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
+          🔥 Sygnały Live
+        </button>
+        <button id="tab-insiders-btn" onclick="switchTab('insiders')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+          🕵️ Insiderzy
+        </button>
+        <button id="tab-scanner-btn" onclick="switchTab('scanner')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          <i data-lucide="search" class="w-4 h-4 text-cyan-400"></i>
+          🔍 Skaner Tokena
+        </button>
+        <button id="tab-alerts-btn" onclick="switchTab('alerts')" class="btn-anim flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i>
+          🔔 Alerty Market Cap
+        </button>
+      </div>
+
+      <!-- FOMO SUB-TAB 1: LIVE SIGNALS -->
+      <div id="tab-live-content" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div class="glass-card p-4 rounded-xl animate-emerge">
+            <div class="flex justify-between items-start">
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Maksymalny Wiek</p>
+              <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="clock" class="w-4 h-4"></i></div>
+            </div>
+            <p class="text-xl font-bold text-blue-400 mt-1 font-mono">0 - 30 Minut</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Starsze coinie (&gt;30m) odrzucone</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl animate-emerge">
+            <div class="flex justify-between items-start">
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Min. Kwota Buya</p>
+              <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="dollar-sign" class="w-4 h-4"></i></div>
+            </div>
+            <p class="text-xl font-bold text-blue-400 mt-1 font-mono">$2,500 USD+</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Próg wejścia kupującego</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl animate-emerge">
+            <div class="flex justify-between items-start">
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Warunek Holderów</p>
+              <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="users" class="w-4 h-4"></i></div>
+            </div>
+            <p class="text-xl font-bold text-blue-400 mt-1 font-mono">&ge; 1 Active Holder</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Zweryfikowana płynność</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl animate-emerge">
+            <div class="flex justify-between items-start">
+              <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Skanowane Tokeny</p>
+              <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+            </div>
+            <p id="stat-tokens-count" class="text-xl font-bold text-blue-400 mt-1 font-mono">0</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Robinhood, Base, Solana</p>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl flex flex-wrap justify-between items-center gap-3 animate-emerge">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs w-full lg:w-auto">
+            <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="filter" class="w-4 h-4 text-blue-400"></i> Filtry:
+            </span>
+            <select id="filter-sort" onchange="renderAll()" class="bg-blue-950 border border-blue-500/50 text-blue-200 font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-400">
+              <option value="age_asc">⏱️ Sortuj: Najnowsze (Czas dodania)</option>
+              <option value="mcap_desc">💰 Sortuj: Market Cap (Najwyższy)</option>
+              <option value="holders_desc">👥 Sortuj: Holdery (Najwięcej)</option>
+              <option value="buy_desc">🚀 Sortuj: Największy Buy ($)</option>
+            </select>
+            <select id="filter-holders" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
+              <option value="all">Wszyscy holdery (&ge; 1)</option>
+              <option value="10">&ge; 10 Holderów</option>
+              <option value="50">&ge; 50 Holderów</option>
+              <option value="100">&ge; 100 Holderów</option>
+            </select>
+            <select id="filter-mcap" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
+              <option value="all">Wszystkie Market Cap</option>
+              <option value="50000">MCap &ge; $50K</option>
+              <option value="100000">MCap &ge; $100K</option>
+              <option value="250000">MCap &ge; $250K</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+        <div class="glass-card rounded-xl p-4 space-y-3 overflow-hidden animate-emerge">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i>
+            Wszystkie Śledzone Coiny (&le; 30 min, &ge; 1 Holder)
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+              <thead>
+                <tr class="border-b border-blue-900/40 text-slate-400 font-semibold uppercase tracking-wider">
+                  <th class="py-2.5 px-3">Token / Ticker</th>
+                  <th class="py-2.5 px-3">Sieć</th>
+                  <th class="py-2.5 px-3">Wiek</th>
+                  <th class="py-2.5 px-3">Holdery</th>
+                  <th class="py-2.5 px-3">Wolumen 5m</th>
+                  <th class="py-2.5 px-3">Ostatni Buy</th>
+                  <th class="py-2.5 px-3">Opis Tradera</th>
+                  <th class="py-2.5 px-3 text-right">Akcja</th>
+                </tr>
+              </thead>
+              <tbody id="tokens-table-body" class="divide-y divide-blue-900/30 text-slate-300">
+                <tr><td colspan="8" class="py-6 text-center text-slate-500 font-mono">Ładowanie danych...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOMO SUB-TAB 2: INSIDERZY -->
+      <div id="tab-insiders-content" class="hidden space-y-6">
+        <div class="glass-card p-5 rounded-3xl border border-blue-900/50 bg-slate-950 flex flex-col sm:flex-row justify-between items-center gap-4 animate-emerge">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="users" class="w-5 h-5 text-purple-400"></i>
+              Dedykowany Feed Insiderów &amp; Smart-Money (Ostatnie 24h)
+            </h3>
+            <p class="text-xs text-purple-300 font-semibold mt-0.5">🔥 Wyświetla zakupy śledzonych insiderów i smart-money</p>
+          </div>
+        </div>
+
+        <div id="insider-manager-box" class="glass-card p-6 rounded-3xl border border-purple-500/30 space-y-4 animate-emerge">
+          <h4 class="text-sm font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
+            <i data-lucide="user-plus" class="w-4 h-4 text-purple-400"></i>
+            Dodaj Nowego Insidera (Link z X / Twitter, fomo.family lub @handle)
+          </h4>
+          <form onsubmit="handleAddInsiderSubmit(event)" class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="insider-input" placeholder="Wklej link: https://x.com/nick lub https://fomo.family/profile/... lub @handle" required class="bg-slate-950 border border-blue-900/60 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 flex-1 font-mono">
+            <button type="submit" class="btn-anim bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs shrink-0">
+              Dodaj do Śledzonych
+            </button>
+          </form>
+          <div id="insider-add-error" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-2.5 rounded-xl text-xs">
+            Nieprawidłowy link lub uchwyt insidera.
+          </div>
+          <div class="pt-2">
+            <h5 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Aktywnie Obserwowane Konta:</h5>
+            <div id="tracked-insiders-list" class="flex flex-wrap gap-2 text-xs"></div>
+          </div>
+        </div>
+
+        <div id="insider-signals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- FOMO SUB-TAB 3: SKANER TOKENA -->
+      <div id="tab-scanner-content" class="hidden space-y-6">
+        <div class="glass-card p-6 sm:p-10 rounded-3xl border border-blue-900/50 max-w-3xl mx-auto space-y-4 text-center shadow-2xl animate-emerge">
+          <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/40 flex items-center justify-center mx-auto text-cyan-400 text-2xl">
+            <i data-lucide="search" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Skaner Tokena &amp; Honeypot Checker</h2>
+            <p class="text-xs text-slate-400 mt-1">Wklej link z fomo.family, DexScreener, pump.fun lub adres kontraktu CA / ticker (PNUT, WIF, 4STOCKS...)</p>
+          </div>
+          <form onsubmit="handleTokenScanSubmit(event)" class="space-y-3">
+            <div class="relative">
+              <input type="text" id="scanner-input" placeholder="Wklej link lub CA / Ticker..." required class="w-full bg-slate-950 border border-blue-900/80 rounded-2xl px-4 py-4 pl-12 pr-24 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition font-mono">
+              <i data-lucide="link" class="w-5 h-5 text-blue-400 absolute left-4 top-4"></i>
+              <button type="button" onclick="clearScannerInput()" class="absolute right-3 top-3 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 btn-anim">
+                Wyczyść
+              </button>
+            </div>
+            <div id="scanner-error-box" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-3 rounded-xl text-xs font-semibold text-center"></div>
+            <button type="submit" id="scanner-submit-btn" class="btn-anim w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-sm">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Sprawdź ryzyko</span>
+            </button>
+          </form>
+        </div>
+        <div id="scanner-result-container" class="hidden max-w-3xl mx-auto animate-emerge"></div>
+      </div>
+
+      <!-- FOMO SUB-TAB 4: ALERTY MARKET CAP -->
+      <div id="tab-alerts-content" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="glass-card p-6 rounded-2xl border border-blue-900/50 space-y-4 animate-emerge">
+            <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
+              <i data-lucide="bell-plus" class="w-5 h-5 text-amber-400"></i>
+              Ustaw Nowy Alert Market Cap
+            </h3>
+            <form onsubmit="handleCreateAlertSubmit(event)" class="space-y-4 text-xs">
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Nazwa / Ticker Tokena:</label>
+                <input type="text" id="alert-token-name" placeholder="np. RUNNER ($RUNNER)" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Adres Kontraktu (CA):</label>
+                <input type="text" id="alert-ca" placeholder="Wklej CA tokena..." required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none font-mono">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Typ Alertu:</label>
+                <select id="alert-type" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-blue-500 focus:outline-none">
+                  <option value="BUY_UNDER">🛒 KUPNO: Gdy Market Cap SPADNIE poniżej kwoty</option>
+                  <option value="SELL_OVER">💰 SPRZEDAŻ: Gdy Market Cap WZROŚNIE powyżej kwoty</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Docelowa Kwota Market Cap ($ USD):</label>
+                <input type="number" id="alert-target-mcap" step="500" placeholder="np. 50000" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none font-mono">
+              </div>
+              <button type="submit" class="btn-anim w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Dodaj Alert Market Cap
+              </button>
+            </form>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border border-blue-900/50 lg:col-span-2 space-y-4 animate-emerge">
+            <h3 class="text-base font-bold text-white flex items-center justify-between border-b border-blue-900/40 pb-3">
+              <span class="flex items-center gap-2">
+                <i data-lucide="list-checks" class="w-5 h-5 text-blue-400"></i>
+                Aktywne Alerty Price / Market Cap
+              </span>
+              <span id="alerts-count-badge" class="text-xs font-mono bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2.5 py-0.5 rounded-full">0 Alertów</span>
+            </h3>
+            <div id="alerts-list" class="space-y-3">
+              <div class="text-center py-10 text-slate-500 text-xs">Brak aktywnych alertów... Ustaw swój pierwszy alert obok.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 2: 💰 WYDATKI ==================== -->
+    <div id="app-container-wydatki" class="hidden space-y-6">
+      
+      <!-- User Data Privacy Banner -->
+      <div class="bg-emerald-950/40 border border-emerald-500/40 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-emerald-300 font-mono animate-emerge">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+          <span>🔒 <b>PRYWATNOŚĆ DANYCH:</b> Wpisy przychodów i wydatków konta <b id="wydatki-user-name" class="text-white">...</b> są w 100% prywatne i widoczne tylko dla Ciebie.</span>
+        </div>
+      </div>
+
+      <!-- Wydatki Stat KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5 rounded-2xl animate-emerge">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Przychody Całkowite</p>
+          <p id="kpi-przychody" class="text-2xl font-black text-emerald-400 mt-1 font-mono">0.00 PLN</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Suma wpływów</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl animate-emerge">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Wydatki Całkowite</p>
+          <p id="kpi-wydatki" class="text-2xl font-black text-rose-400 mt-1 font-mono">0.00 PLN</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Suma kosztów</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl animate-emerge">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saldo (Czysty Zysk)</p>
+          <p id="kpi-saldo" class="text-2xl font-black text-blue-400 mt-1 font-mono">0.00 PLN</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Bilans finansowy</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl animate-emerge">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Liczba Transakcji</p>
+          <p id="kpi-count" class="text-2xl font-black text-slate-200 mt-1 font-mono">0</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Zarejestrowane wpisy</p>
+        </div>
+      </div>
+
+      <!-- Action Bar & Add Form -->
+      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 space-y-4 animate-emerge">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-blue-900/40 pb-4">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i>
+            Dodaj Nową Transakcję (Przychód lub Wydatek)
+          </h3>
+        </div>
+
+        <form onsubmit="handleAddWydatkiSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Typ Transakcji:</label>
+            <select id="wyd-type" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 font-bold focus:border-emerald-500 focus:outline-none">
+              <option value="PRZYCHÓD">💵 PRZYCHÓD (Wpływ)</option>
+              <option value="WYDATEK">💸 WYDATEK (Koszt)</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 font-semibold mb-1">Tytuł / Opis:</label>
+            <input type="text" id="wyd-title" placeholder="np. Wdrożenie systemu / Opłata serwera" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Kategoria:</label>
+            <select id="wyd-category" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-emerald-500 focus:outline-none">
+              <option value="Usługi">Usługi / Zlecenia</option>
+              <option value="Sprzedaż">Sprzedaż</option>
+              <option value="Krypto/Inwestycje">Krypto / Inwestycje</option>
+              <option value="Biuro/Sprzęt">Biuro / Sprzęt / Infrastructure</option>
+              <option value="Podatki">Podatki / Księgowość</option>
+              <option value="Inne">Inne</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Kwota (PLN):</label>
+            <input type="number" id="wyd-amount" step="0.01" placeholder="np. 2500.00" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none font-mono">
+          </div>
+
+          <div class="sm:col-span-2 lg:col-span-4">
+            <label class="block text-slate-300 font-semibold mb-1">Dodatkowa Notatka / Uwagi:</label>
+            <input type="text" id="wyd-note" placeholder="np. Numer faktury, ID przelewu lub opis..." class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none">
+          </div>
+
+          <div class="flex items-end">
+            <button type="submit" class="btn-anim w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              Zapisz Wpis
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Transactions List Table -->
+      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 space-y-4 animate-emerge">
+        <h3 class="text-base font-bold text-white flex items-center justify-between border-b border-blue-900/40 pb-3">
+          <span class="flex items-center gap-2">
+            <i data-lucide="list" class="w-5 h-5 text-blue-400"></i>
+            Historia Przychodów i Wydatków
+          </span>
+          <span class="text-xs text-slate-400 font-mono">Synchronizowane z kontem</span>
+        </h3>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead>
+              <tr class="border-b border-blue-900/40 text-slate-400 font-semibold uppercase tracking-wider">
+                <th class="py-3 px-4">Typ</th>
+                <th class="py-3 px-4">Tytuł / Opis</th>
+                <th class="py-3 px-4">Kategoria</th>
+                <th class="py-3 px-4">Data</th>
+                <th class="py-3 px-4">Kwota PLN</th>
+                <th class="py-3 px-4">Uwagi</th>
+                <th class="py-3 px-4 text-right">Akcja</th>
+              </tr>
+            </thead>
+            <tbody id="wydatki-table-body" class="divide-y divide-blue-900/30 text-slate-300">
+              <tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">Ładowanie wpisów...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 3: 📍 POI ==================== -->
+    <div id="app-container-poi" class="hidden space-y-6">
+      
+      <!-- User Data Privacy Banner -->
+      <div class="bg-amber-950/40 border border-amber-500/40 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-amber-300 font-mono animate-emerge">
+        <div class="flex items-center gap-2">
+          <i data-lucide="map-pin" class="w-5 h-5 text-amber-400 shrink-0"></i>
+          <span>🔒 <b>PRYWATNOŚĆ DANYCH:</b> Notatki i lokalizacje POI konta <b id="poi-user-name" class="text-white">...</b> są przypisane wyłącznie do Twojego profilu.</span>
+        </div>
+      </div>
+
+      <!-- Add POI Form -->
+      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 space-y-4 animate-emerge">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
+          <i data-lucide="map-pin" class="w-5 h-5 text-amber-400"></i>
+          Dodaj Nowy Punkt POI (Lokalizacja / Węzeł / Spotkanie)
+        </h3>
+
+        <form onsubmit="handleAddPoiSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 font-semibold mb-1">Nazwa Punktu / Tytuł:</label>
+            <input type="text" id="poi-name" placeholder="np. Główna Serwerownia / Biuro Klienta X" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Kategoria:</label>
+            <select id="poi-category" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-amber-500 focus:outline-none">
+              <option value="Serwerownia">Serwerownia / Infrastruktura</option>
+              <option value="Klient">Klient / Biuro</option>
+              <option value="Spotkanie">Spotkanie / Event</option>
+              <option value="Spot Terenowy">Spot Terenowy</option>
+              <option value="Inne">Inne</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Status POI:</label>
+            <select id="poi-status" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-amber-500 focus:outline-none font-bold">
+              <option value="Aktywny">🟢 Aktywny</option>
+              <option value="Planowany">🟡 Planowany</option>
+              <option value="Zakończony">⚪ Zakończony</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 font-semibold mb-1">Adres lub Współrzędne GPS:</label>
+            <input type="text" id="poi-address" placeholder="np. Warszawa, ul. Prosta 20 lub 52.2300, 20.9900" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none font-mono">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 font-semibold mb-1">Opis / Notatki Terenowe:</label>
+            <input type="text" id="poi-notes" placeholder="np. Dostęp 24/7, kod do bramy lub szczegóły węzła..." class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none">
+          </div>
+
+          <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
+            <button type="submit" class="btn-anim bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              Zapisz Punkt POI
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- POI Cards Grid -->
+      <div id="poi-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 4: 🏷️ WYCENY ==================== -->
+    <div id="app-container-wyceny" class="hidden space-y-6">
+      
+      <!-- User Data Privacy Banner -->
+      <div class="bg-purple-950/40 border border-purple-500/40 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-purple-300 font-mono animate-emerge">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-purple-400 shrink-0"></i>
+          <span>🔒 <b>PRYWATNOŚĆ DANYCH:</b> Wyceny i budżety kosztorysowe konta <b id="wyceny-user-name" class="text-white">...</b> są w 100% prywatne i widoczne tylko dla Ciebie.</span>
+        </div>
+      </div>
+
+      <!-- Create Wycena Form -->
+      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 space-y-4 animate-emerge">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
+          <i data-lucide="file-plus" class="w-5 h-5 text-purple-400"></i>
+          Stwórz Nową Wycenę / Kosztorys dla Klienta
+        </h3>
+
+        <form onsubmit="handleAddWycenySubmit(event)" class="space-y-4 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Nazwa Klienta / Firma:</label>
+              <input type="text" id="wyc-client" placeholder="np. Crypto Fund Alpha" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Tytuł Projektu / Usługi:</label>
+              <input type="text" id="wyc-title" placeholder="np. Dedykowany Bot Sygnałowy FOMO" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Status Wyceny:</label>
+              <select id="wyc-status" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-purple-500 focus:outline-none font-bold">
+                <option value="Szkic">📝 Szkic</option>
+                <option value="Wysłano do Klienta">📨 Wysłano do Klienta</option>
+                <option value="Zaakceptowano">✅ Zaakceptowano</option>
+                <option value="Odrzucono">❌ Odrzucono</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic Items List -->
+          <div class="space-y-2 bg-slate-950 p-4 rounded-2xl border border-blue-900/40">
+            <div class="flex justify-between items-center">
+              <label class="block text-slate-300 font-semibold">Pozycje Kosztorysowe:</label>
+              <button type="button" onclick="addWycenaItemRow()" class="text-purple-400 hover:text-purple-200 font-bold text-xs flex items-center gap-1 btn-anim">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Dodaj Pozycję
+              </button>
+            </div>
+            <div id="wycena-items-container" class="space-y-2">
+              <div class="grid grid-cols-1 sm:grid-cols-6 gap-2 wycena-item-row">
+                <input type="text" placeholder="Opis pozycji..." required class="sm:col-span-3 item-desc bg-slate-900 border border-blue-900/60 rounded-lg px-3 py-2 text-white">
+                <input type="number" placeholder="Ilość" value="1" min="1" required class="item-qty bg-slate-900 border border-blue-900/60 rounded-lg px-3 py-2 text-white font-mono">
+                <input type="number" placeholder="Cena Netto (PLN)" step="0.01" required class="sm:col-span-2 item-price bg-slate-900 border border-blue-900/60 rounded-lg px-3 py-2 text-white font-mono">
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Stawka VAT (%):</label>
+              <input type="number" id="wyc-tax" value="23" step="1" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white font-mono focus:border-purple-500 focus:outline-none">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-slate-300 font-semibold mb-1">Uwagi / Warunki Wyceny:</label>
+              <input type="text" id="wyc-notes" placeholder="np. Termin realizacji 14 dni, płatność 50/50" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-purple-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="btn-anim bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              Zapisz Wycenę
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Wyceny Cards Grid -->
+      <div id="wyceny-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 5: ✉️ STOPKI E-MAIL ==================== -->
+    <div id="app-container-stopki_email" class="hidden space-y-6">
+      
+      <div class="glass-card p-6 sm:p-8 rounded-3xl border border-blue-900/50 space-y-6 animate-emerge">
+        <div class="flex justify-between items-center border-b border-blue-900/40 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="mail" class="w-6 h-6 text-cyan-400"></i>
+              Generator Profesjonalnych Stopek E-mail HTML
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Stwórz elegancką stopkę z logo, danymi kontaktowymi i przyciskami social media gotową do wklejenia w Gmail / Outlook</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Generator Form -->
+          <div class="space-y-3 text-xs bg-slate-950 p-5 rounded-2xl border border-blue-900/50">
+            <h3 class="font-bold text-white text-sm border-b border-blue-900/40 pb-2">Dane Osobowe i Firmowe:</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Imię i Nazwisko:</label>
+                <input type="text" id="sig-fullname" value="Adrian Chrom" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Stanowisko / Tytuł:</label>
+                <input type="text" id="sig-jobtitle" value="CEO & Lead Systems Architect" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Firma / Marka:</label>
+                <input type="text" id="sig-company" value="FOMO Technologies Ltd." oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Telefon:</label>
+                <input type="text" id="sig-phone" value="+48 600 000 000" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Adres E-mail:</label>
+                <input type="email" id="sig-email" value="adrian@fomo.family" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Strona WWW:</label>
+                <input type="text" id="sig-website" value="https://fomo.family" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-slate-300 font-semibold mb-1">Adres Siedziby / Biura:</label>
+              <input type="text" id="sig-address" value="Warszawa, Polska" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Kolor Akcentu:</label>
+                <input type="color" id="sig-color" value="#2563eb" oninput="updateEmailSignaturePreview()" class="w-full h-9 bg-slate-900 border border-blue-900/60 rounded-xl p-1 cursor-pointer">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">URL Logo Firma (PNG):</label>
+                <input type="text" id="sig-logo" value="https://fomo.family/favicon.ico" oninput="updateEmailSignaturePreview()" class="w-full bg-slate-900 border border-blue-900/60 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Preview & Copy Controls -->
+          <div class="space-y-4">
+            <h3 class="font-bold text-white text-sm flex items-center justify-between border-b border-blue-900/40 pb-2">
+              <span>Podgląd Na Żywo Stopki:</span>
+              <span class="text-xs text-cyan-400 font-mono">HTML Email Ready</span>
+            </h3>
+
+            <div class="bg-white text-slate-900 p-6 rounded-2xl border-2 border-cyan-500/40 shadow-2xl overflow-x-auto min-h-[200px]" id="email-signature-preview-target">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 pt-2">
+              <button onclick="copyEmailSignatureVisual()" class="btn-anim flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+                Kopiuj Podgląd (Dla Gmail / Outlook)
+              </button>
+              <button onclick="copyEmailSignatureHtml()" class="btn-anim bg-slate-900 hover:bg-slate-800 text-slate-200 border border-cyan-500/40 font-bold px-4 py-3 rounded-xl text-xs flex items-center justify-center gap-2 shrink-0">
+                <i data-lucide="code" class="w-4 h-4 text-cyan-400"></i>
+                Kopiuj Kod HTML
+              </button>
+            </div>
+            <div id="sig-copy-toast" class="hidden bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 p-3 rounded-xl text-xs text-center font-semibold">
+              ✅ Stopka została skopiowana do schowka!
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================== MODULE 6: ⚙️ PANEL ADMINA (FOR ADRIAN) ==================== -->
+    <div id="app-container-admin" class="hidden space-y-6">
+      
+      <div class="glass-card p-6 sm:p-8 rounded-3xl border border-purple-500/40 space-y-6 animate-emerge">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-purple-500/30 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="shield" class="w-6 h-6 text-purple-400"></i>
+              Panel Administracyjny – Zarządzanie Uprawnieniami
+            </h2>
+            <p class="text-xs text-purple-300 font-semibold mt-0.5">Zarządzaj dostępem do zakładek dla konta Użytkownika (Maciek)</p>
+          </div>
+          <span class="bg-purple-500/20 text-purple-300 border border-purple-500/40 px-3 py-1 rounded-full text-xs font-mono font-bold">
+            SUPER ADMIN: ADRIAN
+          </span>
+        </div>
+
+        <div class="bg-slate-950 p-6 rounded-2xl border border-purple-500/30 space-y-5">
+          <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-400 text-lg font-bold">
+              <i data-lucide="user-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white">Uprawnienia Modułów Konta: MACIEK</h3>
+              <p class="text-xs text-slate-400">Zaznacz lub odznacz moduły, do których Maciek ma posiadać odblokowany dostęp.</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
+              <div class="flex items-center gap-3">
+                <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+                <div>
+                  <span class="font-bold text-white block text-sm">⚡ FOMO (Monitoring Coinów &amp; Insiderzy)</span>
+                  <span class="text-slate-400 text-[11px]">Podstawowy moduł analityczny krypto</span>
+                </div>
+              </div>
+              <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-lg font-bold">Zawsze Odblokowane</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
+              <div class="flex items-center gap-3">
+                <i data-lucide="wallet" class="w-5 h-5 text-emerald-400"></i>
+                <div>
+                  <span class="font-bold text-white block text-sm">💰 WYDATKI (Przychody i Koszty)</span>
+                  <span class="text-slate-400 text-[11px]">Prywatny manager finansowy (dane odizolowane per konto)</span>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="admin-perm-wydatki" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-950 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
+              <div class="flex items-center gap-3">
+                <i data-lucide="map-pin" class="w-5 h-5 text-amber-400"></i>
+                <div>
+                  <span class="font-bold text-white block text-sm">📍 POI (Punkty i Lokalizacje Terenowe)</span>
+                  <span class="text-slate-400 text-[11px]">Baza lokalizacji i notatek terenowych</span>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="admin-perm-poi" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-950 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
+              <div class="flex items-center gap-3">
+                <i data-lucide="file-text" class="w-5 h-5 text-purple-400"></i>
+                <div>
+                  <span class="font-bold text-white block text-sm">🏷️ WYCENY (Generator Kosztorysów)</span>
+                  <span class="text-slate-400 text-[11px]">Tworzenie wycen i kosztorysów dla klientów</span>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="admin-perm-wyceny" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-950 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+            </div>
+
+            <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
+              <div class="flex items-center gap-3">
+                <i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i>
+                <div>
+                  <span class="font-bold text-white block text-sm">✉️ STOPKI E-MAIL (Generator Stopek HTML)</span>
+                  <span class="text-slate-400 text-[11px]">Kreator profesjonalnych stopek e-mail</span>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="admin-perm-stopki_email" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-950 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800 flex justify-end">
+            <button onclick="handleSaveAdminPermissions()" class="btn-anim bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xl">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              Zapisz Uprawnienia Maćka
+            </button>
+          </div>
+          <div id="admin-save-toast" class="hidden bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 p-3 rounded-xl text-xs text-center font-semibold">
+            ✅ Uprawnienia dla konta Maciek zostały pomyślnie zaktualizowane!
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== ACCESS LOCKED WARNING CONTAINER ==================== -->
+    <div id="app-container-locked" class="hidden animate-emerge">
+      <div class="glass-card p-8 sm:p-12 rounded-3xl border border-rose-500/40 text-center max-w-2xl mx-auto space-y-4 shadow-2xl">
+        <div class="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center mx-auto text-3xl">
+          <i data-lucide="lock" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Dostęp Zablokowany przez Administratora</h2>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          Zakładka jest obecnie niedostępna dla Twojego konta. Administrator (<b class="text-purple-300">Adrian</b>) zarządza uprawnieniami w Panelu Administracyjnym.
+        </p>
+        <div class="pt-2">
+          <button onclick="switchApp('fomo')" class="btn-anim bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs inline-flex items-center gap-1.5">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Powrót do Modułu ⚡ FOMO
+          </button>
+        </div>
+      </div>
+    </div>
+
 
     <!-- USER PROFILE & FOMO ACCOUNT CONNECTION MODAL -->
     <div id="user-profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="handleProfileModalBackdropClick(event)">
@@ -209,285 +973,10 @@
             <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
             Moje Pozycje &amp; Analiza Ryzyka / Wzrostu
           </h4>
-          <div id="user-trades-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Rendered dynamically -->
-          </div>
+          <div id="user-trades-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
       </div>
-    </div>
-
-
-    <!-- ==================== TAB 1: LIVE SIGNALS ==================== -->
-    <div id="tab-live-content" class="space-y-6">
-      
-      <!-- Stat Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="glass-card p-4 rounded-xl animate-emerge">
-          <div class="flex justify-between items-start">
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Maksymalny Wiek</p>
-            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="clock" class="w-4 h-4"></i></div>
-          </div>
-          <p class="text-xl font-bold text-blue-400 mt-1 font-mono">0 - 30 Minut</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Starsze coinie (&gt;30m) odrzucone</p>
-        </div>
-
-        <div class="glass-card p-4 rounded-xl animate-emerge">
-          <div class="flex justify-between items-start">
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Min. Kwota Buya</p>
-            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="dollar-sign" class="w-4 h-4"></i></div>
-          </div>
-          <p class="text-xl font-bold text-blue-400 mt-1 font-mono">$2,500 USD+</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Próg wejścia kupującego</p>
-        </div>
-
-        <div class="glass-card p-4 rounded-xl animate-emerge">
-          <div class="flex justify-between items-start">
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Warunek Holderów</p>
-            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="users" class="w-4 h-4"></i></div>
-          </div>
-          <p class="text-xl font-bold text-blue-400 mt-1 font-mono">&ge; 1 Active Holder</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Zweryfikowana płynność</p>
-        </div>
-
-        <div class="glass-card p-4 rounded-xl animate-emerge">
-          <div class="flex justify-between items-start">
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Skanowane Tokeny</p>
-            <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="cpu" class="w-4 h-4"></i></div>
-          </div>
-          <p id="stat-tokens-count" class="text-xl font-bold text-blue-400 mt-1 font-mono">0</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Robinhood, Base, Solana</p>
-        </div>
-      </div>
-
-      <!-- Filters Toolbar -->
-      <div class="glass-card p-4 rounded-xl flex flex-wrap justify-between items-center gap-3 animate-emerge">
-        <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs w-full lg:w-auto">
-          <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-            <i data-lucide="filter" class="w-4 h-4 text-blue-400"></i> Filtry:
-          </span>
-          <select id="filter-sort" onchange="renderAll()" class="bg-blue-950 border border-blue-500/50 text-blue-200 font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-400">
-            <option value="age_asc">⏱️ Sortuj: Najnowsze (Czas dodania)</option>
-            <option value="mcap_desc">💰 Sortuj: Market Cap (Najwyższy)</option>
-            <option value="holders_desc">👥 Sortuj: Holdery (Najwięcej)</option>
-            <option value="buy_desc">🚀 Sortuj: Największy Buy ($)</option>
-          </select>
-          <select id="filter-holders" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
-            <option value="all">Wszyscy holdery (&ge; 1)</option>
-            <option value="10">&ge; 10 Holderów</option>
-            <option value="50">&ge; 50 Holderów</option>
-            <option value="100">&ge; 100 Holderów</option>
-            <option value="500">&ge; 500 Holderów</option>
-          </select>
-          <select id="filter-mcap" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
-            <option value="all">Wszystkie Market Cap</option>
-            <option value="50000">MCap &ge; $50K</option>
-            <option value="100000">MCap &ge; $100K</option>
-            <option value="250000">MCap &ge; $250K</option>
-            <option value="500000">MCap &ge; $500K</option>
-            <option value="1000000">MCap &ge; $1M</option>
-          </select>
-          <select id="filter-age" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
-            <option value="all">Wszystkie do 30m</option>
-            <option value="5">Do 5 minut</option>
-            <option value="15">Do 15 minut</option>
-          </select>
-          <select id="filter-buy" onchange="renderAll()" class="bg-slate-900 border border-blue-900/60 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500">
-            <option value="all">Wszystkie wkładki</option>
-            <option value="2500">$2,500+ Buy</option>
-            <option value="5000">$5,000+ Buy</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Live Signals Grid -->
-      <div id="signals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Tokens Table -->
-      <div class="glass-card rounded-xl p-4 space-y-3 overflow-hidden animate-emerge">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <i data-lucide="table" class="w-4 h-4 text-blue-400"></i>
-          Wszystkie Śledzone Coiny (&le; 30 min, &ge; 1 Holder)
-        </h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs whitespace-nowrap">
-            <thead>
-              <tr class="border-b border-blue-900/40 text-slate-400 font-semibold uppercase tracking-wider">
-                <th class="py-2.5 px-3">Token / Ticker</th>
-                <th class="py-2.5 px-3">Sieć</th>
-                <th class="py-2.5 px-3">Wiek</th>
-                <th class="py-2.5 px-3">Holdery</th>
-                <th class="py-2.5 px-3">Wolumen 5m</th>
-                <th class="py-2.5 px-3">Ostatni Buy</th>
-                <th class="py-2.5 px-3">Opis Tradera</th>
-                <th class="py-2.5 px-3 text-right">Akcja</th>
-              </tr>
-            </thead>
-            <tbody id="tokens-table-body" class="divide-y divide-blue-900/30 text-slate-300">
-              <tr>
-                <td colspan="8" class="py-6 text-center text-slate-500 font-mono">Ładowanie danych...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-
-
-    <!-- ==================== TAB 2: INSIDERZY ==================== -->
-    <div id="tab-insiders-content" class="hidden space-y-6">
-      
-      <div class="glass-card p-5 rounded-3xl border border-blue-900/50 bg-slate-950 flex flex-col sm:flex-row justify-between items-center gap-4 animate-emerge">
-        <div>
-          <h3 class="text-lg font-bold text-white flex items-center gap-2">
-            <i data-lucide="users" class="w-5 h-5 text-purple-400"></i>
-            Dedykowany Feed Insiderów &amp; Smart-Money (Ostatnie 24h)
-          </h3>
-          <p class="text-xs text-purple-300 font-semibold mt-0.5">🔥 Wyświetla WSZYSTKIE ostatnie zakupy śledzonych insiderów i smart-money z ostatnich 24 godzin</p>
-        </div>
-        
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <button onclick="toggleInsiderManagerModal()" class="btn-anim bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-500/40 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shrink-0">
-            <i data-lucide="user-plus" class="w-4 h-4"></i>
-            Dodaj / Zarządzaj Insiderami
-          </button>
-        </div>
-      </div>
-
-      <!-- INSIDER MANAGER CONTAINER -->
-      <div id="insider-manager-box" class="glass-card p-6 rounded-3xl border border-purple-500/30 space-y-4 animate-emerge">
-        <h4 class="text-sm font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
-          <i data-lucide="user-plus" class="w-4 h-4 text-purple-400"></i>
-          Dodaj Nowego Insidera (Link z X / Twitter, fomo.family lub @handle)
-        </h4>
-
-        <form onsubmit="handleAddInsiderSubmit(event)" class="flex flex-col sm:flex-row gap-2">
-          <input type="text" id="insider-input" placeholder="Wklej link: https://x.com/nick lub https://fomo.family/profile/... lub @handle" required class="bg-slate-950 border border-blue-900/60 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 flex-1 font-mono">
-          <button type="submit" class="btn-anim bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs shrink-0">
-            Dodaj do Śledzonych
-          </button>
-        </form>
-
-        <div id="insider-add-error" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-2.5 rounded-xl text-xs">
-          Nieprawidłowy link lub uchwyt insidera.
-        </div>
-
-        <div class="pt-2">
-          <h5 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Aktywnie Obserwowane Konta:</h5>
-          <div id="tracked-insiders-list" class="flex flex-wrap gap-2 text-xs">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Insider Live Signals Grid -->
-      <div id="insider-signals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically -->
-      </div>
-
-    </div>
-
-
-    <!-- ==================== TAB 3: SKANER TOKENA ==================== -->
-    <div id="tab-scanner-content" class="hidden space-y-6">
-      
-      <div class="glass-card p-6 sm:p-10 rounded-3xl border border-blue-900/50 max-w-3xl mx-auto space-y-4 text-center shadow-2xl animate-emerge">
-        <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/40 flex items-center justify-center mx-auto text-cyan-400 text-2xl">
-          <i data-lucide="search" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h2 class="text-xl sm:text-2xl font-bold text-white">Skaner Tokena &amp; Honeypot Checker</h2>
-          <p class="text-xs text-slate-400 mt-1">Wklej bezpośredni link z fomo.family lub adres kontraktu (CA) dowolnej sieci (EVM / Solana)</p>
-        </div>
-
-        <form onsubmit="handleTokenScanSubmit(event)" class="space-y-3">
-          <div class="relative">
-            <input type="text" id="scanner-input" placeholder="Wklej link z fomo.family (np. https://fomo.family/tokens/robinhood/0x...) lub adres CA..." required class="w-full bg-slate-950 border border-blue-900/80 rounded-2xl px-4 py-4 pl-12 pr-24 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition font-mono">
-            <i data-lucide="link" class="w-5 h-5 text-blue-400 absolute left-4 top-4"></i>
-            <button type="button" onclick="clearScannerInput()" class="absolute right-3 top-3 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-xl border border-slate-700 btn-anim">
-              Wyczyść
-            </button>
-          </div>
-
-          <div id="scanner-error-box" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-3 rounded-xl text-xs font-semibold text-center">
-            Nieprawidłowy format linku lub adresu CA.
-          </div>
-
-          <button type="submit" id="scanner-submit-btn" class="btn-anim w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-white font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-sm">
-            <i data-lucide="shield-check" class="w-4 h-4"></i>
-            <span>Sprawdź ryzyko</span>
-          </button>
-        </form>
-      </div>
-
-      <div id="scanner-result-container" class="hidden max-w-3xl mx-auto animate-emerge">
-        <!-- Rendered dynamically -->
-      </div>
-
-    </div>
-
-
-    <!-- ==================== TAB 4: ALERT MARKET CAP ==================== -->
-    <div id="tab-alerts-content" class="hidden space-y-6">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="glass-card p-6 rounded-2xl border border-blue-900/50 space-y-4 animate-emerge">
-          <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
-            <i data-lucide="bell-plus" class="w-5 h-5 text-amber-400"></i>
-            Ustaw Nowy Alert Market Cap
-          </h3>
-
-          <form onsubmit="handleCreateAlertSubmit(event)" class="space-y-4 text-xs">
-            <div>
-              <label class="block text-slate-300 font-semibold mb-1">Nazwa / Ticker Tokena:</label>
-              <input type="text" id="alert-token-name" placeholder="np. RUNNER ($RUNNER)" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-slate-300 font-semibold mb-1">Adres Kontraktu (CA):</label>
-              <input type="text" id="alert-ca" placeholder="Wklej CA tokena..." required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none font-mono">
-            </div>
-
-            <div>
-              <label class="block text-slate-300 font-semibold mb-1">Typ Alertu:</label>
-              <select id="alert-type" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-blue-500 focus:outline-none">
-                <option value="BUY_UNDER">🛒 KUPNO: Gdy Market Cap SPADNIE poniżej kwoty</option>
-                <option value="SELL_OVER">💰 SPRZEDAŻ: Gdy Market Cap WZROŚNIE powyżej kwoty</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-slate-300 font-semibold mb-1">Docelowa Kwota Market Cap ($ USD):</label>
-              <input type="number" id="alert-target-mcap" step="500" placeholder="np. 50000" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none font-mono">
-            </div>
-
-            <button type="submit" class="btn-anim w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i>
-              Dodaj Alert Market Cap
-            </button>
-          </form>
-        </div>
-
-        <div class="glass-card p-6 rounded-2xl border border-blue-900/50 lg:col-span-2 space-y-4 animate-emerge">
-          <h3 class="text-base font-bold text-white flex items-center justify-between border-b border-blue-900/40 pb-3">
-            <span class="flex items-center gap-2">
-              <i data-lucide="list-checks" class="w-5 h-5 text-blue-400"></i>
-              Aktywne Alerty Price / Market Cap
-            </span>
-            <span id="alerts-count-badge" class="text-xs font-mono bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2.5 py-0.5 rounded-full">0 Alertów</span>
-          </h3>
-
-          <div id="alerts-list" class="space-y-3">
-            <div class="text-center py-10 text-slate-500 text-xs">Brak aktywnych alertów... Ustaw swój pierwszy alert obok.</div>
-          </div>
-        </div>
-
-      </div>
-
     </div>
 
   </main>
@@ -500,6 +989,16 @@
     let isReconnecting = false;
     let lastHeartbeat = Date.now();
     let currentTab = 'live';
+    let currentApp = 'fomo';
+    let currentUser = 'Maciek';
+    let userPermissions = {
+      fomo: true,
+      wydatki: false,
+      poi: false,
+      wyceny: false,
+      stopki_email: false,
+      is_admin: false
+    };
 
     // SEED SAMPLE TOKENS WITH REAL CONTRACT ADDRESSES
     const seedTokens = [
@@ -551,9 +1050,11 @@
         if (res.ok) {
           const data = await res.json();
           if (data.username) {
-            const userCap = data.username.charAt(0).toUpperCase() + data.username.slice(1);
-            sessionStorage.setItem('fomo_username', userCap);
-            setGreeting(userCap);
+            currentUser = data.username.charAt(0).toUpperCase() + data.username.slice(1);
+            userPermissions = data.permissions || userPermissions;
+            sessionStorage.setItem('fomo_username', currentUser);
+            setGreeting(currentUser);
+            updatePermissionsUI();
           } else {
             window.location.href = '/login';
           }
@@ -575,10 +1076,34 @@
       document.getElementById('user-badge').innerText = userCap;
       document.getElementById('header-greeting').innerText = `👋 HEJ ${upper}!`;
       document.getElementById('greeting-title').innerText = `HEJ ${upper}!`;
+      
       const fomoLabel = document.getElementById('fomo-profile-label');
-      if (fomoLabel) {
-        fomoLabel.innerText = `${userCap} (${upper === 'ADRIAN' ? 'adrian.chrom' : 'maciek.fomo'})`;
+      if (fomoLabel) fomoLabel.innerText = `${userCap} (${upper === 'ADRIAN' ? 'adrian.chrom' : 'maciek.fomo'})`;
+
+      const wName = document.getElementById('wydatki-user-name');
+      if (wName) wName.innerText = userCap;
+      const pName = document.getElementById('poi-user-name');
+      if (pName) pName.innerText = userCap;
+      const wycName = document.getElementById('wyceny-user-name');
+      if (wycName) wycName.innerText = userCap;
+    }
+
+    function updatePermissionsUI() {
+      const isAdrian = currentUser.toLowerCase() === 'adrian';
+      const adminBox = document.getElementById('admin-panel-nav-box');
+      if (adminBox) {
+        if (isAdrian) adminBox.classList.remove('hidden');
+        else adminBox.classList.add('hidden');
       }
+
+      // Update navbar badges for locked/unlocked modules for Maciek
+      ['wydatki', 'poi', 'wyceny', 'stopki_email'].forEach(m => {
+        const badge = document.getElementById(`lock-badge-${m}`);
+        if (badge) {
+          if (!userPermissions[m] && !isAdrian) badge.classList.remove('hidden');
+          else badge.classList.add('hidden');
+        }
+      });
     }
 
     async function handleLogout() {
@@ -589,6 +1114,50 @@
       } catch (e) {
         window.location.href = '/login';
       }
+    }
+
+    // TOP EXECUTIVE APP SWITCHER
+    function switchApp(appName) {
+      const isAdrian = currentUser.toLowerCase() === 'adrian';
+      const isAllowed = isAdrian || userPermissions[appName] || appName === 'fomo';
+
+      const apps = ['fomo', 'wydatki', 'poi', 'wyceny', 'stopki_email', 'admin'];
+      
+      apps.forEach(a => {
+        const btn = document.getElementById(`app-btn-${a}`);
+        const container = document.getElementById(`app-container-${a}`);
+        if (btn) {
+          if (a === appName && isAllowed) {
+            btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-lg border border-blue-400/50";
+          } else {
+            btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+          }
+        }
+        if (container) container.classList.add('hidden');
+      });
+
+      const lockedContainer = document.getElementById('app-container-locked');
+
+      if (!isAllowed) {
+        if (lockedContainer) lockedContainer.classList.remove('hidden');
+        lucide.createIcons();
+        return;
+      }
+
+      if (lockedContainer) lockedContainer.classList.add('hidden');
+      const targetContainer = document.getElementById(`app-container-${appName}`);
+      if (targetContainer) targetContainer.classList.remove('hidden');
+
+      currentApp = appName;
+
+      // Load App Specific Data
+      if (appName === 'wydatki') loadWydatkiData();
+      if (appName === 'poi') loadPoiData();
+      if (appName === 'wyceny') loadWycenyData();
+      if (appName === 'stopki_email') updateEmailSignaturePreview();
+      if (appName === 'admin') loadAdminPermissions();
+
+      lucide.createIcons();
     }
 
     function switchTab(tab) {
@@ -684,7 +1253,7 @@
       }
     }
 
-    // USER PROFILE & FOMO.FAMILY POSITIONS MODAL CONTROLS
+    // USER PROFILE & FOMO POSITIONS MODAL CONTROLS
     function toggleUserProfileModal() {
       const modal = document.getElementById('user-profile-modal');
       if (modal) {
@@ -702,7 +1271,6 @@
       }
     }
 
-    // USER FOMO.FAMILY POSITIONS & TRADE RISK/GROWTH ENGINE
     async function loadUserFomoPositions() {
       const grid = document.getElementById('user-trades-grid');
       const label = document.getElementById('fomo-profile-label');
@@ -769,7 +1337,7 @@
       } catch (e) {}
     }
 
-    // TAB 1: LIVE SIGNALS WITH FALLBACK NAMES & HONEYPOT BADGES
+    // ==================== FOMO ENGINE RENDER LOGIC ====================
     function purgeClientOldTokens() {
       const nowSec = Date.now() / 1000;
       for (const [key, t] of tokensMap.entries()) {
@@ -795,7 +1363,6 @@
       if (t.age_minutes > 30.0 || t.age_minutes < 0) return false;
       if (t.holders_count < 1) return false;
 
-      // Filter out tokens with "No data here" or invalid/corrupted data
       if (t.name === 'No data here' || t.symbol === 'No data here' || t.token_name === 'No data here') return false;
       if ((!t.market_cap || t.market_cap <= 0) && (!t.liquidity_usd || t.liquidity_usd <= 0)) return false;
 
@@ -807,7 +1374,6 @@
       if (ageFilter !== 'all' && t.age_minutes > parseFloat(ageFilter)) return false;
       if (buyFilter === '2500' && t.whale_volume_usd < 2500.0) return false;
       if (buyFilter === '5000' && t.whale_volume_usd < 5000.0) return false;
-
       if (holdersFilter !== 'all' && (t.holders_count || 0) < parseInt(holdersFilter)) return false;
       if (mcapFilter !== 'all' && (t.market_cap || 0) < parseFloat(mcapFilter)) return false;
 
@@ -819,14 +1385,13 @@
       const sortType = document.getElementById('filter-sort')?.value || 'age_asc';
 
       return filtered.sort((a, b) => {
-        // Prioritize growing tokens (pc5m > 0 and not dead/honeypot) to the very top of the list!
         const aGrowing = (a.price_change_5m || 0) > 0 && !a.is_honeypot && a.signal_status !== 'RUGPULL_DEAD';
         const bGrowing = (b.price_change_5m || 0) > 0 && !b.is_honeypot && b.signal_status !== 'RUGPULL_DEAD';
 
         if (aGrowing && !bGrowing) return -1;
         if (!aGrowing && bGrowing) return 1;
         if (aGrowing && bGrowing) {
-          return (b.price_change_5m || 0) - (a.price_change_5m || 0); // Highest growth first
+          return (b.price_change_5m || 0) - (a.price_change_5m || 0);
         }
 
         if (sortType === 'age_asc') {
@@ -890,7 +1455,7 @@
 
         let trendHtml = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded text-[10px] font-bold">🚀 ROSNĄCY (+${pc5m.toFixed(1)}% 5m)</span>`;
         if (isHoneypot || isRugpull) {
-          trendHtml = `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold pulse-red">🚨 RUGPULL / MARTWY COIN (Płynność wyciągnięta / 0 ruchu)</span>`;
+          trendHtml = `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold pulse-red">🚨 RUGPULL / MARTWY COIN</span>`;
         } else if (pc5m < 0) {
           trendHtml = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-[10px] font-bold">📉 SPADAJĄCY (${pc5m.toFixed(1)}% 5m)</span>`;
         } else if (pc5m === 0) {
@@ -927,8 +1492,8 @@
           <div class="space-y-1.5 text-xs text-slate-300 font-mono">
             <div class="flex justify-between items-center"><span>Tendencja:</span>${trendHtml}</div>
             <div class="flex justify-between"><span>Market Cap:</span><span class="text-blue-300 font-bold">${mcapStr} USD</span></div>
-            <div class="flex justify-between"><span>Holdery (Real-time):</span><span class="text-blue-300 font-bold">${holdersStr}</span></div>
-            <div class="flex justify-between"><span>Wiek (Czas dodania):</span><span class="text-slate-300 font-bold">${t.age_minutes} min ago</span></div>
+            <div class="flex justify-between"><span>Holdery:</span><span class="text-blue-300 font-bold">${holdersStr}</span></div>
+            <div class="flex justify-between"><span>Wiek:</span><span class="text-slate-300 font-bold">${t.age_minutes} min ago</span></div>
             <div class="flex justify-between"><span>Ostatni Buy:</span><span class="text-emerald-400 font-bold">$${(t.whale_volume_usd || 2500).toLocaleString()}</span></div>
           </div>
 
@@ -954,6 +1519,7 @@
     function renderTokensTable() {
       const tbody = document.getElementById('tokens-table-body');
       const list = getSortedTokens();
+      if (!tbody) return;
       if (list.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-500 font-mono">Brak tokenów dla wybranych filtrów...</td></tr>`;
         return;
@@ -982,14 +1548,9 @@
       lucide.createIcons();
     }
 
-    // TAB 2: INSIDER SIGNALS & TRACKED INSIDERS MANAGER
-    function toggleInsiderManagerModal() {
-      const box = document.getElementById('insider-manager-box');
-      box.classList.toggle('hidden');
-    }
-
     async function loadTrackedInsidersList() {
       const listEl = document.getElementById('tracked-insiders-list');
+      if (!listEl) return;
       try {
         const res = await fetch('/api/tracked-insiders');
         const list = await res.json();
@@ -1040,6 +1601,7 @@
 
     async function loadInsiderSignalsFeed() {
       const container = document.getElementById('insider-signals-grid');
+      if (!container) return;
       try {
         const res = await fetch('/api/insider-signals');
         const signals = await res.json();
@@ -1093,7 +1655,6 @@
                 </div>
               </div>
 
-              <!-- COMPACT METRIC BAR: MCap | Holders | Direct fomo.family Link -->
               <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/40 flex flex-wrap justify-between items-center text-xs font-mono gap-2">
                 <div class="flex items-center gap-3">
                   <span>MCap: <b class="text-blue-300">${mcapFormatted} USD</b></span>
@@ -1119,7 +1680,6 @@
       }
     }
 
-    // TAB 3: TOKEN SCANNER & HONEYPOT CHECKER (FIXED FOR 4STOCKS)
     function clearScannerInput() {
       document.getElementById('scanner-input').value = '';
       document.getElementById('scanner-error-box').classList.add('hidden');
@@ -1137,7 +1697,7 @@
       const rawVal = inputEl.value.trim();
 
       if (!rawVal) {
-        errBox.innerText = 'Wklej prawidłowy link z fomo.family lub adres kontraktu (CA).';
+        errBox.innerText = 'Wklej prawidłowy link lub adres CA / ticker.';
         errBox.classList.remove('hidden');
         return;
       }
@@ -1239,14 +1799,14 @@
       lucide.createIcons();
     }
 
-    // TAB 4: MARKET CAP ALERTS
     async function loadAlertsList() {
       const listEl = document.getElementById('alerts-list');
       const badgeEl = document.getElementById('alerts-count-badge');
+      if (!listEl) return;
       try {
         const res = await fetch('/api/alerts');
         const alerts = await res.json();
-        badgeEl.innerText = `${alerts.length} Alertów`;
+        if (badgeEl) badgeEl.innerText = `${alerts.length} Alertów`;
 
         if (!alerts || alerts.length === 0) {
           listEl.innerHTML = `<div class="text-center py-10 text-slate-500 text-xs">Brak aktywnych alertów... Ustaw swój pierwszy alert obok.</div>`;
@@ -1312,6 +1872,421 @@
       try {
         await fetch(`/api/alerts/${id}`, { method: 'DELETE' });
         loadAlertsList();
+      } catch (e) {}
+    }
+
+
+    // ==================== MODULE 2: 💰 WYDATKI LOGIC ====================
+    async function loadWydatkiData() {
+      const tbody = document.getElementById('wydatki-table-body');
+      if (!tbody) return;
+      try {
+        const res = await fetch('/api/wydatki');
+        const list = await res.json();
+
+        let sumPrzychody = 0;
+        let sumWydatki = 0;
+
+        list.forEach(x => {
+          const amt = parseFloat(x.amount_pln || 0);
+          if (x.type === 'PRZYCHÓD') sumPrzychody += amt;
+          else sumWydatki += amt;
+        });
+
+        const saldo = sumPrzychody - sumWydatki;
+
+        document.getElementById('kpi-przychody').innerText = `${sumPrzychody.toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN`;
+        document.getElementById('kpi-wydatki').innerText = `${sumWydatki.toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN`;
+        document.getElementById('kpi-saldo').innerText = `${saldo.toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN`;
+        document.getElementById('kpi-count').innerText = list.length;
+
+        if (!list || list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">Brak wpisów finansowych dla Twojego konta... Dodaj swój pierwszy wpis powyżej.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map(item => {
+          const isIncome = item.type === 'PRZYCHÓD';
+          const typeBadge = isIncome 
+            ? `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded font-bold">💵 PRZYCHÓD</span>`
+            : `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold">💸 WYDATEK</span>`;
+          
+          const amtClass = isIncome ? 'text-emerald-400 font-bold font-mono' : 'text-rose-400 font-bold font-mono';
+          const prefix = isIncome ? '+' : '-';
+
+          return `
+            <tr class="hover:bg-blue-950/20 transition">
+              <td class="py-3 px-4">${typeBadge}</td>
+              <td class="py-3 px-4 font-semibold text-white">${item.title}</td>
+              <td class="py-3 px-4 font-mono text-slate-400">${item.category || 'Ogólne'}</td>
+              <td class="py-3 px-4 font-mono text-slate-400">${item.date || new Date().toISOString().split('T')[0]}</td>
+              <td class="py-3 px-4 ${amtClass}">${prefix}${Number(item.amount_pln || 0).toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN</td>
+              <td class="py-3 px-4 italic text-slate-400 max-w-xs truncate">${item.note || '-'}</td>
+              <td class="py-3 px-4 text-right">
+                <button onclick="handleDeleteWydatki('${item.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded-lg text-[11px] font-semibold">
+                  Usuń
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (e) {}
+    }
+
+    async function handleAddWydatkiSubmit(e) {
+      e.preventDefault();
+      const type = document.getElementById('wyd-type').value;
+      const title = document.getElementById('wyd-title').value.trim();
+      const category = document.getElementById('wyd-category').value;
+      const amount = parseFloat(document.getElementById('wyd-amount').value || 0);
+      const note = document.getElementById('wyd-note').value.trim();
+
+      try {
+        await fetch('/api/wydatki', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: type,
+            title: title,
+            category: category,
+            amount_pln: amount,
+            date: new Date().toISOString().split('T')[0],
+            note: note
+          })
+        });
+        document.getElementById('wyd-title').value = '';
+        document.getElementById('wyd-amount').value = '';
+        document.getElementById('wyd-note').value = '';
+        loadWydatkiData();
+      } catch (e) {}
+    }
+
+    async function handleDeleteWydatki(id) {
+      try {
+        await fetch(`/api/wydatki/${id}`, { method: 'DELETE' });
+        loadWydatkiData();
+      } catch (e) {}
+    }
+
+
+    // ==================== MODULE 3: 📍 POI LOGIC ====================
+    async function loadPoiData() {
+      const grid = document.getElementById('poi-cards-grid');
+      if (!grid) return;
+      try {
+        const res = await fetch('/api/poi');
+        const list = await res.json();
+
+        if (!list || list.length === 0) {
+          grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500 text-xs glass-card rounded-2xl">Brak zapisanych punktów POI... Dodaj swój pierwszy punkt powyżej.</div>`;
+          return;
+        }
+
+        grid.innerHTML = list.map(p => {
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.coords || p.address)}`;
+          let statusClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+          if (p.status === 'Planowany') statusClass = 'bg-amber-500/20 text-amber-300 border border-amber-500/40';
+          if (p.status === 'Zakończony') statusClass = 'bg-slate-500/20 text-slate-300 border border-slate-500/40';
+
+          return `
+            <div class="glass-card p-5 rounded-2xl space-y-3 border border-blue-900/60 shadow-xl animate-emerge">
+              <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
+                <div>
+                  <h4 class="text-base font-bold text-white">${p.name}</h4>
+                  <span class="text-xs font-mono text-amber-400">${p.category || 'Spot'}</span>
+                </div>
+                <span class="${statusClass} px-2.5 py-0.5 rounded text-[10px] font-bold font-mono">${p.status || 'Aktywny'}</span>
+              </div>
+
+              <div class="space-y-1 text-xs text-slate-300 font-mono">
+                <p>📍 <b>Adres:</b> ${p.address}</p>
+                ${p.coords ? `<p>🌐 <b>GPS:</b> ${p.coords}</p>` : ''}
+              </div>
+
+              ${p.notes ? `<p class="bg-slate-950 p-2.5 rounded-lg border border-blue-900/40 text-[11px] italic text-slate-300">"${p.notes}"</p>` : ''}
+
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-blue-900/30">
+                <a href="${mapsUrl}" target="_blank" class="btn-anim bg-amber-600/30 hover:bg-amber-600 text-amber-200 hover:text-white px-3 py-1.5 rounded-lg border border-amber-500/40 text-[11px] font-bold inline-flex items-center gap-1">
+                  <span>Google Maps</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+                <button onclick="handleDeletePoi('${p.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold">
+                  Usuń
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      } catch (e) {}
+    }
+
+    async function handleAddPoiSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('poi-name').value.trim();
+      const category = document.getElementById('poi-category').value;
+      const status = document.getElementById('poi-status').value;
+      const address = document.getElementById('poi-address').value.trim();
+      const notes = document.getElementById('poi-notes').value.trim();
+
+      try {
+        await fetch('/api/poi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            category: category,
+            status: status,
+            address: address,
+            notes: notes
+          })
+        });
+        document.getElementById('poi-name').value = '';
+        document.getElementById('poi-address').value = '';
+        document.getElementById('poi-notes').value = '';
+        loadPoiData();
+      } catch (e) {}
+    }
+
+    async function handleDeletePoi(id) {
+      try {
+        await fetch(`/api/poi/${id}`, { method: 'DELETE' });
+        loadPoiData();
+      } catch (e) {}
+    }
+
+
+    // ==================== MODULE 4: 🏷️ WYCENY LOGIC ====================
+    function addWycenaItemRow() {
+      const container = document.getElementById('wycena-items-container');
+      const div = document.createElement('div');
+      div.className = 'grid grid-cols-1 sm:grid-cols-6 gap-2 wycena-item-row animate-emerge';
+      div.innerHTML = `
+        <input type="text" placeholder="Opis pozycji..." required class="sm:col-span-3 item-desc bg-slate-900 border border-blue-900/60 rounded-lg px-3 py-2 text-white">
+        <input type="number" placeholder="Ilość" value="1" min="1" required class="item-qty bg-slate-900 border border-blue-900/60 rounded-lg px-3 py-2 text-white font-mono">
+        <input type="number" placeholder="Cena Netto (PLN)" step="0.01" required class="sm:col-span-2 item-price bg-slate-900 border border-blue-900/60 rounded-lg px-3 py-2 text-white font-mono">
+      `;
+      container.appendChild(div);
+    }
+
+    async function loadWycenyData() {
+      const grid = document.getElementById('wyceny-cards-grid');
+      if (!grid) return;
+      try {
+        const res = await fetch('/api/wyceny');
+        const list = await res.json();
+
+        if (!list || list.length === 0) {
+          grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500 text-xs glass-card rounded-2xl">Brak zapisanych wycen... Stwórz pierwszą wycenę powyżej.</div>`;
+          return;
+        }
+
+        grid.innerHTML = list.map(w => {
+          let statusClass = 'bg-purple-500/20 text-purple-300 border border-purple-500/40';
+          if (w.status === 'Zaakceptowano') statusClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+          if (w.status === 'Odrzucono') statusClass = 'bg-rose-500/20 text-rose-300 border border-rose-500/40';
+
+          return `
+            <div class="glass-card p-5 rounded-2xl space-y-4 border border-blue-900/60 shadow-xl animate-emerge">
+              <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
+                <div>
+                  <h4 class="text-base font-bold text-white">${w.project_title}</h4>
+                  <p class="text-xs font-mono text-purple-400">Klient: ${w.client_name}</p>
+                </div>
+                <span class="${statusClass} px-2.5 py-0.5 rounded text-[10px] font-bold font-mono">${w.status || 'Szkic'}</span>
+              </div>
+
+              <div class="space-y-1.5 text-xs text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-blue-900/40">
+                <div class="flex justify-between"><span>Suma Netto:</span><b class="text-white">${Number(w.total_netto || 0).toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN</b></div>
+                <div class="flex justify-between"><span>VAT (${w.tax_rate}%):</span><b class="text-slate-400">${Number((w.total_brutto || 0) - (w.total_netto || 0)).toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN</b></div>
+                <div class="flex justify-between border-t border-slate-900 pt-1"><span>Suma Brutto:</span><b class="text-purple-300 text-sm font-black">${Number(w.total_brutto || 0).toLocaleString('pl-PL', {minimumFractionDigits: 2})} PLN</b></div>
+              </div>
+
+              <div class="bg-slate-950 p-2.5 rounded-lg border border-blue-900/30 text-[11px] text-slate-400 space-y-1">
+                <p class="font-bold text-slate-300">Pozycje (${(w.items || []).length}):</p>
+                <ul class="list-disc list-inside space-y-0.5">
+                  ${(w.items || []).map(i => `<li>${i.description} (${i.qty}x ${Number(i.unit_price).toLocaleString()} PLN)</li>`).join('')}
+                </ul>
+              </div>
+
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-blue-900/30">
+                <button onclick="printWycenaModal('${w.id}')" class="btn-anim bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white px-3 py-1.5 rounded-lg border border-purple-500/40 text-[11px] font-bold inline-flex items-center gap-1">
+                  <i data-lucide="printer" class="w-3.5 h-3.5"></i> Drukuj / PDF
+                </button>
+                <button onclick="handleDeleteWyceny('${w.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold">
+                  Usuń
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      } catch (e) {}
+    }
+
+    async function handleAddWycenySubmit(e) {
+      e.preventDefault();
+      const client = document.getElementById('wyc-client').value.trim();
+      const title = document.getElementById('wyc-title').value.trim();
+      const status = document.getElementById('wyc-status').value;
+      const taxRate = parseFloat(document.getElementById('wyc-tax').value || 23);
+      const notes = document.getElementById('wyc-notes').value.trim();
+
+      const rows = document.querySelectorAll('.wycena-item-row');
+      const items = [];
+      let totalNetto = 0;
+
+      rows.forEach(r => {
+        const desc = r.querySelector('.item-desc').value.trim();
+        const qty = parseInt(r.querySelector('.item-qty').value || 1);
+        const price = parseFloat(r.querySelector('.item-price').value || 0);
+        if (desc && price > 0) {
+          items.push({ description: desc, qty: qty, unit_price: price });
+          totalNetto += (qty * price);
+        }
+      });
+
+      if (items.length === 0) return;
+
+      const totalBrutto = totalNetto * (1 + (taxRate / 100));
+
+      try {
+        await fetch('/api/wyceny', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            client_name: client,
+            project_title: title,
+            items: items,
+            tax_rate: taxRate,
+            total_netto: totalNetto,
+            total_brutto: totalBrutto,
+            status: status,
+            date: new Date().toISOString().split('T')[0],
+            notes: notes
+          })
+        });
+        document.getElementById('wyc-client').value = '';
+        document.getElementById('wyc-title').value = '';
+        document.getElementById('wyc-notes').value = '';
+        loadWycenyData();
+      } catch (e) {}
+    }
+
+    async function handleDeleteWyceny(id) {
+      try {
+        await fetch(`/api/wyceny/${id}`, { method: 'DELETE' });
+        loadWycenyData();
+      } catch (e) {}
+    }
+
+    function printWycenaModal(id) {
+      window.print();
+    }
+
+
+    // ==================== MODULE 5: ✉️ STOPKI E-MAIL LOGIC ====================
+    function updateEmailSignaturePreview() {
+      const name = document.getElementById('sig-fullname')?.value || 'Adrian Chrom';
+      const title = document.getElementById('sig-jobtitle')?.value || 'CEO & Lead Architect';
+      const company = document.getElementById('sig-company')?.value || 'FOMO Technologies Ltd.';
+      const phone = document.getElementById('sig-phone')?.value || '+48 600 000 000';
+      const email = document.getElementById('sig-email')?.value || 'adrian@fomo.family';
+      const website = document.getElementById('sig-website')?.value || 'https://fomo.family';
+      const address = document.getElementById('sig-address')?.value || 'Warszawa, Polska';
+      const color = document.getElementById('sig-color')?.value || '#2563eb';
+      const logo = document.getElementById('sig-logo')?.value || 'https://fomo.family/favicon.ico';
+
+      const target = document.getElementById('email-signature-preview-target');
+      if (!target) return;
+
+      target.innerHTML = `
+        <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 13px; color: #1e293b; line-height: 1.4; width: 100%; max-width: 500px;">
+          <tr>
+            <td style="vertical-align: top; padding-right: 16px; width: 64px;">
+              <img src="${logo}" alt="${company}" style="width: 56px; height: 56px; border-radius: 12px; object-fit: cover;" />
+            </td>
+            <td style="vertical-align: top; border-left: 2px solid ${color}; padding-left: 16px;">
+              <div style="font-size: 15px; font-weight: bold; color: ${color}; tracking-tight: -0.2px;">${name}</div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 6px;">${title} | <b>${company}</b></div>
+              <div style="font-size: 11px; color: #475569; margin-bottom: 2px;">📞 <a href="tel:${phone}" style="color: #475569; text-decoration: none;">${phone}</a></div>
+              <div style="font-size: 11px; color: #475569; margin-bottom: 2px;">✉️ <a href="mailto:${email}" style="color: ${color}; font-weight: bold; text-decoration: none;">${email}</a></div>
+              <div style="font-size: 11px; color: #475569; margin-bottom: 2px;">🌐 <a href="${website}" target="_blank" style="color: ${color}; text-decoration: none;">${website}</a></div>
+              <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">📍 ${address}</div>
+            </td>
+          </tr>
+        </table>
+      `;
+    }
+
+    function copyEmailSignatureHtml() {
+      const target = document.getElementById('email-signature-preview-target');
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerHTML);
+      showSigToast();
+    }
+
+    function copyEmailSignatureVisual() {
+      const target = document.getElementById('email-signature-preview-target');
+      if (!target) return;
+      const range = document.createRange();
+      range.selectNodeContents(target);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      showSigToast();
+    }
+
+    function showSigToast() {
+      const t = document.getElementById('sig-copy-toast');
+      if (t) {
+        t.classList.remove('hidden');
+        setTimeout(() => t.classList.add('hidden'), 3000);
+      }
+    }
+
+
+    // ==================== MODULE 6: ⚙️ PANEL ADMINA LOGIC ====================
+    async function loadAdminPermissions() {
+      try {
+        const res = await fetch('/api/admin/permissions');
+        if (!res.ok) return;
+        const data = await res.json();
+        const p = data.maciek || {};
+
+        document.getElementById('admin-perm-wydatki').checked = !!p.wydatki;
+        document.getElementById('admin-perm-poi').checked = !!p.poi;
+        document.getElementById('admin-perm-wyceny').checked = !!p.wyceny;
+        document.getElementById('admin-perm-stopki_email').checked = !!p.stopki_email;
+      } catch (e) {}
+    }
+
+    async function handleSaveAdminPermissions() {
+      const wydatki = document.getElementById('admin-perm-wydatki').checked;
+      const poi = document.getElementById('admin-perm-poi').checked;
+      const wyceny = document.getElementById('admin-perm-wyceny').checked;
+      const stopki_email = document.getElementById('admin-perm-stopki_email').checked;
+
+      try {
+        const res = await fetch('/api/admin/permissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            wydatki: wydatki,
+            poi: poi,
+            wyceny: wyceny,
+            stopki_email: stopki_email
+          })
+        });
+        if (res.ok) {
+          const toast = document.getElementById('admin-save-toast');
+          if (toast) {
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+          }
+          fetchUser();
+        }
       } catch (e) {}
     }
 

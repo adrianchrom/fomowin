@@ -1,0 +1,33 @@
+{
+  "Adrian": [
+    {
+      "id": "wyd-101",
+      "type": "PRZYCHÓD",
+      "title": "Realizacja Wdrożenia FOMO Platform",
+      "category": "Usługi",
+      "amount_pln": 14500.0,
+      "date": "2026-09-12",
+      "note": "Płatność końcowa za moduł analizy ryzyka"
+    },
+    {
+      "id": "wyd-102",
+      "type": "WYDATEK",
+      "title": "Hosting Cloud & Node Infrastructure",
+      "category": "Biuro/Sprzęt",
+      "amount_pln": 1250.0,
+      "date": "2026-09-10",
+      "note": "Opłata za serwery RPC Solana & Base"
+    }
+  ],
+  "Maciek": [
+    {
+      "id": "wyd-201",
+      "type": "PRZYCHÓD",
+      "title": "Konsultacje Sygnałowe Krypto",
+      "category": "Krypto/Inwestycje",
+      "amount_pln": 3200.0,
+      "date": "2026-09-14",
+      "note": "Płatność za doradztwo on-chain"
+    }
+  ]
+}
