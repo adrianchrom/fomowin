@@ -2797,6 +2797,12 @@
       wydatki: false,
       wyceny: false,
       stopki_email: false,
+      kalendarz: false,
+      ai_chat: true,
+      crm: false,
+      tasks: false,
+      password_gen: false,
+      currency_calc: false,
       is_admin: false
     };
 
@@ -2961,7 +2967,7 @@
         else adminTile.classList.add('hidden');
       }
 
-      ['wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat'].forEach(m => {
+      ['wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'crm', 'tasks', 'password_gen', 'currency_calc'].forEach(m => {
         const drawerBadge = document.getElementById(`lock-badge-${m}`);
         const tileStatus = document.getElementById(`tile-status-${m}`);
         const isUnlocked = isAdrian || userPermissions[m] || m === 'ai_chat';
@@ -5511,10 +5517,12 @@
       try {
         let reply = '';
 
-        // 1. Call Puter.js Open-Source Free LLM API in browser
+        // 1. Call Puter.js Open-Source Free LLM API with fast timeout
         if (window.puter && window.puter.ai && typeof window.puter.ai.chat === 'function') {
           try {
-            const puterRes = await window.puter.ai.chat(text, { model: 'gpt-4o-mini' });
+            const puterPromise = window.puter.ai.chat(text, { model: 'gpt-4o-mini' });
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('PuterTimeout')), 2500));
+            const puterRes = await Promise.race([puterPromise, timeoutPromise]);
             if (typeof puterRes === 'string') {
               reply = puterRes;
             } else if (puterRes && puterRes.message && puterRes.message.content) {
@@ -5523,7 +5531,7 @@
               reply = puterRes.text;
             }
           } catch (pErr) {
-            console.log("Puter AI fallback:", pErr);
+            console.log("Puter AI fallback to backend LLM:", pErr);
           }
         }
 

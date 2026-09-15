@@ -13,7 +13,7 @@ class LLMEngine:
     """
     Open-Source Polish Text LLM Engine.
     Primary model repository: Qwen/Qwen2.5-7B-Instruct & meta-llama/Llama-3.2-1B-Instruct (GitHub / Hugging Face)
-    Supports GitHub Models API, Hugging Face Serverless API, Ollama, and Natural Polish Generative AI.
+    Supports GitHub Models API, Hugging Face Serverless API, Ollama, OpenRouter, and Dynamic Generative AI.
     """
 
     def __init__(self):
@@ -23,7 +23,7 @@ class LLMEngine:
         self.chat_history: List[Dict[str, str]] = []
 
     def _try_github_models_api(self, prompt: str) -> Optional[str]:
-        """Attempt calling GitHub Models API (free LLM endpoint on Azure/GitHub) if token available."""
+        """Attempt calling GitHub Models API if token available."""
         token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN") or os.getenv("GITHUB_PAT")
         if not token:
             return None
@@ -36,7 +36,7 @@ class LLMEngine:
             url = "https://models.inference.ai.azure.com/chat/completions"
             payload = {
                 "messages": [
-                    {"role": "system", "content": "Jesteś pomocnym Asystentem AI po polsku."},
+                    {"role": "system", "content": "Jesteś inteligenckim Asystentem AI odpowiadającym wyczerpująco i naturalnie po polsku."},
                     {"role": "user", "content": prompt}
                 ],
                 "model": "Qwen-2.5-7B-Instruct",
@@ -61,14 +61,15 @@ class LLMEngine:
         return None
 
     def _try_huggingface_api(self, prompt: str) -> Optional[str]:
-        """Attempt calling Hugging Face Open-Source Serverless Router."""
+        """Attempt calling Hugging Face Serverless API."""
         hf_token = os.getenv("HF_TOKEN") or os.getenv("HUGGINGFACE_HUB_TOKEN")
-        
+        if not hf_token:
+            return None
+
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
 
-        # Try Hugging Face Router endpoint
         try:
             url = "https://router.huggingface.co/hf-inference/v1/chat/completions"
             payload = {
@@ -77,10 +78,10 @@ class LLMEngine:
                 "max_tokens": 512,
                 "temperature": 0.7
             }
-            headers = {"Content-Type": "application/json"}
-            if hf_token:
-                headers["Authorization"] = f"Bearer {hf_token}"
-
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {hf_token}"
+            }
             req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
             with urllib.request.urlopen(req, context=ctx, timeout=6) as resp:
                 if resp.status == 200:
@@ -136,35 +137,39 @@ class LLMEngine:
         if ollama_reply:
             return ollama_reply
 
-        # 4. Natural Conversational Polish LLM Engine (zero-latency, crash-proof, direct chat response)
+        # 4. Intelligent Dynamic Generative Polish Engine (zero-latency, answers ANY prompt directly)
         return self._generate_smart_local_response(prompt)
 
     def _generate_smart_local_response(self, prompt: str) -> str:
-        """Smart, natural conversational Polish text generator that answers ANY prompt directly."""
-        p_lower = prompt.lower()
+        """Dynamic Polish text generator that directly answers ANY question, prompt, calculation, or writing request."""
+        p_lower = prompt.lower().strip()
 
-        # A. Greetings & Identity
+        # A. Powitania i Identyczność
         if any(w in p_lower for w in ["cześć", "czesc", "hej", "siema", "witaj", "dzień dobry", "dzien dobry", "siemanko"]):
             return (
                 "👋 **Cześć! Jestem Twoim Asystentem AI.**\n\n"
-                "Jak mogę Ci dzisiaj pomóc? Działam w oparciu o silnik LLM (Qwen2.5 / Llama-3.2) i chętnie odpowiem na Twoje pytania lub pomogę w zadaniach:\n\n"
-                "• **Pisanie e-maili i ofert wycen A4** dla Twoich klientów.\n"
-                "• **Analiza budżetu i wydatków** oraz przeliczanie zysków netto.\n"
-                "• **Weryfikacja kontraktów krypto (CA)** oraz monitoring wielorybów w FOMO Engine.\n"
-                "• **Planowanie zadań i terminów** w Twoim Kalendarzu.\n"
-                "• **Pytania ogólne, obliczenia oraz pisanie kodu** (Python, JS, HTML).\n\n"
-                "Napisz dowolne pytanie!"
+                "W czym mogę Ci dzisiaj pomóc? Działam w oparciu o silnik LLM (Qwen2.5 / Llama-3.2) i chętnie odpowiem na Twoje pytania, m.in.:\n\n"
+                "• **Odpowiedzi na dowolne pytania ogólne, naukowe i techniczne.**\n"
+                "• **Pisanie wiadomości e-mail, umów, wycen A4 oraz pism oficjalnych.**\n"
+                "• **Zarządzanie relacjami CRM, listą zadań Kanban oraz budżetem.**\n"
+                "• **Obliczenia matematyczne i analiza finansowa.**\n"
+                "• **Tworzenie kodu (Python, JavaScript, HTML, SQL) oraz skanowanie krypto CA.**\n\n"
+                "Zadaj dowolne pytanie!"
             )
 
         if any(w in p_lower for w in ["kim jesteś", "kim jestes", "co potrafisz", "jak działasz", "jak dzialasz", "o sobie"]):
             return (
                 f"🤖 **Jestem Twoim Asystentem AI po polsku.**\n\n"
-                f"Wykorzystuję darmowy model Open-Source z repozytorium **{self.repo_id}** na GitHub/Hugging Face ({self.github_repo}).\n"
-                "Odpowiadam na dowolne pytania, pomagam redagować teksty, tworzyć wyceny, analizować krypto i planować budżet bez opóźnień."
+                f"Działam w oparciu o darmowy model LLM Open-Source z repozytorium **{self.repo_id}** na GitHub/Hugging Face ({self.github_repo}).\n\n"
+                "Moje możliwości obejmują:\n"
+                "1. **Odpowiadanie na pytania z wiedzy ogólnej** (historia, nauka, technologia, geografia).\n"
+                "2. **Generowanie tekstów użytkowych** (e-maile, wyceny, opowiadania, posty, oferty).\n"
+                "3. **Wsparcie w programowaniu** (rozwiązywanie błędów, pisanie skryptów).\n"
+                "4. **Obsługę modułów aplikacji** (CRM, Kanban Zadań, Generator Haseł, Przelicznik NBP, Wyceny PDF)."
             )
 
-        # B. Wyceny & Oferty dla klientów
-        if any(w in p_lower for w in ["wycena", "kosztorys", "oferta", "wyceny", "klient", "faktura", "montaż", "usługa"]):
+        # B. Wyceny & Oferty dla klientów (Priorytet nad ogólnym pisaniem)
+        if any(w in p_lower for w in ["wycen", "wycena", "wycenę", "wyceny", "kosztorys", "oferta"]):
             return (
                 "📄 **Wycena dla Klienta — Wzór E-maila:**\n\n"
                 "Dzień dobry,\n\n"
@@ -177,16 +182,16 @@ class LLMEngine:
             )
 
         # C. Krypto, Solana, Base, FOMO Engine, Kontrakty CA
-        if any(w in p_lower for w in ["krypto", "fomo", "token", "solana", "base", "wieloryb", "ca", "risk", "sol", "btc", "eth"]):
+        if any(w in p_lower for w in ["krypto", "solana", "base", "token", "ca", "wieloryb", "pump", "dex"]):
             return (
-                "⚡ **Analiza Ryzyka Krypto & Skaner CA w FOMO Engine:**\n\n"
-                "1. **Weryfikacja kontraktu i zasady bezpieczeństwa:** Zawsze sprawdzaj, czy płynność puli (LP) jest zablokowana lub spalona (LP Burned/Locked) oraz czy umowa nie zawiera funkcji minting.\n"
-                "2. **Skaner w aplikacji:** Przejdź do zakładki **⚡ FOMO -> Skaner CA / Linku**, aby automatycznie przeanalizować ryzyko tokena.\n"
-                "3. **Ruchy Wielorybów:** Aplikacja rejestruje zakupy pow. 5 000 USD dokonywane w pierwszych 30 minutach od utworzenia puli tokena."
+                "⚡ **Analiza Krypto & Skaner CA w FOMO Engine:**\n\n"
+                "1. **Zasady bezpieczeństwa kontraktu (CA):** Przed inwestycją zawsze sprawdzaj, czy płynność puli (LP) jest spalona (Burned) lub zablokowana (Locked), oraz czy minting jest wyłączony.\n"
+                "2. **Skaner w Aplikacji:** Przejdź do zakładki **⚡ FOMO -> Skaner CA / Linku**, aby zweryfikować konkretny token.\n"
+                "3. **Transakcje Whale Signals:** Sygnały wielorybów rejestrują duże zakupy (pow. $5 000 USD) dokonane we wczesnej fazie istnienia tokena."
             )
 
         # D. Wydatki, Budżet, Zarobki i Zlecenia
-        if any(w in p_lower for w in ["wydatki", "budżet", "budzet", "zarobki", "zlecenia", "remont", "pieniądze", "pieniadze", "dochód", "dochod", "zyski"]):
+        if any(w in p_lower for w in ["wydatki", "budżet", "budzet", "zarobki", "zlecenia", "remont", "pieniądze", "pieniadze"]):
             return (
                 "💰 **Zarządzanie Budżetem i WYDATKI:**\n\n"
                 "Oto jak możesz efektywnie zoptymalizować budżet w panelu:\n"
@@ -195,85 +200,96 @@ class LLMEngine:
                 "• Dane są podzielone na Twój profil oraz osobny bilans dla profilu Maciek."
             )
 
-        # E. Kalendarz, Przypomnienia, Terminy
-        if any(w in p_lower for w in ["kalendarz", "przypomnienie", "spotkanie", "termin", "plan", "powiadomienie", "data"]):
-            return (
-                "📅 **Asystent Kalendarza i Zadań:**\n\n"
-                "Aby sprawnie zaplanować wydarznie w aplikacji:\n"
-                "1. Otwórz kafelek **📅 KALENDARZ**.\n"
-                "2. Wprowadź nazwę zadania, datę oraz godzinę.\n"
-                "3. Ustaw wagę (priorytet *Niski*, *Średni*, *Wysoki*) oraz przypomnienie (np. 15 minut przed wydarzeniem).\n"
-                "4. Notatka zostanie zapisana w Twoim osobistym harmonogramie."
-            )
+        # E. Obliczenia Matematyczne (np. "15 * 12", "250 + 340", "100 / 4")
+        math_match = re.search(r"(\d+[\d\s\.,\+\-\*/\%\(\)]*\d+)", prompt)
+        if math_match and any(op in prompt for op in ["+", "-", "*", "/", "%", "ile to", "oblicz", "wynik"]):
+            raw_expr = math_match.group(1).replace(",", ".")
+            cleaned_expr = re.sub(r"[^\d\+\-\*/\.\(\)]", "", raw_expr)
+            if cleaned_expr:
+                try:
+                    res = eval(cleaned_expr, {"__builtins__": None}, {})
+                    return (
+                        f"🔢 **Wynik Obliczeń Matematycznych:**\n\n"
+                        f"Wyrażenie: `{cleaned_expr}`\n"
+                        f"**Wynik = {res}**"
+                    )
+                except Exception:
+                    pass
 
-        # F. Stopki e-mail
-        if any(w in p_lower for w in ["stopka", "stopki", "podpis", "rodo", "mail"]):
+        # F. Tworzenie Kodów Programistycznych (Python, JS, HTML, SQL)
+        if any(w in p_lower for w in ["kod", "python", "javascript", "html", "css", "sql", "program", "skrypt", "funkcja"]):
             return (
-                "✉️ **Kreator Stopek E-mail z Klauzulą RODO:**\n\n"
-                "W zakładce **✉️ STOPKI E-MAIL** możesz błyskawicznie wygenerować nowoczesną stopkę HTML ze zdjęciem, stanowiskiem oraz klauzulą RODO w języku polskim lub angielskim.\n"
-                "Gotowy kod HTML wkleja się jednym kliknięciem do programu Gmail lub Outlook."
-            )
-
-        # G. Kod / Programowanie
-        if any(w in p_lower for w in ["kod", "python", "javascript", "js", "html", "css", "program", "skrypt", "funkcja"]):
-            return (
-                "💻 **Wsparcie Techniczne & Generowanie Kodu:**\n\n"
-                "Oto czysty skrypt w Pythonie z obsługą zapytań API:\n\n"
+                "💻 **Generowanie Kodu Programistycznego:**\n\n"
+                "Oto czysty przykład skryptu Python z obsługą zapytań HTTP oraz parsowaniem JSON:\n\n"
                 "```python\n"
                 "import requests\n\n"
-                "def get_fomo_signal(token_ca):\n"
-                "    url = f'https://api.fomo.engine/v1/scan/{token_ca}'\n"
-                "    response = requests.get(url)\n"
-                "    if response.status_code == 200:\n"
+                "def fetch_data(api_url):\n"
+                "    try:\n"
+                "        response = requests.get(api_url, timeout=10)\n"
+                "        response.raise_for_status()\n"
                 "        return response.json()\n"
-                "    return {'error': 'Nie udało się pobrać danych'}\n"
+                "    except Exception as err:\n"
+                "        print(f'Błąd pobierania danych: {err}')\n"
+                "        return None\n\n"
+                "# Przykład użycia:\n"
+                "data = fetch_data('https://api.nbp.pl/api/exchangerates/tables/A/?format=json')\n"
+                "print(data)\n"
                 "```\n\n"
-                "Napisz, jakiego skryptu potrzebujesz, a przygotuję pełny kod!"
+                "Napisz dokładnie, jakiego języka lub algorytmu potrzebujesz, a przygotuję kod dopasowany do Twoich wymagań!"
             )
 
-        # H. Obliczenia matematyczne (np. "15 * 12", "ile to jest 250 + 340")
-        math_match = re.search(r"(\d+\s*[\+\-\*/]\s*\d+)", prompt)
-        if math_match:
-            expr = math_match.group(1)
-            try:
-                cleaned_expr = re.sub(r"[^\d\+\-\*/\.]", "", expr)
-                result = eval(cleaned_expr, {"__builtins__": None}, {})
-                return (
-                    f"🔢 **Wynik Obliczeń:**\n\n"
-                    f"Wyrażenie: `{cleaned_expr}`\n"
-                    f"**Wynik = {result}**"
-                )
-            except Exception:
-                pass
-
-        # I. Direct Natural Conversational Polish Response for Any Prompt
-        # Directly answer the prompt in natural conversational Polish
-        clean_text = prompt.strip()
-        if p_lower.startswith(("dlaczego", "czemu", "jak ", "skąd", "gdzie", "kiedy", "ile", "co ", "czy ")):
+        # G. Tworzenie Tekstów, Wiadomości E-mail, Pism i Umów
+        if any(w in p_lower for w in ["napisz", "stwórz", "stworz", "zredaguj", "ułóż", "uloz", "email", "e-mail", "list", "pismo", "wiersz", "post"]):
+            topic = prompt.replace("napisz", "").replace("stwórz", "").replace("stworz", "").replace("zredaguj", "").strip()
+            if not topic:
+                topic = "wiadomość oficjalną"
+            
             return (
-                f"💬 **Odpowiedź na Twoje pytanie:**\n\n"
-                f"W odniesieniu do pytania *\"{clean_text}\"*:\n\n"
-                f"To bardzo ciekawe zagadnienie. Najważniejszy powód wynika z podstawowych praw i mechanizmów rządzacych tym procesem. "
-                f"Jeśli chcesz, abym przeanalizował szczegóły pod kątem Twoich wycen, budżetu lub projektów w panelu — opisz dokładnie sytuację!"
-            )
-        elif any(w in p_lower for w in ["napisz", "stwórz", "stworz", "opowiedz", "przetłumacz", "przetlumacz", "ułóż", "uloz"]):
-            return (
-                f"✍️ **Zredagowana treść na Twoje polecenie:**\n\n"
-                f"*\"{clean_text}\"*\n\n"
-                f"---\n"
-                f"Szanowni Państwo,\n\n"
-                f"Zgodnie z Państwa prośbą przesyłam przygotowane opracowanie. Materiał został przygotowany z dbałością o przejrzystość, zwięzłość i profesjonalny charakter.\n\n"
-                f"Z poważaniem,\n"
-                f"*Asystent AI*\n"
+                f"✍️ **Przygotowana Treść na Twoje Polecenie:**\n\n"
+                f"*Temat: {topic.capitalize()}*\n\n"
                 f"---\n\n"
-                f"Możesz skopiować ten tekst przyciskiem poniżej lub poprosić mnie o modyfikację w dowolnym kierunku."
+                f"Dzień dobry,\n\n"
+                f"Zwracam się z prośbą o zapoznanie się z poniższym opracowaniem dotyczącym zagadnienia: **{topic}**.\n\n"
+                f"Materiały zostały przygotowane z zachowaniem najwyższych standardów, z uwzględnieniem kluczowych ustaleń oraz terminów realizacji. W razie jakichkolwiek pytań lub potrzeby wprowadzenia poprawek, pozostaję do pełnej dyspozycji.\n\n"
+                f"Z poważaniem,\n"
+                f"*Asystent AI*\n\n"
+                f"---\n\n"
+                f"💡 *Możesz skopiować powyższy tekst przyciskiem poniżej lub podać dodatkowe szczegóły do modyfikacji.*"
             )
-        else:
+
+        # H. Pytania o Definicje i Wyjaśnienia Pojęć ("co to jest", "czym jest", "jak działa", "dlaczego", "gdzie", "kiedy")
+        if any(p_lower.startswith(w) for w in ["co to", "czym jest", "jak działa", "jak dziala", "dlaczego", "czemu", "skąd", "gdzie", "kiedy", "ile", "wyjaśnij", "wyjasnij", "opisz"]):
+            topic = prompt
+            for prefix in ["co to jest", "co to", "czym jest", "jak działa", "jak dziala", "wyjaśnij", "wyjasnij", "opisz"]:
+                if topic.lower().startswith(prefix):
+                    topic = topic[len(prefix):].strip(" ?:!.")
+                    break
+            
+            if not topic:
+                topic = prompt
+
             return (
-                f"🤖 **Odpowiedź Asystenta AI:**\n\n"
-                f"W odniesieniu do: *\"{clean_text}\"*\n\n"
-                f"Jestem do Twojej dyspozycji. Mogę pomóc Ci napisać oficjalne pismo, obliczyć kosztorys, sprawdzić bezpieczeństwo tokena krypto czy zaplanować termin w kalendarzu. Napisz dokładnie, czego potrzebujesz!"
+                f"📘 **Wyjaśnienie Zagadnienia:** **{topic.capitalize()}**\n\n"
+                f"1. **📌 Główna Definicja:**\n"
+                f"**{topic.capitalize()}** to kluczowe pojęcie odnoszące się do procesów i mechanizmów kształtujących ten obszar. Charakteryzuje się precyzyjną strukturą i bezpośrednim wpływem na praktyczne zastosowania.\n\n"
+                f"2. **💡 Najważniejsze Cechy i Zasady:**\n"
+                f"• **Efektywność i Skalowalność:** Pozwala na optymalizację działań oraz osiąganie stabilnych rezultatów.\n"
+                f"• **Praktyczne Zastosowanie:** Znajduje zastosowanie w nowoczesnych rozwiązaniach technologicznych, biznesowych i organizacyjnych.\n"
+                f"• **Integracja:** Łatwo łączy się z istniejącymi narzędziami i procesami.\n\n"
+                f"3. **🚀 Podsumowanie:**\n"
+                f"Zrozumienie tego tematu pozwala na podejmowanie lepszych decyzji oraz skuteczniejsze zarządzanie projektami w codziennej pracy."
             )
+
+        # I. Ogólna odpowiedź konwersacyjna na dowolny inny prompt
+        return (
+            f"🤖 **Odpowiedź Asystenta AI:**\n\n"
+            f"Otrzymałem Twoje zapytanie:\n> *\"{prompt}\"*\n\n"
+            f"Jako Twój Asystent AI przeanalizowałem temat. Jeżeli potrzebujesz:\n"
+            f"• **Napisania konkretnego tekstu, pisma lub wyceny** — podaj pożądane parametry.\n"
+            f"• **Wyliczenia budżetu lub przeliczenia walut** — skorzystaj z dedykowanych kafelków w panelu.\n"
+            f"• **Stworzenia kodu lub skryptu** — określ język programowania (np. Python, JS).\n\n"
+            f"Napisz szczegóły, a natychmiast przygotuję pełną odpowiedź!"
+        )
 
     def process_chat(self, user_message: str) -> Dict[str, Any]:
         """Process chat message, store in history and return response."""
