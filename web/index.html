@@ -161,10 +161,11 @@
           <span id="theme-status">Tryb: Ciemny</span>
         </button>
 
-        <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-800 px-3 py-1.5 rounded-xl font-medium">
+        <button onclick="switchUserQuick()" title="Kliknij, aby przełączyć konto (Adrian / Maciek)" class="btn-anim flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-900 px-3 py-1.5 rounded-xl font-medium cursor-pointer shadow-sm">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-600"></i>
           <span id="header-greeting" class="font-bold">👋 HEJ...</span>
-        </div>
+          <span class="text-[10px] bg-blue-200 text-blue-950 px-1.5 py-0.5 rounded font-extrabold ml-1">Przełącz</span>
+        </button>
 
         <button id="sound-btn" onclick="toggleSound()" class="btn-anim hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
           <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-500"></i>
@@ -3041,8 +3042,25 @@
     async function handleLogout() {
       try {
         await fetch('/api/logout', { method: 'POST' });
-        sessionStorage.removeItem('fomo_username');
       } catch (e) {}
+      safeRemoveStorage('fomo_username');
+      window.location.href = '/login';
+    }
+
+    async function switchUserQuick(targetUser) {
+      const newUser = targetUser || (currentUser.toLowerCase() === 'adrian' ? 'Maciek' : 'Adrian');
+      try {
+        await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: newUser, password: '' })
+        });
+      } catch (e) {}
+      safeSetStorage('fomo_username', newUser);
+      currentUser = newUser;
+      setGreeting(newUser);
+      updatePermissionsUI();
+      window.location.reload();
     }
 
     // TOP EXECUTIVE APP SWITCHER

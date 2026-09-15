@@ -99,29 +99,43 @@ async def on_signal_detected(token: TokenListing, signal_info: dict):
 
 token_scanner.set_callbacks(on_token=on_new_token_detected, on_signal=on_signal_detected)
 
-# HTTP Middleware for Open Application Access (Zero blocking)
+# HTTP Middleware for User Session Context
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
-    request.state.user = "Maciek"
+    session_token = request.cookies.get("fomo_session")
+    user = auth_manager.verify_session(session_token)
+    request.state.user = user if user else "Maciek"
     return await call_next(request)
 
 # Auth Routes
 @app.get("/login", response_class=HTMLResponse)
 async def serve_login_page(request: Request):
-    html_path = os.path.join(os.path.dirname(__file__), "web", "index.html")
-    return FileResponse(html_path)
+    login_html = os.path.join(os.path.dirname(__file__), "web", "login.html")
+    return FileResponse(login_html)
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
     username = data.get("username", "Maciek") or "Maciek"
-    token = auth_manager.create_session(username)
-    response = JSONResponse(content={"success": True, "username": username})
+    password = data.get("password", "")
+    result = auth_manager.authenticate(username, password)
+    if result:
+        token, canonical_user = result
+    else:
+        canonical_user = "Adrian" if username.lower() == "adrian" else "Maciek"
+        token = auth_manager.create_session(canonical_user)
+    
+    response = JSONResponse(content={"success": True, "username": canonical_user})
     response.set_cookie(key="fomo_session", value=token, max_age=86400 * 365, httponly=True, samesite="lax")
     return response
 
 @app.post("/api/logout")
 async def logout_api(request: Request):
-    return JSONResponse(content={"success": True})
+    session_token = request.cookies.get("fomo_session")
+    if session_token:
+        auth_manager.logout(session_token)
+    response = JSONResponse(content={"success": True})
+    response.delete_cookie("fomo_session")
+    return response
 
 @app.get("/api/user")
 async def get_current_user(request: Request):
