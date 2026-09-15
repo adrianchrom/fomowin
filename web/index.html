@@ -15,6 +15,8 @@
   <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Puter.js Free Open-Source LLM API -->
+  <script src="https://js.puter.com/v2/"></script>
   <style>
     body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
@@ -4860,17 +4862,41 @@
       });
 
       try {
-        const res = await fetch('/api/llm/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: text })
-        });
+        let reply = '';
+
+        // 1. Call Puter.js Open-Source Free LLM API in browser
+        if (window.puter && window.puter.ai && typeof window.puter.ai.chat === 'function') {
+          try {
+            const puterRes = await window.puter.ai.chat(text, { model: 'gpt-4o-mini' });
+            if (typeof puterRes === 'string') {
+              reply = puterRes;
+            } else if (puterRes && puterRes.message && puterRes.message.content) {
+              reply = puterRes.message.content;
+            } else if (puterRes && puterRes.text) {
+              reply = puterRes.text;
+            }
+          } catch (pErr) {
+            console.log("Puter AI fallback:", pErr);
+          }
+        }
+
+        // 2. Fallback to backend /api/llm/chat
+        if (!reply || !reply.trim()) {
+          const res = await fetch('/api/llm/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: text })
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            reply = data.reply || 'Brak odpowiedzi';
+          }
+        }
 
         document.querySelectorAll(`[id="${loadingId}"]`).forEach(el => el.remove());
 
-        if (res.ok) {
-          const data = await res.json();
-          const reply = data.reply || 'Brak odpowiedzi';
+        if (reply && reply.trim()) {
           const formattedReply = formatAiMarkdown(reply);
 
           containers.forEach(container => {

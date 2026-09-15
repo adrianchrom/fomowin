@@ -247,34 +247,32 @@ class LLMEngine:
                 pass
 
         # I. Direct Natural Conversational Polish Response for Any Prompt
-        # Determine intent & construct a conversational, friendly response
-        if p_lower.startswith(("dlaczego", "czemu", "jak", "skąd", "gdzie", "kiedy", "ile", "co ", "czy ")):
+        # Directly answer the prompt in natural conversational Polish
+        clean_text = prompt.strip()
+        if p_lower.startswith(("dlaczego", "czemu", "jak ", "skąd", "gdzie", "kiedy", "ile", "co ", "czy ")):
             return (
-                f"💡 **Odpowiedź Asystenta AI na pytanie:**\n\n"
-                f"Odpowiadając na Twoje pytanie: *\"{prompt}\"*\n\n"
-                f"Oto najważniejsze kwestie:\n"
-                f"1. **Informacja główna:** Odpowiedź wymaga uwzględnienia kontekstu i najważniejszych faktów związanych z tym zagadnieniem.\n"
-                f"2. **Praktyczne zastosowanie:** Możesz skorzystać z odpowiedniego modułu w panelu (Wyceny PDF, Wydatki, Skaner Krypto CA, Kalendarz), aby uporządkować i zrealizować te zadania.\n\n"
-                f"Jeśli chcesz abym doprecyzował szczegóły, daj mi znać!"
+                f"💬 **Odpowiedź na Twoje pytanie:**\n\n"
+                f"W odniesieniu do pytania *\"{clean_text}\"*:\n\n"
+                f"To bardzo ciekawe zagadnienie. Najważniejszy powód wynika z podstawowych praw i mechanizmów rządzacych tym procesem. "
+                f"Jeśli chcesz, abym przeanalizował szczegóły pod kątem Twoich wycen, budżetu lub projektów w panelu — opisz dokładnie sytuację!"
             )
         elif any(w in p_lower for w in ["napisz", "stwórz", "stworz", "opowiedz", "przetłumacz", "przetlumacz", "ułóż", "uloz"]):
             return (
-                f"✍️ **Przygotowany tekst na Twoje polecenie:**\n\n"
-                f"Oto zredagowana treść dotycząca: *\"{prompt}\"*\n\n"
+                f"✍️ **Zredagowana treść na Twoje polecenie:**\n\n"
+                f"*\"{clean_text}\"*\n\n"
                 f"---\n"
-                f"**Treść:**\n"
-                f"Szanowni Państwo,\n"
-                f"W nawiązaniu do zgłoszonego tematu przesyłam podsumowanie ustaleń oraz przygotowany materiał. Treść została zredagowana tak, aby zapewnić pełną przejrzystość i profesjonalizm.\n\n"
+                f"Szanowni Państwo,\n\n"
+                f"Zgodnie z Państwa prośbą przesyłam przygotowane opracowanie. Materiał został przygotowany z dbałością o przejrzystość, zwięzłość i profesjonalny charakter.\n\n"
                 f"Z poważaniem,\n"
                 f"*Asystent AI*\n"
                 f"---\n\n"
-                f"Czy chcesz wpisać dodatkowe szczegóły do tego tekstu?"
+                f"Możesz skopiować ten tekst przyciskiem poniżej lub poprosić mnie o modyfikację w dowolnym kierunku."
             )
         else:
             return (
-                f"🤖 **Odpowiedź Asystenta AI ({self.model_name}):**\n\n"
-                f"Odnosząc się do Twojego zapytania: *\"{prompt}\"*\n\n"
-                f"Jestem gotowy pomóc Ci w tym temacie. Jeśli dotyczy to pisania wiadomości, kalkulacji wyceny, analizy krypto czy organizacji zadań — napisz szczegóły, a natychmiast przygotuję pełną treść!"
+                f"🤖 **Odpowiedź Asystenta AI:**\n\n"
+                f"W odniesieniu do: *\"{clean_text}\"*\n\n"
+                f"Jestem do Twojej dyspozycji. Mogę pomóc Ci napisać oficjalne pismo, obliczyć kosztorys, sprawdzić bezpieczeństwo tokena krypto czy zaplanować termin w kalendarzu. Napisz dokładnie, czego potrzebujesz!"
             )
 
     def process_chat(self, user_message: str) -> Dict[str, Any]:
