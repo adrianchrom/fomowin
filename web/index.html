@@ -1975,6 +1975,14 @@
     let socket = null;
     let tokensMap = new Map();
 
+    function safeCreateIcons() {
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.safeCreateIcons();
+        }
+      } catch (e) {}
+    }
+
     let soundEnabled = true;
     let currentTab = 'live';
     let currentApp = 'dashboard';
@@ -2073,7 +2081,7 @@
     function updateThemeUI(theme) {
       const status = document.getElementById('theme-status');
       if (status) status.innerText = theme === 'dark' ? 'Tryb: Ciemny' : 'Tryb: Jasny';
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function toggleSound() {
@@ -2182,8 +2190,9 @@
 
     // TOP EXECUTIVE APP SWITCHER
     function switchApp(appName) {
-      const isAdrian = currentUser.toLowerCase() === 'adrian';
-      const isAllowed = isAdrian || userPermissions[appName] || appName === 'fomo' || appName === 'dashboard';
+      const userLower = (currentUser || '').toLowerCase();
+      const isAdrian = userLower === 'adrian';
+      const isAllowed = isAdrian || (userPermissions && userPermissions[appName]) || appName === 'fomo' || appName === 'dashboard';
 
       const drawer = document.getElementById('burger-drawer');
       if (drawer && !drawer.classList.contains('-translate-x-full')) {
@@ -2202,7 +2211,7 @@
       if (!isAllowed) {
         if (lockedContainer) lockedContainer.classList.remove('hidden');
         updateAppTitle('🔒 Zablokowane');
-        lucide.createIcons();
+        safeCreateIcons();
         return;
       }
 
@@ -2223,18 +2232,20 @@
       };
       updateAppTitle(titlesMap[appName] || 'Aplikacja');
 
-      if (appName === 'fomo') loadLiveTokens();
-      if (appName === 'wydatki') loadWydatkiData();
-      if (appName === 'wyceny') {
-        loadCompanyData();
-        generateNewQuoteNumberUI();
-        loadWycenyData();
-      }
-      if (appName === 'stopki_email') updateEmailSignaturePreview();
-      if (appName === 'kalendarz') loadKalendarzData();
-      if (appName === 'admin') loadAdminPermissions();
+      try { if (appName === 'fomo') loadLiveTokens(); } catch (e) {}
+      try { if (appName === 'wydatki') loadWydatkiData(); } catch (e) {}
+      try {
+        if (appName === 'wyceny') {
+          loadCompanyData();
+          generateNewQuoteNumberUI();
+          loadWycenyData();
+        }
+      } catch (e) {}
+      try { if (appName === 'stopki_email') updateEmailSignaturePreview(); } catch (e) {}
+      try { if (appName === 'kalendarz') loadKalendarzData(); } catch (e) {}
+      try { if (appName === 'admin') loadAdminPermissions(); } catch (e) {}
 
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function updateAppTitle(title) {
@@ -2261,7 +2272,7 @@
         loadTrackedInsidersList();
       }
       if (tab === 'alerts') loadAlertsList();
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     // ENGINE STATUS & TOGGLE FOR FOMO
@@ -2321,7 +2332,7 @@
           btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-white bg-emerald-600 hover:bg-emerald-700 shadow-md";
           btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i><span>Włącz Silnik</span>`;
         }
-        if (window.lucide) lucide.createIcons();
+        safeCreateIcons();
       }
 
       if (currentApp === 'fomo' && currentTab === 'live') {
@@ -2386,7 +2397,7 @@
             </button>
           </div>
         `;
-        if (window.lucide) lucide.createIcons();
+        safeCreateIcons();
         return;
       }
 
@@ -2420,7 +2431,7 @@
           </div>
         `;
       }).join('');
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
 
@@ -2445,7 +2456,7 @@
       if (subtab === 'wykresy' || subtab === 'podsumowanie') {
         setTimeout(renderWydatkiChartsUI, 50);
       }
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function getWydatkiProfile() {
@@ -2918,7 +2929,7 @@
         winnerSubtext.innerText = `Oboje wydali dokładnie tyle samo: ${formatPLN(p1TotalSpent)}.`;
         resultDetails.innerText = `Wydatki obu partnerów są idealnie zrównoważone!`;
       }
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function renderWydatkiChartsUI() {
@@ -3076,7 +3087,7 @@
         renderFinancesUI();
         setTimeout(renderPoiFinanceChart, 50);
       }
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     async function loadWycenyData() {
@@ -3333,7 +3344,7 @@
       if (paper && modal) {
         paper.innerHTML = generatePdfA4HTML(quoteObj, poiState.company);
         modal.classList.remove('hidden');
-        lucide.createIcons();
+        safeCreateIcons();
       }
     }
 
@@ -3516,7 +3527,7 @@
       }
       renderInventoryPickerList();
       modal.classList.remove('hidden');
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function closeInventoryPickerModal() {
@@ -3653,7 +3664,7 @@
         </tr>
       `).join('');
 
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     async function deleteInventoryItem(id) {
@@ -3924,7 +3935,7 @@
           const modal = document.getElementById('pdf-preview-modal');
           paper.innerHTML = generatePdfA4HTML(target, companyData);
           modal.classList.remove('hidden');
-          lucide.createIcons();
+          safeCreateIcons();
         }
       } catch (e) {}
     }
@@ -4529,7 +4540,7 @@
               Brak wydarzeń dla wybranych kryteriów.
             </div>
           `;
-          lucide.createIcons();
+          safeCreateIcons();
           return;
         }
 
@@ -4582,18 +4593,18 @@
           `;
         }).join('');
 
-        lucide.createIcons();
+        safeCreateIcons();
       }
     }
 
     // INITIALIZATION ON LOAD
     window.addEventListener('DOMContentLoaded', () => {
-      initTheme();
-      fetchUser();
-      checkFomoEngineStatus();
-      connectWebSocket();
-      updateEmailSignaturePreview();
-      lucide.createIcons();
+      try { initTheme(); } catch (e) {}
+      try { fetchUser(); } catch (e) {}
+      try { checkFomoEngineStatus(); } catch (e) {}
+      try { connectWebSocket(); } catch (e) {}
+      try { updateEmailSignaturePreview(); } catch (e) {}
+      safeCreateIcons();
     });
   </script>
 </body>

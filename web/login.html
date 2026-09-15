@@ -103,6 +103,10 @@
   </div>
 
   <script>
+    function safeCreateIcons() {
+      try { if (window.lucide && typeof window.lucide.createIcons === "function") window.safeCreateIcons(); } catch(e) {}
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('fomo_saved_username');
       const savedPass = localStorage.getItem('fomo_saved_password');
@@ -194,7 +198,7 @@
         submitBtn.classList.remove('opacity-50');
       }
     }
-    lucide.createIcons();
+    safeCreateIcons();
   </script>
 </body>
 </html>
