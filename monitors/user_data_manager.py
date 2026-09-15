@@ -8,14 +8,12 @@ logger = logging.getLogger("UserDataManager")
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PERMISSIONS_FILE = os.path.join(BASE_DIR, "USER_PERMISSIONS.json")
 WYDATKI_FILE = os.path.join(BASE_DIR, "DATA_WYDATKI.json")
-POI_FILE = os.path.join(BASE_DIR, "DATA_POI.json")
 WYCENY_FILE = os.path.join(BASE_DIR, "DATA_WYCENY.json")
 
 DEFAULT_PERMISSIONS = {
     "Adrian": {
         "fomo": True,
         "wydatki": True,
-        "poi": True,
         "wyceny": True,
         "stopki_email": True,
         "is_admin": True
@@ -23,7 +21,6 @@ DEFAULT_PERMISSIONS = {
     "Maciek": {
         "fomo": True,
         "wydatki": False,
-        "poi": False,
         "wyceny": False,
         "stopki_email": False,
         "is_admin": False
@@ -60,31 +57,6 @@ DEFAULT_WYDATKI = {
             "amount_pln": 3200.0,
             "date": "2026-09-14",
             "note": "Płatność za doradztwo on-chain"
-        }
-    ]
-}
-
-DEFAULT_POI = {
-    "Adrian": [
-        {
-            "id": "poi-101",
-            "name": "Główna Serwerownia RPC",
-            "category": "Serwerownia",
-            "address": "Warszawa, ul. Prosta 20",
-            "coords": "52.2300, 20.9900",
-            "status": "Aktywny",
-            "notes": "Węzeł dedykowany dla skanera Solana & Base"
-        }
-    ],
-    "Maciek": [
-        {
-            "id": "poi-201",
-            "name": "Biuro Klienta FOMO Trade",
-            "category": "Klient",
-            "address": "Kraków, Rynek Główny 1",
-            "coords": "50.0614, 19.9365",
-            "status": "Planowany",
-            "notes": "Spotkanie w sprawie wdrożenia alertów"
         }
     ]
 }
@@ -131,7 +103,6 @@ class UserDataManager:
     def __init__(self):
         self.permissions = self._load_json(PERMISSIONS_FILE, DEFAULT_PERMISSIONS)
         self.wydatki = self._load_json(WYDATKI_FILE, DEFAULT_WYDATKI)
-        self.poi = self._load_json(POI_FILE, DEFAULT_POI)
         self.wyceny = self._load_json(WYCENY_FILE, DEFAULT_WYCENY)
 
     def _load_json(self, filepath: str, default_data: dict) -> dict:
@@ -158,7 +129,6 @@ class UserDataManager:
             self.permissions[canonical] = {
                 "fomo": True,
                 "wydatki": False,
-                "poi": False,
                 "wyceny": False,
                 "stopki_email": False,
                 "is_admin": False
@@ -170,7 +140,6 @@ class UserDataManager:
             return {
                 "fomo": True,
                 "wydatki": True,
-                "poi": True,
                 "wyceny": True,
                 "stopki_email": True,
                 "is_admin": True
@@ -182,7 +151,7 @@ class UserDataManager:
         if target not in self.permissions:
             self.permissions[target] = {}
         
-        for k in ["wydatki", "poi", "wyceny", "stopki_email"]:
+        for k in ["wydatki", "wyceny", "stopki_email"]:
             if k in new_perms:
                 self.permissions[target][k] = bool(new_perms[k])
         
@@ -213,31 +182,6 @@ class UserDataManager:
         if len(filtered) < len(items):
             self.wydatki[canonical] = filtered
             self._save_json(WYDATKI_FILE, self.wydatki)
-            return True
-        return False
-
-    # POI DATA (STRICT PER-USER ISOLATION)
-    def get_user_poi(self, username: str) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        return self.poi.get(canonical, [])
-
-    def add_user_poi(self, username: str, entry: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        if canonical not in self.poi:
-            self.poi[canonical] = []
-        
-        entry["id"] = f"poi-{len(self.poi[canonical]) + 101}"
-        self.poi[canonical].insert(0, entry)
-        self._save_json(POI_FILE, self.poi)
-        return entry
-
-    def delete_user_poi(self, username: str, entry_id: str) -> bool:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        items = self.poi.get(canonical, [])
-        filtered = [x for x in items if x.get("id") != entry_id]
-        if len(filtered) < len(items):
-            self.poi[canonical] = filtered
-            self._save_json(POI_FILE, self.poi)
             return True
         return False
 

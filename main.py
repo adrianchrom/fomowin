@@ -191,24 +191,6 @@ async def delete_wydatki_route(request: Request, entry_id: str):
     success = user_data_mgr.delete_user_wydatki(user, entry_id)
     return {"success": success}
 
-# POI ENDPOINTS (STRICT PER-USER ISOLATION)
-@app.get("/api/poi")
-async def get_poi_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
-    return user_data_mgr.get_user_poi(user)
-
-@app.post("/api/poi")
-async def add_poi_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
-    res = user_data_mgr.add_user_poi(user, data)
-    return {"success": True, "entry": res}
-
-@app.delete("/api/poi/{entry_id}")
-async def delete_poi_route(request: Request, entry_id: str):
-    user = getattr(request.state, "user", "Maciek")
-    success = user_data_mgr.delete_user_poi(user, entry_id)
-    return {"success": success}
-
 # WYCENY ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/wyceny")
 async def get_wyceny_route(request: Request):

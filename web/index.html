@@ -95,7 +95,7 @@
           </div>
           <p class="text-xs text-blue-300 font-semibold flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-0.5">
             <span id="header-greeting" onclick="toggleUserProfileModal()" class="cursor-pointer hover:text-blue-200 hover:underline transition">👋 HEJ...</span>
-            <span class="text-slate-400 font-normal">| Integrated Apps: FOMO, Wydatki, POI, Wyceny, Stopki E-mail</span>
+            <span class="text-slate-400 font-normal">| Integrated Apps: FOMO, Wydatki, Wyceny, Stopki E-mail</span>
           </p>
         </div>
       </div>
@@ -151,12 +151,6 @@
           <span id="lock-badge-wydatki" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
         </button>
 
-        <button id="app-btn-poi" onclick="switchApp('poi')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
-          <i data-lucide="map-pin" class="w-4 h-4 text-amber-400"></i>
-          <span>📍 POI</span>
-          <span id="lock-badge-poi" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
-        </button>
-
         <button id="app-btn-wyceny" onclick="switchApp('wyceny')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
           <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
           <span>🏷️ WYCENY</span>
@@ -185,7 +179,7 @@
       <div class="relative z-10 flex items-center gap-4 text-center sm:text-left">
         <div>
           <h2 id="greeting-title" class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 tracking-tight drop-shadow-md">HEJ...</h2>
-          <p id="greeting-subtitle" class="text-xs sm:text-sm text-slate-300 mt-1">FOMO Signal Engine • Moduły: Wydatki, POI, Wyceny, Stopki E-mail, Panel Admina</p>
+          <p id="greeting-subtitle" class="text-xs sm:text-sm text-slate-300 mt-1">FOMO Signal Engine • Moduły: Wydatki, Wyceny, Stopki E-mail, Panel Admina</p>
         </div>
       </div>
       <div class="relative z-10 flex items-center gap-2 text-xs font-mono bg-slate-950 px-4 py-2 rounded-xl border border-blue-900/60 text-blue-400 shrink-0">
@@ -554,75 +548,6 @@
     </div>
 
 
-    <!-- ==================== MODULE 3: 📍 POI ==================== -->
-    <div id="app-container-poi" class="hidden space-y-6">
-      
-      <!-- User Data Privacy Banner -->
-      <div class="bg-amber-950/40 border border-amber-500/40 p-4 rounded-2xl flex items-center justify-between gap-3 text-xs text-amber-300 font-mono animate-emerge">
-        <div class="flex items-center gap-2">
-          <i data-lucide="map-pin" class="w-5 h-5 text-amber-400 shrink-0"></i>
-          <span>🔒 <b>PRYWATNOŚĆ DANYCH:</b> Notatki i lokalizacje POI konta <b id="poi-user-name" class="text-white">...</b> są przypisane wyłącznie do Twojego profilu.</span>
-        </div>
-      </div>
-
-      <!-- Add POI Form -->
-      <div class="glass-card p-6 rounded-3xl border border-blue-900/50 space-y-4 animate-emerge">
-        <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-blue-900/40 pb-3">
-          <i data-lucide="map-pin" class="w-5 h-5 text-amber-400"></i>
-          Dodaj Nowy Punkt POI (Lokalizacja / Węzeł / Spotkanie)
-        </h3>
-
-        <form onsubmit="handleAddPoiSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          <div class="sm:col-span-2">
-            <label class="block text-slate-300 font-semibold mb-1">Nazwa Punktu / Tytuł:</label>
-            <input type="text" id="poi-name" placeholder="np. Główna Serwerownia / Biuro Klienta X" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block text-slate-300 font-semibold mb-1">Kategoria:</label>
-            <select id="poi-category" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-amber-500 focus:outline-none">
-              <option value="Serwerownia">Serwerownia / Infrastruktura</option>
-              <option value="Klient">Klient / Biuro</option>
-              <option value="Spotkanie">Spotkanie / Event</option>
-              <option value="Spot Terenowy">Spot Terenowy</option>
-              <option value="Inne">Inne</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-slate-300 font-semibold mb-1">Status POI:</label>
-            <select id="poi-status" class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-slate-200 focus:border-amber-500 focus:outline-none font-bold">
-              <option value="Aktywny">🟢 Aktywny</option>
-              <option value="Planowany">🟡 Planowany</option>
-              <option value="Zakończony">⚪ Zakończony</option>
-            </select>
-          </div>
-
-          <div class="sm:col-span-2">
-            <label class="block text-slate-300 font-semibold mb-1">Adres lub Współrzędne GPS:</label>
-            <input type="text" id="poi-address" placeholder="np. Warszawa, ul. Prosta 20 lub 52.2300, 20.9900" required class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none font-mono">
-          </div>
-
-          <div class="sm:col-span-2">
-            <label class="block text-slate-300 font-semibold mb-1">Opis / Notatki Terenowe:</label>
-            <input type="text" id="poi-notes" placeholder="np. Dostęp 24/7, kod do bramy lub szczegóły węzła..." class="w-full bg-slate-950 border border-blue-900/60 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:border-amber-500 focus:outline-none">
-          </div>
-
-          <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
-            <button type="submit" class="btn-anim bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i>
-              Zapisz Punkt POI
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- POI Cards Grid -->
-      <div id="poi-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-
-    </div>
-
-
     <!-- ==================== MODULE 4: 🏷️ WYCENY ==================== -->
     <div id="app-container-wyceny" class="hidden space-y-6">
       
@@ -861,20 +786,6 @@
 
             <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
               <div class="flex items-center gap-3">
-                <i data-lucide="map-pin" class="w-5 h-5 text-amber-400"></i>
-                <div>
-                  <span class="font-bold text-white block text-sm">📍 POI (Punkty i Lokalizacje Terenowe)</span>
-                  <span class="text-slate-400 text-[11px]">Baza lokalizacji i notatek terenowych</span>
-                </div>
-              </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="admin-perm-poi" class="sr-only peer">
-                <div class="w-11 h-6 bg-slate-950 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-              </label>
-            </div>
-
-            <div class="flex items-center justify-between p-3.5 bg-slate-900 rounded-xl border border-blue-900/40">
-              <div class="flex items-center gap-3">
                 <i data-lucide="file-text" class="w-5 h-5 text-purple-400"></i>
                 <div>
                   <span class="font-bold text-white block text-sm">🏷️ WYCENY (Generator Kosztorysów)</span>
@@ -994,7 +905,6 @@
     let userPermissions = {
       fomo: true,
       wydatki: false,
-      poi: false,
       wyceny: false,
       stopki_email: false,
       is_admin: false
@@ -1082,8 +992,6 @@
 
       const wName = document.getElementById('wydatki-user-name');
       if (wName) wName.innerText = userCap;
-      const pName = document.getElementById('poi-user-name');
-      if (pName) pName.innerText = userCap;
       const wycName = document.getElementById('wyceny-user-name');
       if (wycName) wycName.innerText = userCap;
     }
@@ -1097,7 +1005,7 @@
       }
 
       // Update navbar badges for locked/unlocked modules for Maciek
-      ['wydatki', 'poi', 'wyceny', 'stopki_email'].forEach(m => {
+      ['wydatki', 'wyceny', 'stopki_email'].forEach(m => {
         const badge = document.getElementById(`lock-badge-${m}`);
         if (badge) {
           if (!userPermissions[m] && !isAdrian) badge.classList.remove('hidden');
@@ -1121,7 +1029,7 @@
       const isAdrian = currentUser.toLowerCase() === 'adrian';
       const isAllowed = isAdrian || userPermissions[appName] || appName === 'fomo';
 
-      const apps = ['fomo', 'wydatki', 'poi', 'wyceny', 'stopki_email', 'admin'];
+      const apps = ['fomo', 'wydatki', 'wyceny', 'stopki_email', 'admin'];
       
       apps.forEach(a => {
         const btn = document.getElementById(`app-btn-${a}`);
@@ -1152,7 +1060,6 @@
 
       // Load App Specific Data
       if (appName === 'wydatki') loadWydatkiData();
-      if (appName === 'poi') loadPoiData();
       if (appName === 'wyceny') loadWycenyData();
       if (appName === 'stopki_email') updateEmailSignaturePreview();
       if (appName === 'admin') loadAdminPermissions();
@@ -1969,92 +1876,6 @@
     }
 
 
-    // ==================== MODULE 3: 📍 POI LOGIC ====================
-    async function loadPoiData() {
-      const grid = document.getElementById('poi-cards-grid');
-      if (!grid) return;
-      try {
-        const res = await fetch('/api/poi');
-        const list = await res.json();
-
-        if (!list || list.length === 0) {
-          grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500 text-xs glass-card rounded-2xl">Brak zapisanych punktów POI... Dodaj swój pierwszy punkt powyżej.</div>`;
-          return;
-        }
-
-        grid.innerHTML = list.map(p => {
-          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.coords || p.address)}`;
-          let statusClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
-          if (p.status === 'Planowany') statusClass = 'bg-amber-500/20 text-amber-300 border border-amber-500/40';
-          if (p.status === 'Zakończony') statusClass = 'bg-slate-500/20 text-slate-300 border border-slate-500/40';
-
-          return `
-            <div class="glass-card p-5 rounded-2xl space-y-3 border border-blue-900/60 shadow-xl animate-emerge">
-              <div class="flex justify-between items-start border-b border-blue-900/40 pb-3">
-                <div>
-                  <h4 class="text-base font-bold text-white">${p.name}</h4>
-                  <span class="text-xs font-mono text-amber-400">${p.category || 'Spot'}</span>
-                </div>
-                <span class="${statusClass} px-2.5 py-0.5 rounded text-[10px] font-bold font-mono">${p.status || 'Aktywny'}</span>
-              </div>
-
-              <div class="space-y-1 text-xs text-slate-300 font-mono">
-                <p>📍 <b>Adres:</b> ${p.address}</p>
-                ${p.coords ? `<p>🌐 <b>GPS:</b> ${p.coords}</p>` : ''}
-              </div>
-
-              ${p.notes ? `<p class="bg-slate-950 p-2.5 rounded-lg border border-blue-900/40 text-[11px] italic text-slate-300">"${p.notes}"</p>` : ''}
-
-              <div class="flex items-center justify-between gap-2 pt-1 border-t border-blue-900/30">
-                <a href="${mapsUrl}" target="_blank" class="btn-anim bg-amber-600/30 hover:bg-amber-600 text-amber-200 hover:text-white px-3 py-1.5 rounded-lg border border-amber-500/40 text-[11px] font-bold inline-flex items-center gap-1">
-                  <span>Google Maps</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                </a>
-                <button onclick="handleDeletePoi('${p.id}')" class="btn-anim bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold">
-                  Usuń
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-        lucide.createIcons();
-      } catch (e) {}
-    }
-
-    async function handleAddPoiSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById('poi-name').value.trim();
-      const category = document.getElementById('poi-category').value;
-      const status = document.getElementById('poi-status').value;
-      const address = document.getElementById('poi-address').value.trim();
-      const notes = document.getElementById('poi-notes').value.trim();
-
-      try {
-        await fetch('/api/poi', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: name,
-            category: category,
-            status: status,
-            address: address,
-            notes: notes
-          })
-        });
-        document.getElementById('poi-name').value = '';
-        document.getElementById('poi-address').value = '';
-        document.getElementById('poi-notes').value = '';
-        loadPoiData();
-      } catch (e) {}
-    }
-
-    async function handleDeletePoi(id) {
-      try {
-        await fetch(`/api/poi/${id}`, { method: 'DELETE' });
-        loadPoiData();
-      } catch (e) {}
-    }
-
-
     // ==================== MODULE 4: 🏷️ WYCENY LOGIC ====================
     function addWycenaItemRow() {
       const container = document.getElementById('wycena-items-container');
@@ -2256,7 +2077,6 @@
         const p = data.maciek || {};
 
         document.getElementById('admin-perm-wydatki').checked = !!p.wydatki;
-        document.getElementById('admin-perm-poi').checked = !!p.poi;
         document.getElementById('admin-perm-wyceny').checked = !!p.wyceny;
         document.getElementById('admin-perm-stopki_email').checked = !!p.stopki_email;
       } catch (e) {}
@@ -2264,7 +2084,6 @@
 
     async function handleSaveAdminPermissions() {
       const wydatki = document.getElementById('admin-perm-wydatki').checked;
-      const poi = document.getElementById('admin-perm-poi').checked;
       const wyceny = document.getElementById('admin-perm-wyceny').checked;
       const stopki_email = document.getElementById('admin-perm-stopki_email').checked;
 
@@ -2274,7 +2093,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             wydatki: wydatki,
-            poi: poi,
             wyceny: wyceny,
             stopki_email: stopki_email
           })
