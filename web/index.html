@@ -11,23 +11,66 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; }
+    body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
-    /* CLEAN WHITE STYLING */
+    /* LIGHT MODE STYLING */
     .clean-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
       box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+      transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
     
-    .clean-card-hover {
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .clean-card-hover { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
     .clean-card-hover:hover {
       transform: translateY(-2px);
       box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
       border-color: #cbd5e1;
     }
+
+    /* DARK MODE STYLING */
+    body.dark {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+    }
+    body.dark header {
+      background-color: #111827;
+      border-color: #1f2937;
+    }
+    body.dark #burger-drawer {
+      background-color: #111827;
+      border-color: #1f2937;
+      color: #f1f5f9;
+    }
+    body.dark #burger-drawer nav button {
+      color: #cbd5e1;
+    }
+    body.dark #burger-drawer nav button:hover {
+      background-color: #1f2937;
+      color: #ffffff;
+    }
+    body.dark .clean-card {
+      background-color: #111827;
+      border-color: #1f2937;
+      color: #f1f5f9;
+    }
+    body.dark .clean-card-hover:hover {
+      border-color: #374151;
+      box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.6);
+    }
+    body.dark input, body.dark select, body.dark textarea {
+      background-color: #0b0f19 !important;
+      border-color: #374151 !important;
+      color: #f1f5f9 !important;
+    }
+    body.dark .text-slate-900 { color: #f8fafc !important; }
+    body.dark .text-slate-800 { color: #f1f5f9 !important; }
+    body.dark .text-slate-700 { color: #e2e8f0 !important; }
+    body.dark .text-slate-600 { color: #cbd5e1 !important; }
+    body.dark .text-slate-500 { color: #94a3b8 !important; }
+    body.dark .bg-slate-50 { background-color: #0b0f19 !important; }
+    body.dark .bg-slate-100 { background-color: #1f2937 !important; }
+    body.dark .border-slate-100, body.dark .border-slate-200 { border-color: #1f2937 !important; }
 
     .btn-anim { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
     .btn-anim:active { transform: scale(0.98); }
@@ -48,7 +91,7 @@
 
     /* PDF A4 Paper & Modal Styles */
     .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75);
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(6px); z-index: 50; display: flex; items: center; justify-content: center; padding: 1rem;
     }
     .pdf-modal-container {
@@ -56,9 +99,9 @@
       display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
     }
     .a4-paper {
-      background: #ffffff; width: 100%; max-width: 800px; margin: 0 auto; padding: 2.5rem;
+      background: #ffffff !important; color: #0f172a !important; width: 100%; max-width: 800px; margin: 0 auto; padding: 2.5rem;
       box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; font-family: Arial, Helvetica, sans-serif;
-      color: #0f172a; line-height: 1.4;
+      line-height: 1.4;
     }
 
     /* Print Specific Styling */
@@ -98,9 +141,15 @@
         </div>
       </div>
 
-      <!-- Right: User Greeting & Actions -->
-      <div class="flex items-center gap-3 text-xs">
+      <!-- Right: User Greeting, Theme Toggle & Actions -->
+      <div class="flex items-center gap-2.5 text-xs">
         
+        <!-- Theme Toggle Button (Jasny / Ciemny) -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn-anim flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
+          <i id="theme-icon" data-lucide="moon" class="w-3.5 h-3.5 text-indigo-500"></i>
+          <span id="theme-status">Tryb: Ciemny</span>
+        </button>
+
         <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-800 px-3 py-1.5 rounded-xl font-medium">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-600"></i>
           <span id="header-greeting" class="font-bold">👋 HEJ...</span>
@@ -306,7 +355,7 @@
             </div>
             <div>
               <h3 class="text-lg font-bold text-slate-900">✉️ STOPKI E-MAIL</h3>
-              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kreator eleganckich stopek HTML do podpisów e-mailowych z klauzulami RODO (PL/EN/DE) i logo.</p>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Kreator eleganckich stopek HTML z kolorowymi ikonami SVG, RODO PL/EN/DE i podglądem na żywo.</p>
             </div>
           </div>
           <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-blue-600">
@@ -379,7 +428,8 @@
               </h3>
               <p class="text-xs text-slate-500 mt-0.5">Wykryte w ciągu ostatnich 30 minut • Wykryte na blockchainie Solana / Base</p>
             </div>
-            <div class="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200">
+            <div class="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-blue"></span>
               Auto-Refresh: Active
             </div>
           </div>
@@ -713,8 +763,8 @@
             <div id="wycena-items-container" class="space-y-2">
               <!-- Item Row 1 default -->
               <div class="grid grid-cols-1 sm:grid-cols-7 gap-2 wycena-item-row bg-slate-50 p-2.5 rounded-2xl border border-slate-200 items-center">
-                <input type="text" placeholder="Opis pozycji / usługi / materiału..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc">
-                <input type="number" value="1" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty">
+                <input type="text" placeholder="Opis pozycji / usługi / materiału..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc" oninput="updateQuoteLiveTotal()">
+                <input type="number" value="1" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty" oninput="updateQuoteLiveTotal()">
                 <select class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
                   <option value="szt.">szt.</option>
                   <option value="kpl.">kpl.</option>
@@ -724,8 +774,8 @@
                   <option value="godz.">godz.</option>
                   <option value="kg">kg</option>
                 </select>
-                <input type="number" step="0.01" placeholder="Cena jedn. PLN" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold wyc-item-price">
-                <button type="button" onclick="this.parentElement.remove()" class="bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
+                <input type="number" step="0.01" placeholder="Cena jedn. PLN" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold wyc-item-price" oninput="updateQuoteLiveTotal()">
+                <button type="button" onclick="this.parentElement.remove(); updateQuoteLiveTotal();" class="bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-xl px-2 py-2 font-bold text-[11px]">Usuń</button>
               </div>
             </div>
           </div>
@@ -778,7 +828,7 @@
             <i data-lucide="mail" class="w-6 h-6 text-cyan-600"></i>
             ✉️ STOPKI E-MAIL — Kreator Podpisów HTML PRO
           </h2>
-          <p class="text-xs text-slate-500 mt-1">Szybkie generowanie spójnego podpisu e-mailowego HTML z klauzulą poufności i RODO</p>
+          <p class="text-xs text-slate-500 mt-1">Szybkie generowanie spójnego podpisu e-mailowego HTML z kolorowymi ikonami SVG i RODO</p>
         </div>
       </div>
 
@@ -855,7 +905,7 @@
           <!-- Color Customization Card -->
           <div class="clean-card p-6 rounded-3xl space-y-3">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-              <i data-lucide="palette" class="w-4 h-4 text-cyan-600"></i> Kolorystyka & Stylistyka
+              <i data-lucide="palette" class="w-4 h-4 text-cyan-600"></i> Kolorystyka & Stylistyka Ikon SVG
             </h3>
             
             <div class="grid grid-cols-2 gap-3">
@@ -864,12 +914,16 @@
                 <input type="color" id="sig-line-color" value="#c0d600" oninput="updateEmailSignaturePreview()" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl p-1 cursor-pointer">
               </div>
               <div>
-                <label class="block font-semibold mb-1 text-slate-700">Kolor akcentu linków:</label>
+                <label class="block font-semibold mb-1 text-slate-700">Kolor stanowiska i linków:</label>
                 <input type="color" id="sig-accent-color" value="#1e88e5" oninput="updateEmailSignaturePreview()" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl p-1 cursor-pointer">
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold mb-1 text-slate-700">Kolor ikonek SVG:</label>
+                <input type="color" id="sig-icon-color" value="#1e88e5" oninput="updateEmailSignaturePreview()" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl p-1 cursor-pointer">
+              </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Grubość kreski (px):</label>
                 <select id="sig-line-width" onchange="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
@@ -879,13 +933,15 @@
                   <option value="6">6 px</option>
                 </select>
               </div>
-              <div>
-                <label class="block font-semibold mb-1 text-slate-700">Styl ikon kontaktowych:</label>
-                <select id="sig-icon-style" onchange="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
-                  <option value="emoji" selected>Emoji (📞 ✉️ 🌐)</option>
-                  <option value="none">Brak ikon</option>
-                </select>
-              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">Styl ikon kontaktowych:</label>
+              <select id="sig-icon-style" onchange="updateEmailSignaturePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <option value="svg" selected>Graficzne (Kolorowe SVG z wybranym kolorem)</option>
+                <option value="emoji">Emoji (📞 ✉️ 🌐)</option>
+                <option value="none">Brak ikon (Tylko tekst)</option>
+              </select>
             </div>
           </div>
 
@@ -1107,19 +1163,6 @@
       logo_base64: ''
     };
 
-    // Current Quote State
-    let currentQuote = {
-      number: '',
-      issueDate: new Date().toISOString().split('T')[0],
-      validDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      clientName: '',
-      clientPhone: '',
-      clientAddress: '',
-      projectTitle: '',
-      notes: 'Wycena ważna przez 14 dni od daty wystawienia.\nPłatność przelewem po akceptacji prac.',
-      items: []
-    };
-
     // SEED SAMPLE TOKENS
     const seedTokens = [
       {
@@ -1156,6 +1199,36 @@
       }
     ];
     seedTokens.forEach(t => tokensMap.set(t.chain + ':' + t.token_address.toLowerCase(), t));
+
+    // THEME TOGGLE (JASNY / CIEMNY)
+    function initTheme() {
+      const savedTheme = localStorage.getItem('fomo_theme') || 'light';
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+        updateThemeUI('dark');
+      } else {
+        document.body.classList.remove('dark');
+        updateThemeUI('light');
+      }
+    }
+
+    function toggleTheme() {
+      if (document.body.classList.contains('dark')) {
+        document.body.classList.remove('dark');
+        localStorage.setItem('fomo_theme', 'light');
+        updateThemeUI('light');
+      } else {
+        document.body.classList.add('dark');
+        localStorage.setItem('fomo_theme', 'dark');
+        updateThemeUI('dark');
+      }
+    }
+
+    function updateThemeUI(theme) {
+      const status = document.getElementById('theme-status');
+      if (status) status.innerText = theme === 'dark' ? 'Tryb: Ciemny' : 'Tryb: Jasny';
+      lucide.createIcons();
+    }
 
     function toggleSound() {
       soundEnabled = !soundEnabled;
@@ -1303,7 +1376,7 @@
       };
       updateAppTitle(titlesMap[appName] || 'Aplikacja');
 
-      if (appName === 'fomo') renderLiveSignals();
+      if (appName === 'fomo') loadLiveTokens();
       if (appName === 'wydatki') loadWydatkiData();
       if (appName === 'wyceny') {
         loadCompanyData();
@@ -1335,10 +1408,15 @@
           btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100";
         }
       });
+      if (tab === 'insiders') {
+        loadInsiderSignalsFeed();
+        loadTrackedInsidersList();
+      }
+      if (tab === 'alerts') loadAlertsList();
       lucide.createIcons();
     }
 
-    // WEBSOCKET & REST RECOVERY
+    // WEBSOCKET & REST RECOVERY FOR FOMO
     function connectWebSocket() {
       if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) return;
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -1357,6 +1435,19 @@
       };
     }
 
+    async function loadLiveTokens() {
+      try {
+        const res = await fetch('/api/tokens');
+        if (res.ok) {
+          const list = await res.json();
+          if (list && list.length > 0) {
+            list.forEach(t => tokensMap.set(t.chain + ':' + t.token_address.toLowerCase(), t));
+          }
+        }
+      } catch (e) {}
+      renderLiveSignals();
+    }
+
     function renderLiveSignals() {
       const container = document.getElementById('live-signals-container');
       if (!container) return;
@@ -1368,16 +1459,16 @@
       }
 
       container.innerHTML = list.map(t => {
-        const isUp = t.price_change_5m >= 0;
+        const isUp = (t.price_change_5m || 0) >= 0;
         const changeClass = isUp ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
         return `
           <div class="p-4 bg-white border border-slate-200 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:border-slate-300 transition">
             <div class="space-y-1">
               <div class="flex items-center gap-2">
-                <span class="font-bold text-sm text-slate-900">${t.name} (${t.ticker})</span>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded uppercase font-bold bg-slate-100 text-slate-700">${t.chain}</span>
+                <span class="font-bold text-sm text-slate-900">${t.name || t.symbol || 'Token'} (${t.ticker || t.symbol || 'CA'})</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded uppercase font-bold bg-slate-100 text-slate-700">${t.chain || 'solana'}</span>
               </div>
-              <p class="text-xs text-slate-500 font-mono">${t.trader_description || 'Sygnał zakupu wieloryba'}</p>
+              <p class="text-xs text-slate-500 font-mono">${t.trader_description || 'Sygnał zakupu wieloryba (> $500k Portfolio)'}</p>
             </div>
             <div class="flex items-center gap-4">
               <div class="text-right">
@@ -1892,6 +1983,26 @@
 
 
     // ==================== MODULE 4: ✉️ STOPKI E-MAIL LOGIC ====================
+    // Base64 SVG Icon Generator for guaranteed rendering across browsers & mail clients
+    function getBase64Icon(type, colorHex) {
+      const color = colorHex || '#1e88e5';
+      let svg = '';
+
+      if (type === 'phone') {
+        svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+      } else if (type === 'email') {
+        svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`;
+      } else if (type === 'website') {
+        svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"/></svg>`;
+      }
+
+      try {
+        return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+      } catch (e) {
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      }
+    }
+
     function updateEmailSignaturePreview() {
       const templateStyleEl = document.querySelector('input[name="sigTemplateStyle"]:checked');
       const templateStyle = templateStyleEl ? templateStyleEl.value : 'top-line';
@@ -1905,8 +2016,9 @@
 
       const lineColor = document.getElementById('sig-line-color').value || '#c0d600';
       const accentColor = document.getElementById('sig-accent-color').value || '#1e88e5';
+      const iconColor = document.getElementById('sig-icon-color').value || '#1e88e5';
       const lineWidth = document.getElementById('sig-line-width').value || '3';
-      const iconStyle = document.getElementById('sig-icon-style').value || 'emoji';
+      const iconStyle = document.getElementById('sig-icon-style').value || 'svg';
 
       const enableClause = document.getElementById('sig-enable-clause').checked;
       const langPL = document.getElementById('sig-lang-pl').checked;
@@ -1914,14 +2026,33 @@
       const langDE = document.getElementById('sig-lang-de').checked;
 
       let contactRowsHtml = '';
-      if (phone) {
-        contactRowsHtml += `<tr><td style="padding-bottom: 4px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">${iconStyle === 'emoji' ? '📞 ' : ''}<a href="tel:${phone.replace(/\s+/g, '')}" style="color: ${accentColor}; font-weight: bold; text-decoration: none;">${phone}</a></td></tr>`;
-      }
-      if (email) {
-        contactRowsHtml += `<tr><td style="padding-bottom: 4px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">${iconStyle === 'emoji' ? '✉️ ' : ''}<a href="mailto:${email}" style="color: ${accentColor}; text-decoration: none;">${email}</a></td></tr>`;
-      }
+
+      const renderContactRow = (type, text, href, emoji) => {
+        let iconTd = '';
+        if (iconStyle === 'svg') {
+          const iconDataUrl = getBase64Icon(type, iconColor);
+          iconTd = `<td style="padding-right: 10px; vertical-align: middle; width: 18px; padding-bottom: 5px;">
+            <img src="${iconDataUrl}" width="16" height="16" alt="" style="display: block; border: 0; width: 16px; height: 16px;" />
+          </td>`;
+        } else if (iconStyle === 'emoji') {
+          iconTd = `<td style="padding-right: 8px; vertical-align: middle; width: 20px; padding-bottom: 5px; font-size: 14px;">${emoji}</td>`;
+        }
+
+        return `
+          <tr>
+            ${iconTd}
+            <td style="padding-bottom: 5px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">
+              <a href="${href}" style="color: ${accentColor}; text-decoration: underline; font-weight: ${type === 'phone' ? 'bold' : 'normal'};">${text}</a>
+            </td>
+          </tr>
+        `;
+      };
+
+      if (phone) contactRowsHtml += renderContactRow('phone', phone, `tel:${phone.replace(/\s+/g, '')}`, '📞');
+      if (email) contactRowsHtml += renderContactRow('email', email, `mailto:${email}`, '✉️');
       if (website) {
-        contactRowsHtml += `<tr><td style="padding-bottom: 4px; vertical-align: middle; font-family: Arial, sans-serif; font-size: 13px;">${iconStyle === 'emoji' ? '🌐 ' : ''}<a href="https://${website}" target="_blank" style="color: ${accentColor}; text-decoration: none;">${website}</a></td></tr>`;
+        const webUrl = website.startsWith('http') ? website : `https://${website}`;
+        contactRowsHtml += renderContactRow('website', website, webUrl, '🌐');
       }
 
       let clauseHtml = '';
@@ -2056,27 +2187,29 @@
       } catch (e) {}
     }
 
-    // INSIDER FEED & ALERTS PLACEHOLDERS FOR FOMO ENGINE
+    // INSIDER FEED & ALERTS FOR FOMO ENGINE
     async function loadInsiderSignalsFeed() {
       const list = document.getElementById('insider-signals-list');
       if (!list) return;
       try {
-        const res = await fetch('/api/insider-feed');
-        const data = await res.json();
-        if (!data || data.length === 0) {
-          list.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Brak aktywności insiderów w tej chwili.</div>`;
-          return;
+        const res = await fetch('/api/insider-signals');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            list.innerHTML = data.map(item => `
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex justify-between items-center text-xs">
+                <div>
+                  <span class="font-bold text-purple-700">${item.insider?.handle || item.handle || '@insider'}</span>
+                  <span class="text-slate-500 font-mono block text-[11px]">${item.token?.name || item.token_name || 'Token'} (${item.token?.ticker || 'CA'}) • Buy $${item.buyAmountUsd || 15000}</span>
+                </div>
+                <a href="${item.token?.fomo_url || '#'}" target="_blank" class="btn-anim bg-blue-50 text-blue-700 font-bold px-3 py-1 rounded-lg border border-blue-200">Otwórz</a>
+              </div>
+            `).join('');
+            return;
+          }
         }
-        list.innerHTML = data.map(item => `
-          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex justify-between items-center text-xs">
-            <div>
-              <span class="font-bold text-purple-700">${item.insider?.handle || '@insider'}</span>
-              <span class="text-slate-500 font-mono block text-[11px]">${item.token?.name} (${item.token?.ticker}) • Buy $${item.buyAmountUsd}</span>
-            </div>
-            <a href="${item.token?.fomo_url || '#'}" target="_blank" class="btn-anim text-blue-600 font-bold">Otwórz</a>
-          </div>
-        `).join('');
       } catch (e) {}
+      list.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Brak aktywności insiderów w tej chwili.</div>`;
     }
 
     async function loadTrackedInsidersList() {
@@ -2084,13 +2217,16 @@
       if (!list) return;
       try {
         const res = await fetch('/api/tracked-insiders');
-        const data = await res.json();
-        list.innerHTML = data.map(i => `
-          <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-xl border border-slate-200">
-            <span class="font-bold text-slate-800">${i.handle}</span>
-            <button onclick="handleDeleteInsider('${i.handle}')" class="text-rose-600 font-bold text-[11px]">Usuń</button>
-          </div>
-        `).join('');
+        if (res.ok) {
+          const data = await res.json();
+          list.innerHTML = data.map(i => `
+            <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-xl border border-slate-200">
+              <span class="font-bold text-slate-800">${i.handle}</span>
+              <button onclick="handleDeleteInsider('${i.handle}')" class="text-rose-600 font-bold text-[11px]">Usuń</button>
+            </div>
+          `).join('');
+          return;
+        }
       } catch (e) {}
     }
 
@@ -2120,7 +2256,7 @@
       const input = document.getElementById('scanner-input').value.trim();
       const results = document.getElementById('scanner-results');
       try {
-        const res = await fetch('/api/scan-contract', {
+        const res = await fetch('/api/scan-token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ input })
@@ -2129,7 +2265,7 @@
         results.classList.remove('hidden');
         results.innerHTML = `
           <h4 class="font-bold text-slate-900">Wyniki Analizy CA: ${data.token_name || 'Token'}</h4>
-          <p class="text-xs font-bold ${data.security?.is_honeypot ? 'text-rose-600' : 'text-emerald-600'}">Status: ${data.security?.status_text || 'SAFE'}</p>
+          <p class="text-xs font-bold ${data.security?.is_honeypot ? 'text-rose-600' : 'text-emerald-600'}">Status: ${data.security?.status_text || 'SAFE CONTRACT'}</p>
         `;
       } catch (e) {}
     }
@@ -2139,13 +2275,16 @@
       if (!list) return;
       try {
         const res = await fetch('/api/alerts');
-        const data = await res.json();
-        list.innerHTML = data.map(a => `
-          <div class="flex justify-between items-center text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <span class="font-mono text-slate-800">${a.token_name || a.ca} - MCap: $${a.target_mcap_usd}</span>
-            <button onclick="handleDeleteAlert('${a.id}')" class="text-rose-600 font-bold text-[11px]">Usuń</button>
-          </div>
-        `).join('');
+        if (res.ok) {
+          const data = await res.json();
+          list.innerHTML = data.map(a => `
+            <div class="flex justify-between items-center text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <span class="font-mono text-slate-800">${a.token_name || a.ca} - MCap: $${a.target_mcap_usd}</span>
+              <button onclick="handleDeleteAlert('${a.id}')" class="text-rose-600 font-bold text-[11px]">Usuń</button>
+            </div>
+          `).join('');
+          return;
+        }
       } catch (e) {}
     }
 
@@ -2174,6 +2313,7 @@
 
     // INITIALIZATION ON LOAD
     window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
       fetchUser();
       connectWebSocket();
       updateEmailSignaturePreview();
