@@ -452,6 +452,18 @@
             <span>Alerty & Powiadomienia</span>
           </button>
         </div>
+
+        <!-- ENGINE ON / OFF TOGGLE & STATUS BADGE -->
+        <div class="flex items-center gap-3 ml-auto pr-2">
+          <span id="fomo-engine-status-badge" class="px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            SILNIK: AKTYWNY 🟢
+          </span>
+          <button id="btn-toggle-fomo" onclick="handleToggleFomoEngine()" class="btn-anim flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md">
+            <i data-lucide="power" class="w-4 h-4"></i>
+            <span>Wyłącz Silnik</span>
+          </button>
+        </div>
       </div>
 
       <!-- TAB 1: LIVE SIGNALS FEED -->
@@ -2260,6 +2272,71 @@
       lucide.createIcons();
     }
 
+    // ENGINE STATUS & TOGGLE FOR FOMO
+    let isFomoEngineEnabled = true;
+
+    async function checkFomoEngineStatus() {
+      try {
+        const res = await fetch('/api/fomo/status');
+        if (res.ok) {
+          const data = await res.json();
+          isFomoEngineEnabled = data.is_enabled;
+          updateFomoEngineUI(isFomoEngineEnabled);
+        }
+      } catch (e) {}
+    }
+
+    async function handleToggleFomoEngine() {
+      const btn = document.getElementById('btn-toggle-fomo');
+      if (btn) btn.disabled = true;
+      try {
+        const res = await fetch('/api/fomo/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: !isFomoEngineEnabled })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          isFomoEngineEnabled = data.is_enabled;
+          updateFomoEngineUI(isFomoEngineEnabled);
+          showToast(isFomoEngineEnabled ? "Silnik FOMO został WŁĄCZONY 🟢" : "Silnik FOMO został WYŁĄCZONY 🔴 (0% CPU / RPC OFF)", isFomoEngineEnabled ? "success" : "info");
+        }
+      } catch (e) {
+        showToast("Błąd podczas przełączania silnika FOMO", "error");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function updateFomoEngineUI(enabled) {
+      const badge = document.getElementById('fomo-engine-status-badge');
+      const btn = document.getElementById('btn-toggle-fomo');
+      if (badge) {
+        if (enabled) {
+          badge.className = "px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm";
+          badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> SILNIK: AKTYWNY 🟢`;
+        } else {
+          badge.className = "px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-rose-50 text-rose-700 border-rose-200 shadow-sm";
+          badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> SILNIK: WYŁĄCZONY 🔴 (0% CPU / RPC OFF)`;
+        }
+      }
+
+      if (btn) {
+        if (enabled) {
+          btn.className = "btn-anim flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md";
+          btn.innerHTML = `<i data-lucide="power" class="w-4 h-4"></i><span>Wyłącz Silnik</span>`;
+        } else {
+          btn.className = "btn-anim flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition text-white bg-emerald-600 hover:bg-emerald-700 shadow-md";
+          btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i><span>Włącz Silnik</span>`;
+        }
+        if (window.lucide) lucide.createIcons();
+      }
+
+      if (currentApp === 'fomo' && currentTab === 'live') {
+        renderLiveSignals();
+      }
+    }
+
     // WEBSOCKET & REST RECOVERY FOR FOMO
     function connectWebSocket() {
       if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) return;
@@ -2270,10 +2347,20 @@
       socket.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          if (message.type === 'TOKEN_UPDATE' || message.type === 'NEW_TOKEN') {
-            const token = message.data;
-            tokensMap.set(token.chain + ':' + token.token_address.toLowerCase(), token);
-            if (currentApp === 'fomo' && currentTab === 'live') renderLiveSignals();
+          if (message.type === 'init') {
+            if (message.is_enabled !== undefined) {
+              isFomoEngineEnabled = message.is_enabled;
+              updateFomoEngineUI(isFomoEngineEnabled);
+            }
+          } else if (message.type === 'fomo_status') {
+            isFomoEngineEnabled = message.is_enabled;
+            updateFomoEngineUI(isFomoEngineEnabled);
+          } else if (message.type === 'TOKEN_UPDATE' || message.type === 'NEW_TOKEN' || message.type === 'token_update') {
+            const token = message.token || message.data;
+            if (token) {
+              tokensMap.set(token.chain + ':' + token.token_address.toLowerCase(), token);
+              if (currentApp === 'fomo' && currentTab === 'live') renderLiveSignals();
+            }
           }
         } catch (e) {}
       };
@@ -2295,6 +2382,21 @@
     function renderLiveSignals() {
       const container = document.getElementById('live-signals-container');
       if (!container) return;
+
+      if (!isFomoEngineEnabled) {
+        container.innerHTML = `
+          <div class="text-center py-12 px-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl font-bold">⏸️</div>
+            <h4 class="text-sm font-bold text-slate-800">Silnik FOMO jest obecnie wyłączony</h4>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">Skanowanie w tle (zapytania RPC & GeckoTerminal) zostało wstrzymane. Procesor i sieć nie są obciążane.</p>
+            <button onclick="handleToggleFomoEngine()" class="btn-anim inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition">
+              <i data-lucide="zap" class="w-4 h-4"></i> Włącz Silnik FOMO
+            </button>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
 
       const list = Array.from(tokensMap.values());
       if (list.length === 0) {
@@ -4504,6 +4606,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
       fetchUser();
+      checkFomoEngineStatus();
       connectWebSocket();
       updateEmailSignaturePreview();
       lucide.createIcons();

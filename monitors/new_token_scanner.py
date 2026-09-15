@@ -35,6 +35,7 @@ class NewTokenScanner:
     """Scans active pools & tokens (STRICTLY 0-30 min old, AT LEAST 1 HOLDER) on Robinhood Chain, Base, SOL."""
 
     def __init__(self):
+        self.is_enabled: bool = True
         self.known_tokens: Dict[str, TokenListing] = {}
         self.token_holders: Dict[str, Set[str]] = {}
         self.ssl_ctx = ssl.create_default_context()
@@ -340,14 +341,23 @@ class NewTokenScanner:
             if key in self.known_tokens:
                 del self.known_tokens[key]
 
+    def toggle_engine(self, enabled: Optional[bool] = None) -> bool:
+        if enabled is not None:
+            self.is_enabled = bool(enabled)
+        else:
+            self.is_enabled = not self.is_enabled
+        logger.info(f"FOMO Engine background scanner is now: {'ENABLED' if self.is_enabled else 'DISABLED (PAUSED)'}")
+        return self.is_enabled
+
     async def start_loop(self):
         """Continuous scanner task loop."""
         logger.info("Starting Token Scanner (0-30 min age, >=1 Holder required, $5k+ buys & RPC)...")
         while True:
             try:
-                self.purge_old_tokens()
-                await self.scan_robinhood_rpc_transfers()
-                await self.scan_geckoterminal_and_pumps()
+                if self.is_enabled:
+                    self.purge_old_tokens()
+                    await self.scan_robinhood_rpc_transfers()
+                    await self.scan_geckoterminal_and_pumps()
             except Exception as e:
                 logger.error(f"Error in scanner loop: {e}")
             await asyncio.sleep(config.SCAN_INTERVAL_SECONDS)

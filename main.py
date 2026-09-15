@@ -38,7 +38,7 @@ class ConnectionManager:
             t.__dict__ for t in token_scanner.known_tokens.values()
             if t.age_minutes <= config.MAX_NEW_TOKEN_AGE_MINUTES and t.holders_count >= 1
         ]
-        await websocket.send_json({"type": "init", "tokens": tokens_payload})
+        await websocket.send_json({"type": "init", "tokens": tokens_payload, "is_enabled": token_scanner.is_enabled})
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
@@ -259,8 +259,22 @@ async def get_status():
         "whale_min_portfolio_usd": config.WHALE_MIN_PORTFOLIO_USD,
         "max_token_age_minutes": config.MAX_NEW_TOKEN_AGE_MINUTES,
         "monitored_tokens_count": len(token_scanner.known_tokens),
-        "chains": list(config.CHAINS.keys())
+        "chains": list(config.CHAINS.keys()),
+        "is_enabled": token_scanner.is_enabled
     }
+
+@app.get("/api/fomo/status")
+async def get_fomo_status():
+    return {"is_enabled": token_scanner.is_enabled}
+
+@app.post("/api/fomo/toggle")
+async def toggle_fomo_status(data: Dict[str, Any] = Body(default={})):
+    enabled = data.get("enabled")
+    if enabled is None:
+        enabled = not token_scanner.is_enabled
+    token_scanner.toggle_engine(enabled)
+    await manager.broadcast({"type": "fomo_status", "is_enabled": token_scanner.is_enabled})
+    return {"success": True, "is_enabled": token_scanner.is_enabled}
 
 @app.get("/api/tokens")
 async def get_tokens():
