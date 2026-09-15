@@ -187,29 +187,32 @@ class UserDataManager:
     def get_user_wydatki(self, username: str) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
         val = self.wydatki.get(canonical)
-        if isinstance(val, list):
+        if isinstance(val, dict) and "baseIncomes" in val:
+            return val
+        
+        expenses_list = val if isinstance(val, list) else []
+        if canonical == "Adrian":
             return {
                 "baseIncomes": [
-                    {"id": 1, "month": "2026-08", "adrian": 9500, "maciek": 8000},
-                    {"id": 2, "month": "2026-09", "adrian": 9500, "maciek": 8500}
+                    {"id": 1, "month": "2026-08", "p1": 9500, "p2": 8000, "adrian": 9500, "patrycja": 8000},
+                    {"id": 2, "month": "2026-09", "p1": 9500, "p2": 8500, "adrian": 9500, "patrycja": 8500}
                 ],
                 "gigs": [
                     {"id": 1, "person": "Adrian", "title": "Zlecenie projektowe www", "amount": 2500, "month": "2026-09", "date": "2026-09-15"}
                 ],
-                "expenses": val
+                "expenses": expenses_list
             }
-        elif isinstance(val, dict):
-            return val
-        return {
-            "baseIncomes": [
-                {"id": 1, "month": "2026-08", "adrian": 9500, "maciek": 8000},
-                {"id": 2, "month": "2026-09", "adrian": 9500, "maciek": 8500}
-            ],
-            "gigs": [
-                {"id": 1, "person": "Adrian", "title": "Zlecenie projektowe www", "amount": 2500, "month": "2026-09", "date": "2026-09-15"}
-            ],
-            "expenses": []
-        }
+        else:
+            return {
+                "baseIncomes": [
+                    {"id": 1, "month": "2026-08", "p1": 8500, "p2": 7500, "maciek": 8500, "karolina": 7500},
+                    {"id": 2, "month": "2026-09", "p1": 9000, "p2": 8000, "maciek": 9000, "karolina": 8000}
+                ],
+                "gigs": [
+                    {"id": 1, "person": "Maciek", "title": "Projekt graficzny logo", "amount": 1800, "month": "2026-09", "date": "2026-09-14"}
+                ],
+                "expenses": expenses_list
+            }
 
     def save_user_wydatki(self, username: str, data: dict) -> dict:
         canonical = "Adrian" if username.lower() == "adrian" else "Maciek"

@@ -565,7 +565,7 @@
             <i data-lucide="user" class="w-6 h-6"></i>
           </div>
           <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Adriana</p>
+            <p id="topAdrianLabel" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Adriana</p>
             <p id="topAdrianIncome" class="text-xl font-extrabold text-slate-900">0 PLN</p>
             <span id="topAdrianExtra" class="text-xs text-blue-600 font-medium">+0 PLN zleceń</span>
           </div>
@@ -576,7 +576,7 @@
             <i data-lucide="user" class="w-6 h-6"></i>
           </div>
           <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Patrycji / Maćka</p>
+            <p id="topPatrycjaLabel" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Patrycji</p>
             <p id="topPatrycjaIncome" class="text-xl font-extrabold text-slate-900">0 PLN</p>
             <span id="topPatrycjaExtra" class="text-xs text-pink-600 font-medium">+0 PLN zleceń</span>
           </div>
@@ -673,8 +673,8 @@
                 <div class="flex items-center gap-2 w-full sm:w-auto text-xs">
                   <select id="filterPerson" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
                     <option value="ALL">Wszyscy</option>
-                    <option value="Adrian">Tylko Adrian</option>
-                    <option value="Patrycja">Tylko Maciek/Patrycja</option>
+                    <option value="Adrian" id="opt-filter-p1">Tylko Adrian</option>
+                    <option value="Patrycja" id="opt-filter-p2">Tylko Patrycja</option>
                     <option value="Wspólne">Tylko Wspólne</option>
                   </select>
                   <select id="filterCategory" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
@@ -739,12 +739,12 @@
 
               <div class="grid grid-cols-2 gap-3">
                 <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100">
-                  <label class="block font-bold text-blue-700 mb-1">Adrian (Stała Pensja):</label>
+                  <label id="labelAdrianSalary" class="block font-bold text-blue-700 mb-1">Adrian (Stała Pensja):</label>
                   <input type="number" id="adrianBaseSalary" step="100" min="0" placeholder="8000" required class="w-full px-3 py-2 rounded-xl border border-blue-200 bg-white font-bold text-slate-900">
                 </div>
 
                 <div class="bg-pink-50/50 p-3 rounded-2xl border border-pink-100">
-                  <label class="block font-bold text-pink-700 mb-1">Maciek/Patrycja (Pensja):</label>
+                  <label id="labelPatrycjaSalary" class="block font-bold text-pink-700 mb-1">Patrycja (Pensja):</label>
                   <input type="number" id="patrycjaBaseSalary" step="100" min="0" placeholder="7500" required class="w-full px-3 py-2 rounded-xl border border-pink-200 bg-white font-bold text-slate-900">
                 </div>
               </div>
@@ -769,8 +769,8 @@
               <div>
                 <label class="block font-semibold text-slate-600 mb-1">Dla kogo wypracowany dochód?</label>
                 <div class="grid grid-cols-2 gap-3">
-                  <button type="button" onclick="selectGigPerson('Adrian')" id="btn-gig-Adrian" class="py-2.5 px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition">Adrian</button>
-                  <button type="button" onclick="selectGigPerson('Patrycja')" id="btn-gig-Patrycja" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Maciek / Patrycja</button>
+                  <button type="button" onclick="selectGigPerson(getWydatkiProfile().p1)" id="btn-gig-Adrian" class="py-2.5 px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition">Adrian</button>
+                  <button type="button" onclick="selectGigPerson(getWydatkiProfile().p2)" id="btn-gig-Patrycja" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Patrycja</button>
                 </div>
               </div>
 
@@ -807,8 +807,8 @@
                 <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
                   <tr>
                     <th class="p-2.5">Miesiąc</th>
-                    <th class="p-2.5 text-blue-600">Adrian</th>
-                    <th class="p-2.5 text-pink-600">Maciek/Patrycja</th>
+                    <th class="p-2.5 text-blue-600" id="thBaseP1">Adrian</th>
+                    <th class="p-2.5 text-pink-600" id="thBaseP2">Patrycja</th>
                     <th class="p-2.5 font-bold">Łącznie</th>
                     <th class="p-2.5 text-center">Usuń</th>
                   </tr>
@@ -883,7 +883,7 @@
                 <i data-lucide="user" class="w-5 h-5"></i>
               </div>
               <div>
-                <h3 class="text-lg font-bold text-slate-900">Adrian</h3>
+                <h3 id="summaryP1Name" class="text-lg font-bold text-slate-900">Adrian</h3>
                 <p class="text-xs text-blue-600 font-semibold">Podsumowanie finansowe</p>
               </div>
             </div>
@@ -913,7 +913,7 @@
                 <i data-lucide="user" class="w-5 h-5"></i>
               </div>
               <div>
-                <h3 class="text-lg font-bold text-slate-900">Maciek / Patrycja</h3>
+                <h3 id="summaryP2Name" class="text-lg font-bold text-slate-900">Patrycja</h3>
                 <p class="text-xs text-pink-600 font-semibold">Podsumowanie finansowe</p>
               </div>
             </div>
@@ -1872,16 +1872,71 @@
       lucide.createIcons();
     }
 
+    function getWydatkiProfile() {
+      const user = (currentUser || sessionStorage.getItem('fomo_username') || '').toLowerCase();
+      const isMaciek = user === 'maciek';
+      return {
+        isMaciek: isMaciek,
+        p1: isMaciek ? 'Maciek' : 'Adrian',
+        p2: isMaciek ? 'Karolina' : 'Patrycja',
+        p1Genitive: isMaciek ? 'Maćka' : 'Adriana',
+        p2Genitive: isMaciek ? 'Karoliny' : 'Patrycji'
+      };
+    }
+
+    function updateWydatkiProfileDOM() {
+      const profile = getWydatkiProfile();
+
+      const topAdrianLabel = document.getElementById('topAdrianLabel');
+      if (topAdrianLabel) topAdrianLabel.innerText = `Dochód ${profile.p1Genitive}`;
+      const topPatrycjaLabel = document.getElementById('topPatrycjaLabel');
+      if (topPatrycjaLabel) topPatrycjaLabel.innerText = `Dochód ${profile.p2Genitive}`;
+
+      const btnP1 = document.getElementById('btn-payer-Adrian');
+      if (btnP1) btnP1.innerText = profile.p1;
+      const btnP2 = document.getElementById('btn-payer-Patrycja');
+      if (btnP2) btnP2.innerText = profile.p2;
+
+      const optFilterP1 = document.getElementById('opt-filter-p1');
+      if (optFilterP1) { optFilterP1.value = profile.p1; optFilterP1.innerText = `Tylko ${profile.p1}`; }
+      const optFilterP2 = document.getElementById('opt-filter-p2');
+      if (optFilterP2) { optFilterP2.value = profile.p2; optFilterP2.innerText = `Tylko ${profile.p2}`; }
+
+      const labelAdrianSal = document.getElementById('labelAdrianSalary');
+      if (labelAdrianSal) labelAdrianSal.innerText = `${profile.p1} (Stała Pensja):`;
+      const labelPatrycjaSal = document.getElementById('labelPatrycjaSalary');
+      if (labelPatrycjaSal) labelPatrycjaSal.innerText = `${profile.p2} (Pensja):`;
+
+      const btnGigP1 = document.getElementById('btn-gig-Adrian');
+      if (btnGigP1) btnGigP1.innerText = profile.p1;
+      const btnGigP2 = document.getElementById('btn-gig-Patrycja');
+      if (btnGigP2) btnGigP2.innerText = profile.p2;
+
+      const thP1 = document.getElementById('thBaseP1');
+      if (thP1) thP1.innerText = profile.p1;
+      const thP2 = document.getElementById('thBaseP2');
+      if (thP2) thP2.innerText = profile.p2;
+
+      const sumP1 = document.getElementById('summaryP1Name');
+      if (sumP1) sumP1.innerText = profile.p1;
+      const sumP2 = document.getElementById('summaryP2Name');
+      if (sumP2) sumP2.innerText = profile.p2;
+    }
+
     function selectExpensePayer(payer) {
       document.getElementById('selectedExpensePayer').value = payer;
-      ['Adrian', 'Patrycja', 'Wspólne'].forEach(opt => {
-        const btn = document.getElementById(`btn-payer-${opt}`);
+      const profile = getWydatkiProfile();
+      const options = [
+        { id: 'Adrian', name: profile.p1, activeClass: 'border-blue-500 bg-blue-100 text-blue-700' },
+        { id: 'Patrycja', name: profile.p2, activeClass: 'border-pink-500 bg-pink-100 text-pink-700' },
+        { id: 'Wspólne', name: 'Wspólne', activeClass: 'border-purple-500 bg-purple-100 text-purple-700' }
+      ];
+
+      options.forEach(opt => {
+        const btn = document.getElementById(`btn-payer-${opt.id}`);
         if (!btn) return;
-        if (opt === payer) {
-          let classes = "py-2.5 px-2 font-bold rounded-xl border transition border-blue-500 bg-blue-100 text-blue-700";
-          if (opt === "Patrycja") classes = "py-2.5 px-2 font-bold rounded-xl border transition border-pink-500 bg-pink-100 text-pink-700";
-          if (opt === "Wspólne") classes = "py-2.5 px-2 font-bold rounded-xl border transition border-purple-500 bg-purple-100 text-purple-700";
-          btn.className = classes;
+        if (payer === opt.name || payer === opt.id) {
+          btn.className = `py-2.5 px-2 font-bold rounded-xl border transition ${opt.activeClass}`;
         } else {
           btn.className = "py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition";
         }
@@ -1890,12 +1945,17 @@
 
     function selectGigPerson(person) {
       document.getElementById('selectedGigPerson').value = person;
-      ['Adrian', 'Patrycja'].forEach(opt => {
-        const btn = document.getElementById(`btn-gig-${opt}`);
+      const profile = getWydatkiProfile();
+      const options = [
+        { id: 'Adrian', name: profile.p1, activeClass: 'border-blue-500 bg-blue-100 text-blue-700' },
+        { id: 'Patrycja', name: profile.p2, activeClass: 'border-pink-500 bg-pink-100 text-pink-700' }
+      ];
+
+      options.forEach(opt => {
+        const btn = document.getElementById(`btn-gig-${opt.id}`);
         if (!btn) return;
-        if (opt === person) {
-          const classes = opt === "Adrian" ? "border-blue-500 bg-blue-100 text-blue-700" : "border-pink-500 bg-pink-100 text-pink-700";
-          btn.className = `py-2.5 px-2 font-bold rounded-xl border ${classes} transition`;
+        if (person === opt.name || person === opt.id) {
+          btn.className = `py-2.5 px-2 font-bold rounded-xl border transition ${opt.activeClass}`;
         } else {
           btn.className = "py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition";
         }
@@ -1931,6 +1991,7 @@
     }
 
     function refreshWydatkiUI() {
+      updateWydatkiProfileDOM();
       renderWydatkiTopMetrics();
       renderExpensesUI();
       renderIncomeTablesUI();
@@ -1942,24 +2003,33 @@
     }
 
     function renderWydatkiTopMetrics() {
-      let adrianBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.adrian) || 0), 0);
-      let patrycjaBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.patrycja || curr.maciek) || 0), 0);
+      const profile = getWydatkiProfile();
 
-      let adrianGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Adrian").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-      let patrycjaGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Patrycja" || g.person === "Maciek").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p1BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
+        const val = curr.p1 !== undefined ? curr.p1 : (profile.isMaciek ? (curr.maciek || curr.adrian) : curr.adrian);
+        return acc + (Number(val) || 0);
+      }, 0);
 
-      let totalAdrianInc = adrianBaseTotal + adrianGigTotal;
-      let totalPatrycjaInc = patrycjaBaseTotal + patrycjaGigTotal;
-      let totalIncomeCombined = totalAdrianInc + totalPatrycjaInc;
+      let p2BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
+        const val = curr.p2 !== undefined ? curr.p2 : (profile.isMaciek ? (curr.karolina || curr.patrycja) : curr.patrycja);
+        return acc + (Number(val) || 0);
+      }, 0);
+
+      let p1GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p1 || (profile.isMaciek && g.person === 'Maciek') || (!profile.isMaciek && g.person === 'Adrian')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p2GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p2 || (profile.isMaciek && g.person === 'Karolina') || (!profile.isMaciek && g.person === 'Patrycja')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
+      let totalP1Inc = p1BaseTotal + p1GigTotal;
+      let totalP2Inc = p2BaseTotal + p2GigTotal;
+      let totalIncomeCombined = totalP1Inc + totalP2Inc;
 
       let totalExpensesCombined = wydatkiFullData.expenses.reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
       let remainingBudget = totalIncomeCombined - totalExpensesCombined;
 
-      document.getElementById("topAdrianIncome").innerText = formatPLN(totalAdrianInc);
-      document.getElementById("topAdrianExtra").innerText = `+${formatPLN(adrianGigTotal)} zleceń`;
+      document.getElementById("topAdrianIncome").innerText = formatPLN(totalP1Inc);
+      document.getElementById("topAdrianExtra").innerText = `+${formatPLN(p1GigTotal)} zleceń`;
 
-      document.getElementById("topPatrycjaIncome").innerText = formatPLN(totalPatrycjaInc);
-      document.getElementById("topPatrycjaExtra").innerText = `+${formatPLN(patrycjaGigTotal)} zleceń`;
+      document.getElementById("topPatrycjaIncome").innerText = formatPLN(totalP2Inc);
+      document.getElementById("topPatrycjaExtra").innerText = `+${formatPLN(p2GigTotal)} zleceń`;
 
       document.getElementById("topTotalExpenses").innerText = formatPLN(totalExpensesCombined);
       document.getElementById("topExpensesCount").innerText = `${wydatkiFullData.expenses.length} pozycji`;
@@ -1978,7 +2048,11 @@
 
     async function handleAddExpense(e) {
       e.preventDefault();
-      const payer = document.getElementById("selectedExpensePayer").value || "Adrian";
+      const profile = getWydatkiProfile();
+      let payer = document.getElementById("selectedExpensePayer").value || profile.p1;
+      if (payer === 'Adrian') payer = profile.p1;
+      if (payer === 'Patrycja') payer = profile.p2;
+
       const title = document.getElementById("expenseTitle").value.trim();
       const amount = parseFloat(document.getElementById("expenseAmount").value);
       const category = document.getElementById("expenseCategory").value;
@@ -2015,6 +2089,7 @@
     function strId(val) { return String(val); }
 
     function renderExpensesUI() {
+      const profile = getWydatkiProfile();
       const tbody = document.getElementById("expensesTableBody");
       if (!tbody) return;
 
@@ -2023,8 +2098,8 @@
       const searchQuery = (document.getElementById("searchExpense").value || "").toLowerCase();
 
       let filtered = wydatkiFullData.expenses.filter(item => {
-        const p = item.person || item.payer || "Adrian";
-        const matchPerson = (personFilter === "ALL") || (p === personFilter);
+        const p = item.person || item.payer || profile.p1;
+        const matchPerson = (personFilter === "ALL") || (p === personFilter) || (personFilter === profile.p1 && (p === 'Adrian' || p === 'Maciek')) || (personFilter === profile.p2 && (p === 'Patrycja' || p === 'Karolina'));
         const matchCategory = (categoryFilter === "ALL") || (item.category === categoryFilter);
         const amt = item.amount_pln || item.amount || 0;
         const matchSearch = item.title.toLowerCase().includes(searchQuery) ||
@@ -2041,10 +2116,10 @@
       }
 
       tbody.innerHTML = filtered.map(item => {
-        const p = item.person || item.payer || "Adrian";
+        const p = item.person || item.payer || profile.p1;
         let badgeClass = "badge-shared";
-        if (p === "Adrian") badgeClass = "badge-adrian";
-        if (p === "Patrycja" || p === "Maciek") badgeClass = "badge-patrycja";
+        if (p === profile.p1 || p === "Adrian" || p === "Maciek") badgeClass = "badge-adrian";
+        if (p === profile.p2 || p === "Patrycja" || p === "Karolina") badgeClass = "badge-patrycja";
 
         const amt = parseFloat(item.amount_pln || item.amount || 0);
 
@@ -2065,19 +2140,34 @@
 
     async function handleAddMonthlyIncome(e) {
       e.preventDefault();
+      const profile = getWydatkiProfile();
       const month = document.getElementById("incomeMonth").value;
-      const adrianSal = parseFloat(document.getElementById("adrianBaseSalary").value) || 0;
-      const patrycjaSal = parseFloat(document.getElementById("patrycjaBaseSalary").value) || 0;
+      const p1Sal = parseFloat(document.getElementById("adrianBaseSalary").value) || 0;
+      const p2Sal = parseFloat(document.getElementById("patrycjaBaseSalary").value) || 0;
 
       if (!month) return;
 
       const idx = wydatkiFullData.baseIncomes.findIndex(item => item.month === month);
       if (idx >= 0) {
-        wydatkiFullData.baseIncomes[idx].adrian = adrianSal;
-        wydatkiFullData.baseIncomes[idx].patrycja = patrycjaSal;
-        wydatkiFullData.baseIncomes[idx].maciek = patrycjaSal;
+        wydatkiFullData.baseIncomes[idx].p1 = p1Sal;
+        wydatkiFullData.baseIncomes[idx].p2 = p2Sal;
+        if (profile.isMaciek) {
+          wydatkiFullData.baseIncomes[idx].maciek = p1Sal;
+          wydatkiFullData.baseIncomes[idx].karolina = p2Sal;
+        } else {
+          wydatkiFullData.baseIncomes[idx].adrian = p1Sal;
+          wydatkiFullData.baseIncomes[idx].patrycja = p2Sal;
+        }
       } else {
-        wydatkiFullData.baseIncomes.push({ id: Date.now(), month: month, adrian: adrianSal, patrycja: patrycjaSal, maciek: patrycjaSal });
+        const newInc = { id: Date.now(), month: month, p1: p1Sal, p2: p2Sal };
+        if (profile.isMaciek) {
+          newInc.maciek = p1Sal;
+          newInc.karolina = p2Sal;
+        } else {
+          newInc.adrian = p1Sal;
+          newInc.patrycja = p2Sal;
+        }
+        wydatkiFullData.baseIncomes.push(newInc);
       }
 
       wydatkiFullData.baseIncomes.sort((a, b) => a.month.localeCompare(b.month));
@@ -2095,7 +2185,11 @@
 
     async function handleAddGigIncome(e) {
       e.preventDefault();
-      const person = document.getElementById("selectedGigPerson").value || "Adrian";
+      const profile = getWydatkiProfile();
+      let person = document.getElementById("selectedGigPerson").value || profile.p1;
+      if (person === 'Adrian') person = profile.p1;
+      if (person === 'Patrycja') person = profile.p2;
+
       const title = document.getElementById("gigTitle").value.trim();
       const amount = parseFloat(document.getElementById("gigAmount").value);
       const month = document.getElementById("gigMonth").value;
@@ -2125,19 +2219,22 @@
     }
 
     function renderIncomeTablesUI() {
+      const profile = getWydatkiProfile();
       const baseBody = document.getElementById("baseIncomeTableBody");
       if (baseBody) {
         baseBody.innerHTML = "";
         const sortedBase = [...wydatkiFullData.baseIncomes].sort((a, b) => b.month.localeCompare(a.month));
 
         sortedBase.forEach(item => {
-          const totalMonth = (item.adrian || 0) + (item.patrycja || item.maciek || 0);
+          const p1Val = Number(item.p1 !== undefined ? item.p1 : (profile.isMaciek ? (item.maciek || item.adrian) : item.adrian)) || 0;
+          const p2Val = Number(item.p2 !== undefined ? item.p2 : (profile.isMaciek ? (item.karolina || item.patrycja) : item.patrycja)) || 0;
+          const totalMonth = p1Val + p2Val;
           const tr = document.createElement("tr");
           tr.className = "hover:bg-slate-50 transition";
           tr.innerHTML = `
             <td class="p-2.5 font-bold text-slate-800">${item.month}</td>
-            <td class="p-2.5 font-semibold text-blue-600">${formatPLN(item.adrian)}</td>
-            <td class="p-2.5 font-semibold text-pink-600">${formatPLN(item.patrycja || item.maciek)}</td>
+            <td class="p-2.5 font-semibold text-blue-600">${formatPLN(p1Val)}</td>
+            <td class="p-2.5 font-semibold text-pink-600">${formatPLN(p2Val)}</td>
             <td class="p-2.5 font-extrabold text-slate-900">${formatPLN(totalMonth)}</td>
             <td class="p-2.5 text-center">
               <button onclick="deleteBaseIncome('${item.id}')" class="text-rose-600 font-bold">Usuń</button>
@@ -2153,7 +2250,7 @@
         const sortedGigs = [...wydatkiFullData.gigs].sort((a, b) => b.month.localeCompare(a.month));
 
         sortedGigs.forEach(gig => {
-          let badgeClass = gig.person === "Adrian" ? "badge-adrian" : "badge-patrycja";
+          let badgeClass = (gig.person === profile.p1 || gig.person === 'Adrian' || gig.person === 'Maciek') ? "badge-adrian" : "badge-patrycja";
           const tr = document.createElement("tr");
           tr.className = "hover:bg-slate-50 transition";
           tr.innerHTML = `
@@ -2171,61 +2268,78 @@
     }
 
     function renderSummarySectionUI() {
-      let adrianBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.adrian) || 0), 0);
-      let patrycjaBaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + (Number(curr.patrycja || curr.maciek) || 0), 0);
+      const profile = getWydatkiProfile();
 
-      let adrianGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Adrian").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-      let patrycjaGigTotal = wydatkiFullData.gigs.filter(g => g.person === "Patrycja" || g.person === "Maciek").reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p1BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
+        const val = curr.p1 !== undefined ? curr.p1 : (profile.isMaciek ? (curr.maciek || curr.adrian) : curr.adrian);
+        return acc + (Number(val) || 0);
+      }, 0);
 
-      let adrianTotalIncome = adrianBaseTotal + adrianGigTotal;
-      let patrycjaTotalIncome = patrycjaBaseTotal + patrycjaGigTotal;
+      let p2BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
+        const val = curr.p2 !== undefined ? curr.p2 : (profile.isMaciek ? (curr.karolina || curr.patrycja) : curr.patrycja);
+        return acc + (Number(val) || 0);
+      }, 0);
 
-      let adrianDirectExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Adrian").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
-      let patrycjaDirectExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Patrycja" || (e.person || e.payer) === "Maciek").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+      let p1GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p1 || (profile.isMaciek && g.person === 'Maciek') || (!profile.isMaciek && g.person === 'Adrian')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p2GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p2 || (profile.isMaciek && g.person === 'Karolina') || (!profile.isMaciek && g.person === 'Patrycja')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
+      let p1TotalIncome = p1BaseTotal + p1GigTotal;
+      let p2TotalIncome = p2BaseTotal + p2GigTotal;
+
+      let p1DirectExpenses = wydatkiFullData.expenses.filter(e => {
+        const p = e.person || e.payer;
+        return p === profile.p1 || (profile.isMaciek ? p === 'Maciek' : p === 'Adrian');
+      }).reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+
+      let p2DirectExpenses = wydatkiFullData.expenses.filter(e => {
+        const p = e.person || e.payer;
+        return p === profile.p2 || (profile.isMaciek ? p === 'Karolina' : p === 'Patrycja');
+      }).reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+
       let sharedExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Wspólne").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
 
       let sharedHalf = sharedExpenses / 2;
 
-      let adrianTotalSpent = adrianDirectExpenses + sharedHalf;
-      let patrycjaTotalSpent = patrycjaDirectExpenses + sharedHalf;
+      let p1TotalSpent = p1DirectExpenses + sharedHalf;
+      let p2TotalSpent = p2DirectExpenses + sharedHalf;
 
-      let adrianPercent = adrianTotalIncome > 0 ? Math.round((adrianTotalSpent / adrianTotalIncome) * 100) : 0;
-      let patrycjaPercent = patrycjaTotalIncome > 0 ? Math.round((patrycjaTotalSpent / patrycjaTotalIncome) * 100) : 0;
+      let p1Percent = p1TotalIncome > 0 ? Math.round((p1TotalSpent / p1TotalIncome) * 100) : 0;
+      let p2Percent = p2TotalIncome > 0 ? Math.round((p2TotalSpent / p2TotalIncome) * 100) : 0;
 
-      // Render Adrian Card
-      document.getElementById("summaryAdrianIncome").innerText = formatPLN(adrianTotalIncome);
-      document.getElementById("summaryAdrianExpenses").innerText = formatPLN(adrianDirectExpenses);
+      // Render Person 1 Card
+      document.getElementById("summaryAdrianIncome").innerText = formatPLN(p1TotalIncome);
+      document.getElementById("summaryAdrianExpenses").innerText = formatPLN(p1DirectExpenses);
       document.getElementById("summaryAdrianShared").innerText = formatPLN(sharedHalf);
-      document.getElementById("summaryAdrianTotalSpent").innerText = formatPLN(adrianTotalSpent);
-      document.getElementById("summaryAdrianPercent").innerText = `${adrianPercent}% dochodu`;
-      document.getElementById("summaryAdrianProgressBar").style.width = `${Math.min(adrianPercent, 100)}%`;
+      document.getElementById("summaryAdrianTotalSpent").innerText = formatPLN(p1TotalSpent);
+      document.getElementById("summaryAdrianPercent").innerText = `${p1Percent}% dochodu`;
+      document.getElementById("summaryAdrianProgressBar").style.width = `${Math.min(p1Percent, 100)}%`;
 
-      // Render Patrycja Card
-      document.getElementById("summaryPatrycjaIncome").innerText = formatPLN(patrycjaTotalIncome);
-      document.getElementById("summaryPatrycjaExpenses").innerText = formatPLN(patrycjaDirectExpenses);
+      // Render Person 2 Card
+      document.getElementById("summaryPatrycjaIncome").innerText = formatPLN(p2TotalIncome);
+      document.getElementById("summaryPatrycjaExpenses").innerText = formatPLN(p2DirectExpenses);
       document.getElementById("summaryPatrycjaShared").innerText = formatPLN(sharedHalf);
-      document.getElementById("summaryPatrycjaTotalSpent").innerText = formatPLN(patrycjaTotalSpent);
-      document.getElementById("summaryPatrycjaPercent").innerText = `${patrycjaPercent}% dochodu`;
-      document.getElementById("summaryPatrycjaProgressBar").style.width = `${Math.min(patrycjaPercent, 100)}%`;
+      document.getElementById("summaryPatrycjaTotalSpent").innerText = formatPLN(p2TotalSpent);
+      document.getElementById("summaryPatrycjaPercent").innerText = `${p2Percent}% dochodu`;
+      document.getElementById("summaryPatrycjaProgressBar").style.width = `${Math.min(p2Percent, 100)}%`;
 
       // CALCULATE BUDGET WINNER AT THE BOTTOM
       const winnerBadge = document.getElementById("winnerBadge");
       const winnerSubtext = document.getElementById("winnerSubtext");
       const resultDetails = document.getElementById("budgetResultDetails");
 
-      const diffPLN = Math.abs(adrianTotalSpent - patrycjaTotalSpent);
+      const diffPLN = Math.abs(p1TotalSpent - p2TotalSpent);
 
-      if (adrianTotalSpent > patrycjaTotalSpent) {
-        winnerBadge.innerHTML = `<span class="text-blue-400 font-black flex items-center gap-1.5"><i data-lucide="user" class="w-5 h-5"></i> ADRIAN</span> <span class="text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded-md font-mono">(+${formatPLN(diffPLN)})</span>`;
-        winnerSubtext.innerText = `Adrian sfinansował ${formatPLN(adrianTotalSpent)} (${adrianPercent}% swojego dochodu).`;
-        resultDetails.innerText = `Adrian wykorzystał więcej budżetu kwotowo o ${formatPLN(diffPLN)} w porównaniu do drugiej osoby. Bezpośrednio wydał ${formatPLN(adrianDirectExpenses)}, a druga osoba ${formatPLN(patrycjaDirectExpenses)}.`;
-      } else if (patrycjaTotalSpent > adrianTotalSpent) {
-        winnerBadge.innerHTML = `<span class="text-pink-400 font-black flex items-center gap-1.5"><i data-lucide="user" class="w-5 h-5"></i> MACIEK / PATRYCJA</span> <span class="text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded-md font-mono">(+${formatPLN(diffPLN)})</span>`;
-        winnerSubtext.innerText = `Druga osoba sfinansowała ${formatPLN(patrycjaTotalSpent)} (${patrycjaPercent}% swojego dochodu).`;
-        resultDetails.innerText = `Druga osoba wykorzystała więcej budżetu kwotowo o ${formatPLN(diffPLN)} w porównaniu do Adriana. Bezpośrednio wydała ${formatPLN(patrycjaDirectExpenses)}, a Adrian ${formatPLN(adrianDirectExpenses)}.`;
+      if (p1TotalSpent > p2TotalSpent) {
+        winnerBadge.innerHTML = `<span class="text-blue-400 font-black flex items-center gap-1.5"><i data-lucide="user" class="w-5 h-5"></i> ${profile.p1.toUpperCase()}</span> <span class="text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded-md font-mono">(+${formatPLN(diffPLN)})</span>`;
+        winnerSubtext.innerText = `${profile.p1} sfinansował(a) ${formatPLN(p1TotalSpent)} (${p1Percent}% swojego dochodu).`;
+        resultDetails.innerText = `${profile.p1} wykorzystał(a) więcej budżetu kwotowo o ${formatPLN(diffPLN)} w porównaniu do ${profile.p2Genitive}. Bezpośrednio wydał(a) ${formatPLN(p1DirectExpenses)}, a ${profile.p2} ${formatPLN(p2DirectExpenses)}.`;
+      } else if (p2TotalSpent > p1TotalSpent) {
+        winnerBadge.innerHTML = `<span class="text-pink-400 font-black flex items-center gap-1.5"><i data-lucide="user" class="w-5 h-5"></i> ${profile.p2.toUpperCase()}</span> <span class="text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded-md font-mono">(+${formatPLN(diffPLN)})</span>`;
+        winnerSubtext.innerText = `${profile.p2} sfinansował(a) ${formatPLN(p2TotalSpent)} (${p2Percent}% swojego dochodu).`;
+        resultDetails.innerText = `${profile.p2} wykorzystał(a) więcej budżetu kwotowo o ${formatPLN(diffPLN)} w porównaniu do ${profile.p1Genitive}. Bezpośrednio wydał(a) ${formatPLN(p2DirectExpenses)}, a ${profile.p1} ${formatPLN(p1DirectExpenses)}.`;
       } else {
         winnerBadge.innerHTML = `<span class="text-emerald-400 font-black flex items-center gap-1.5"><i data-lucide="award" class="w-5 h-5"></i> REMIS</span>`;
-        winnerSubtext.innerText = `Oboje wydali dokładnie tyle samo: ${formatPLN(adrianTotalSpent)}.`;
+        winnerSubtext.innerText = `Oboje wydali dokładnie tyle samo: ${formatPLN(p1TotalSpent)}.`;
         resultDetails.innerText = `Wydatki obu partnerów są idealnie zrównoważone!`;
       }
       lucide.createIcons();
@@ -2233,6 +2347,7 @@
 
     function renderWydatkiChartsUI() {
       if (typeof Chart === 'undefined') return;
+      const profile = getWydatkiProfile();
 
       try {
         const allMonthsSet = new Set();
@@ -2240,21 +2355,24 @@
         wydatkiFullData.gigs.forEach(g => allMonthsSet.add(g.month));
         const sortedMonths = Array.from(allMonthsSet).sort();
 
-        const adrianData = [];
-        const patrycjaData = [];
+        const p1Data = [];
+        const p2Data = [];
         const combinedData = [];
 
         sortedMonths.forEach(m => {
-          const baseItem = wydatkiFullData.baseIncomes.find(b => b.month === m) || { adrian: 0, patrycja: 0, maciek: 0 };
-          const adrianGigs = wydatkiFullData.gigs.filter(g => g.month === m && g.person === "Adrian").reduce((acc, curr) => acc + curr.amount, 0);
-          const patrycjaGigs = wydatkiFullData.gigs.filter(g => g.month === m && (g.person === "Patrycja" || g.person === "Maciek")).reduce((acc, curr) => acc + curr.amount, 0);
+          const baseItem = wydatkiFullData.baseIncomes.find(b => b.month === m) || {};
+          const p1Val = Number(baseItem.p1 !== undefined ? baseItem.p1 : (profile.isMaciek ? (baseItem.maciek || baseItem.adrian) : baseItem.adrian)) || 0;
+          const p2Val = Number(baseItem.p2 !== undefined ? baseItem.p2 : (profile.isMaciek ? (baseItem.karolina || baseItem.patrycja) : baseItem.patrycja)) || 0;
 
-          const adTotal = (baseItem.adrian || 0) + adrianGigs;
-          const patTotal = (baseItem.patrycja || baseItem.maciek || 0) + patrycjaGigs;
+          const p1Gigs = wydatkiFullData.gigs.filter(g => g.month === m && (g.person === profile.p1 || (profile.isMaciek && g.person === 'Maciek') || (!profile.isMaciek && g.person === 'Adrian'))).reduce((acc, curr) => acc + curr.amount, 0);
+          const p2Gigs = wydatkiFullData.gigs.filter(g => g.month === m && (g.person === profile.p2 || (profile.isMaciek && g.person === 'Karolina') || (!profile.isMaciek && g.person === 'Patrycja'))).reduce((acc, curr) => acc + curr.amount, 0);
 
-          adrianData.push(adTotal);
-          patrycjaData.push(patTotal);
-          combinedData.push(adTotal + patTotal);
+          const p1Total = p1Val + p1Gigs;
+          const p2Total = p2Val + p2Gigs;
+
+          p1Data.push(p1Total);
+          p2Data.push(p2Total);
+          combinedData.push(p1Total + p2Total);
         });
 
         // 1. Line Chart
@@ -2266,8 +2384,8 @@
             data: {
               labels: sortedMonths,
               datasets: [
-                { label: 'Adrian', data: adrianData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 },
-                { label: 'Maciek/Patrycja', data: patrycjaData, borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.1)', fill: true, tension: 0.3 },
+                { label: profile.p1, data: p1Data, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 },
+                { label: profile.p2, data: p2Data, borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.1)', fill: true, tension: 0.3 },
                 { label: 'Łącznie', data: combinedData, borderColor: '#8b5cf6', borderDash: [5, 5], fill: false, tension: 0.3 }
               ]
             },
@@ -2300,8 +2418,16 @@
         }
 
         // 3. Payer Bar Chart
-        const adrianExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Adrian").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
-        const patrycjaExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Patrycja" || (e.person || e.payer) === "Maciek").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+        const p1ExpSum = wydatkiFullData.expenses.filter(e => {
+          const p = e.person || e.payer;
+          return p === profile.p1 || (profile.isMaciek ? p === 'Maciek' : p === 'Adrian');
+        }).reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+
+        const p2ExpSum = wydatkiFullData.expenses.filter(e => {
+          const p = e.person || e.payer;
+          return p === profile.p2 || (profile.isMaciek ? p === 'Karolina' : p === 'Patrycja');
+        }).reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+
         const sharedExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Wspólne").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
 
         const barCtx = document.getElementById("expensePayerBarChart");
@@ -2310,10 +2436,10 @@
           payerBarChartInstance = new Chart(barCtx, {
             type: 'bar',
             data: {
-              labels: ['Adrian', 'Maciek/Patrycja', 'Wspólne'],
+              labels: [profile.p1, profile.p2, 'Wspólne'],
               datasets: [{
                 label: 'Suma wydatków (PLN)',
-                data: [adrianExpSum, patrycjaExpSum, sharedExpSum],
+                data: [p1ExpSum, p2ExpSum, sharedExpSum],
                 backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6'],
                 borderRadius: 8
               }]
