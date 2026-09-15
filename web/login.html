@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl" class="dark">
+<html lang="pl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Logowanie | FOMO Signal Engine</title>
+  <title>Logowanie | Panel Aplikacji</title>
   <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,101 +11,91 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    body { background-color: #030712; color: #cbd5e1; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; }
+    body { background-color: #f8fafc; color: #0f172a; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-x: hidden; }
     
-    /* BLACK & BLUE STYLING */
-    .glass-login-box {
-      background: rgba(11, 17, 32, 0.85);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(29, 78, 216, 0.15);
-    }
-    
-    .blue-glow-bg {
-      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.25), rgba(29, 78, 216, 0.12), rgba(15, 23, 42, 0.8), transparent 75%);
+    .clean-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
     }
 
-    .btn-blue {
+    .btn-primary {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .btn-blue:hover {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      transform: translateY(-1px) scale(1.01);
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
-    .btn-blue:active { transform: translateY(0.5px) scale(0.97); }
+    .btn-primary:active { transform: translateY(0.5px); }
 
-    .text-blue-glow {
-      text-shadow: 0 0 30px rgba(59, 130, 246, 0.8), 0 0 70px rgba(37, 99, 235, 0.6);
-    }
-    .liquid-dissolve {
+    .text-dissolve {
       transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
-      filter: blur(28px) brightness(1.5);
+      filter: blur(24px) brightness(1.2);
       opacity: 0 !important;
-      transform: scale(1.3) translateY(-15px) !important;
+      transform: scale(1.2) translateY(-15px) !important;
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-4 relative bg-slate-50">
 
-  <!-- Background Blue Ambient Glow -->
-  <div class="absolute inset-0 blue-glow-bg pointer-events-none"></div>
-
-  <div class="w-full max-w-2xl relative z-10 flex flex-col items-center justify-center">
+  <div class="w-full max-w-md relative z-10 flex flex-col items-center justify-center">
 
     <!-- LOGIN FORM CARD -->
-    <div id="login-card" class="w-full max-w-md glass-login-box p-8 sm:p-10 rounded-3xl space-y-6 shadow-2xl transition-all duration-500">
+    <div id="login-card" class="w-full clean-card p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-500">
       
       <div class="text-center space-y-2">
-        <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">FOMO Signal Engine</h1>
-        <p class="text-xs text-blue-300/80">Dostęp zarezerwowany dla autoryzowanych użytkowników</p>
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 mb-2 border border-blue-100">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Panel Zalogowania</h1>
+        <p class="text-xs text-slate-500">Zaloguj się, aby uzyskać dostęp do aplikacji</p>
       </div>
 
       <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4 text-xs">
-        <div id="error-box" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-300 p-3 rounded-xl text-center font-medium">
+        <div id="error-box" class="hidden bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-center font-medium">
           Nieprawidłowy użytkownik lub hasło.
         </div>
 
         <div>
-          <label class="block text-blue-200 font-semibold mb-1.5 uppercase tracking-wider">Użytkownik:</label>
+          <label class="block text-slate-700 font-semibold mb-1.5 uppercase tracking-wider text-[11px]">Użytkownik:</label>
           <div class="relative">
-            <input type="text" id="username" placeholder="Wpisz 'Adrian' lub 'Maciek'" required class="w-full bg-slate-950/90 border border-blue-900/60 rounded-xl px-3.5 py-3 pl-10 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
-            <i data-lucide="user" class="w-4 h-4 text-blue-400/70 absolute left-3.5 top-3.5"></i>
+            <input type="text" id="username" placeholder="Wpisz 'Adrian' lub 'Maciek'" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 pl-10 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none transition font-medium">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
           </div>
         </div>
 
         <div>
-          <label class="block text-blue-200 font-semibold mb-1.5 uppercase tracking-wider">Hasło:</label>
+          <label class="block text-slate-700 font-semibold mb-1.5 uppercase tracking-wider text-[11px]">Hasło:</label>
           <div class="relative">
-            <input type="password" id="password" placeholder="Wpisz wygenerowane hasło" required class="w-full bg-slate-950/90 border border-blue-900/60 rounded-xl px-3.5 py-3 pl-10 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition">
-            <i data-lucide="key-round" class="w-4 h-4 text-blue-400/70 absolute left-3.5 top-3.5"></i>
+            <input type="password" id="password" placeholder="Wpisz wygenerowane hasło" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 pl-10 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none transition font-medium">
+            <i data-lucide="key-round" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
           </div>
         </div>
 
         <div class="flex items-center justify-between py-1 text-xs">
-          <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white select-none">
-            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded bg-slate-950 border border-blue-900/80 text-blue-600 focus:ring-2 focus:ring-blue-500/20 cursor-pointer">
+          <label class="flex items-center gap-2 cursor-pointer text-slate-600 hover:text-slate-900 select-none font-medium">
+            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded bg-slate-100 border border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 cursor-pointer">
             <span>Zapamiętaj dane logowania</span>
           </label>
         </div>
 
-        <button type="submit" id="submit-btn" class="btn-blue w-full text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer text-sm">
+        <button type="submit" id="submit-btn" class="btn-primary w-full text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer text-sm">
           <i data-lucide="log-in" class="w-4 h-4"></i>
           Zaloguj się
         </button>
       </form>
 
-      <div class="border-t border-blue-900/40 pt-4 text-center text-[11px] text-slate-400 space-y-1">
-        <p>⚠️ Dostęp posiadają tylko: <b class="text-blue-300">Adrian</b> oraz <b class="text-blue-300">Maciek</b></p>
+      <div class="border-t border-slate-100 pt-4 text-center text-[11px] text-slate-400 space-y-1">
+        <p>Autoryzowani użytkownicy: <b class="text-slate-700">Adrian</b> | <b class="text-slate-700">Maciek</b></p>
       </div>
 
     </div>
 
-
-    <!-- PURE GREETING TEXT ONLY - NO BOXES, NO FRAMES, NO RECTANGLES -->
+    <!-- PURE WELCOME DISSOLVING GREETING -->
     <div id="liquid-welcome" class="hidden text-center transition-all duration-700 opacity-0 scale-95">
-      <h1 id="liquid-name" class="text-6xl sm:text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 text-blue-glow py-4">
+      <h1 id="liquid-name" class="text-5xl sm:text-7xl font-black tracking-tight text-blue-600 py-4 drop-shadow-sm">
         HEJ...
       </h1>
     </div>
@@ -170,7 +160,7 @@
           setTimeout(() => {
             loginCard.classList.add('hidden');
             
-            // Display ONLY PURE TEXT with blue glow - NO BOXES OR FRAMES
+            // Display pure welcome text with dissolve effect
             liquidName.innerText = `HEJ ${userCap.toUpperCase()}!`;
             liquidWelcome.classList.remove('hidden');
             
@@ -179,12 +169,12 @@
               liquidWelcome.classList.add('opacity-100', 'scale-100');
             }, 50);
 
-            // Dissolve effect ("rozpływanie się")
+            // Dissolve effect
             setTimeout(() => {
-              liquidWelcome.classList.add('liquid-dissolve');
+              liquidWelcome.classList.add('text-dissolve');
             }, 900);
 
-            // Smooth redirect to dashboard
+            // Redirect to clean dashboard
             setTimeout(() => {
               window.location.href = '/';
             }, 1800);
