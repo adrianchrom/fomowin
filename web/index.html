@@ -2849,7 +2849,7 @@
     let soundEnabled = true;
     let currentTab = 'live';
     let currentApp = 'dashboard';
-    let currentUser = 'Maciek';
+    let currentUser = sessionStorage.getItem('fomo_username') || 'Maciek';
     let userPermissions = {
       fomo: true,
       wydatki: true,
@@ -2982,16 +2982,15 @@
             setGreeting(currentUser);
             updatePermissionsUI();
             loadCompanyData();
-          } else {
-            window.location.href = '/login';
           }
-        } else {
-          window.location.href = '/login';
         }
       } catch (e) {
         const stored = sessionStorage.getItem('fomo_username');
-        if (stored) setGreeting(stored);
-        else window.location.href = '/login';
+        if (stored) {
+          currentUser = stored;
+          setGreeting(stored);
+          updatePermissionsUI();
+        }
       }
     }
 
