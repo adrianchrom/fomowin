@@ -2779,6 +2779,16 @@
     let socket = null;
     let tokensMap = new Map();
 
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     function safeCreateIcons() {
       try {
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -5706,7 +5716,8 @@
       try {
         const res = await fetch('/api/crm');
         if (res.ok) {
-          crmClients = await res.json();
+          const data = await res.json();
+          crmClients = Array.isArray(data) ? data : [];
           renderCrmListUI();
         }
       } catch (e) {
@@ -5715,6 +5726,7 @@
     }
 
     function renderCrmListUI() {
+      if (!Array.isArray(crmClients)) crmClients = [];
       const search = (document.getElementById('crm-search-input')?.value || '').toLowerCase();
       const statusFilter = document.getElementById('crm-status-filter')?.value || 'all';
 
@@ -6190,8 +6202,8 @@
       const tbody = document.getElementById('curr-table-body');
       const updateDateEl = document.getElementById('curr-update-date');
 
-      if (updateDateEl && currencyRatesData.effective_date) {
-        updateDateEl.innerText = currencyRatesData.effective_date;
+      if (updateDateEl && (currencyRatesData.effective_date || currencyRatesData.date)) {
+        updateDateEl.innerText = currencyRatesData.effective_date || currencyRatesData.date;
       }
 
       if (!tbody || !currencyRatesData.rates) return;
@@ -6199,7 +6211,8 @@
       const rates = currencyRatesData.rates;
       const rows = Object.keys(rates).map(code => {
         const item = rates[code];
-        const rateFormatted = (item.rate || 0).toFixed(4) + ' PLN';
+        const rateVal = parseFloat(item.mid ?? item.rate ?? 0);
+        const rateFormatted = rateVal.toFixed(4) + ' PLN';
         return `
           <tr class="hover:bg-slate-50/80 transition">
             <td class="py-2.5 px-3 font-bold font-mono text-slate-900">${escapeHtml(code)}</td>
@@ -6232,14 +6245,16 @@
       // Convert amount to PLN first
       let amountInPln = amount;
       if (fromCurr !== 'PLN') {
-        const fromRate = rates[fromCurr] ? rates[fromCurr].rate : 1.0;
+        const fromItem = rates[fromCurr];
+        const fromRate = fromItem ? parseFloat(fromItem.mid ?? fromItem.rate ?? 1.0) : 1.0;
         amountInPln = amount * fromRate;
       }
 
       // Convert PLN to target currency
       let finalResult = amountInPln;
       if (toCurr !== 'PLN') {
-        const toRate = rates[toCurr] ? rates[toCurr].rate : 1.0;
+        const toItem = rates[toCurr];
+        const toRate = toItem ? parseFloat(toItem.mid ?? toItem.rate ?? 1.0) : 1.0;
         finalResult = amountInPln / toRate;
       }
 

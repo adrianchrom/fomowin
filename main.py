@@ -306,12 +306,20 @@ async def get_currency_rates_route():
                     for r in rates_list:
                         code = r.get("code")
                         if code in fallback_rates:
-                            fallback_rates[code]["mid"] = round(r.get("mid", fallback_rates[code]["mid"]), 4)
+                            mid_val = round(r.get("mid", fallback_rates[code]["mid"]), 4)
+                            fallback_rates[code]["mid"] = mid_val
+                            fallback_rates[code]["rate"] = mid_val
                             fallback_rates[code]["date"] = effective_date
-                    return {"success": True, "date": effective_date, "rates": fallback_rates}
+                    for k in fallback_rates:
+                        if "rate" not in fallback_rates[k]:
+                            fallback_rates[k]["rate"] = fallback_rates[k]["mid"]
+                    return {"success": True, "date": effective_date, "effective_date": effective_date, "rates": fallback_rates}
     except Exception as e:
         logger.debug(f"NBP API fetch error: {e}")
-    return {"success": True, "date": "Dzisiaj", "rates": fallback_rates}
+    for k in fallback_rates:
+        if "rate" not in fallback_rates[k]:
+            fallback_rates[k]["rate"] = fallback_rates[k]["mid"]
+    return {"success": True, "date": "Dzisiaj", "effective_date": "Dzisiaj", "rates": fallback_rates}
 
 # LLM TEXT MODEL CHAT ENDPOINTS
 @app.post("/api/llm/chat")
