@@ -115,15 +115,24 @@ async def serve_login_page(request: Request):
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
-    username = data.get("username", "Maciek") or "Maciek"
-    password = data.get("password", "")
-    result = auth_manager.authenticate(username, password)
-    if result:
-        token, canonical_user = result
+    pin = data.get("pin", "") or data.get("password", "")
+    username = data.get("username", "")
+
+    if pin:
+        res = auth_manager.authenticate_pin(pin, username)
+        if res:
+            token, canonical_user = res
+            response = JSONResponse(content={"success": True, "username": canonical_user})
+            response.set_cookie(key="fomo_session", value=token, max_age=86400 * 365, httponly=True, samesite="lax")
+            return response
+
+    res = auth_manager.authenticate(username, pin)
+    if res:
+        token, canonical_user = res
     else:
-        canonical_user = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical_user = auth_manager.get_canonical_user(username)
         token = auth_manager.create_session(canonical_user)
-    
+
     response = JSONResponse(content={"success": True, "username": canonical_user})
     response.set_cookie(key="fomo_session", value=token, max_age=86400 * 365, httponly=True, samesite="lax")
     return response

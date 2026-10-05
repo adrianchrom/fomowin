@@ -17,52 +17,34 @@ TASKS_FILE = os.path.join(BASE_DIR, "DATA_TASKS.json")
 
 DEFAULT_PERMISSIONS = {
     "Adrian": {
-        "fomo": True,
-        "wydatki": True,
-        "wyceny": True,
-        "stopki_email": True,
-        "kalendarz": True,
-        "ai_chat": True,
-        "crm": True,
-        "tasks": True,
-        "password_gen": True,
-        "currency_calc": True,
-        "is_admin": True
+        "fomo": True, "wydatki": True, "wyceny": True, "stopki_email": True, "kalendarz": True, "ai_chat": True, "crm": True, "tasks": True, "password_gen": True, "currency_calc": True, "is_admin": True
     },
     "Maciek": {
-        "fomo": True,
-        "wydatki": True,
-        "wyceny": True,
-        "stopki_email": True,
-        "kalendarz": True,
-        "ai_chat": True,
-        "crm": True,
-        "tasks": True,
-        "password_gen": True,
-        "currency_calc": True,
-        "is_admin": False
+        "fomo": True, "wydatki": True, "wyceny": True, "stopki_email": True, "kalendarz": True, "ai_chat": True, "crm": True, "tasks": True, "password_gen": True, "currency_calc": True, "is_admin": False
+    },
+    "Karolina": {
+        "fomo": True, "wydatki": True, "wyceny": True, "stopki_email": True, "kalendarz": True, "ai_chat": True, "crm": True, "tasks": True, "password_gen": True, "currency_calc": True, "is_admin": False
+    },
+    "Patrycja": {
+        "fomo": True, "wydatki": True, "wyceny": True, "stopki_email": True, "kalendarz": True, "ai_chat": True, "crm": True, "tasks": True, "password_gen": True, "currency_calc": True, "is_admin": False
     }
 }
 
+DEFAULT_COMPANY_DATA = {
+    "name": "Biuro Usługowe / Twoja Firma",
+    "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
+    "nip": "0000000000",
+    "phone": "+48 000 000 000",
+    "email": "biuro@firma.pl",
+    "bank": "00 0000 0000 0000 0000 0000 0000",
+    "logo_base64": ""
+}
+
 DEFAULT_COMPANY = {
-    "Adrian": {
-        "name": "Biuro Usługowe / Twoja Firma",
-        "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
-        "nip": "0000000000",
-        "phone": "+48 000 000 000",
-        "email": "biuro@firma.pl",
-        "bank": "00 0000 0000 0000 0000 0000 0000",
-        "logo_base64": ""
-    },
-    "Maciek": {
-        "name": "Biuro Usługowe / Twoja Firma",
-        "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
-        "nip": "0000000000",
-        "phone": "+48 000 000 000",
-        "email": "biuro@firma.pl",
-        "bank": "00 0000 0000 0000 0000 0000 0000",
-        "logo_base64": ""
-    }
+    "Adrian": dict(DEFAULT_COMPANY_DATA),
+    "Maciek": dict(DEFAULT_COMPANY_DATA),
+    "Karolina": dict(DEFAULT_COMPANY_DATA),
+    "Patrycja": dict(DEFAULT_COMPANY_DATA)
 }
 
 DEFAULT_WYDATKI = {
@@ -127,9 +109,17 @@ class UserDataManager:
         except Exception as e:
             logger.error(f"Error saving {filepath}: {e}")
 
+    def resolve_canonical(self, username: str) -> str:
+        u = (username or "").strip().lower()
+        if u == "adrian": return "Adrian"
+        if u == "maciek": return "Maciek"
+        if u == "karolina": return "Karolina"
+        if u == "patrycja": return "Patrycja"
+        return "Maciek"
+
     # PERMISSIONS MANAGEMENT
     def get_user_permissions(self, username: str) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else ("Maciek" if username.lower() == "maciek" else username)
+        canonical = self.resolve_canonical(username)
         if canonical not in self.permissions:
             self.permissions[canonical] = {
                 "fomo": True,
