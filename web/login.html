@@ -153,27 +153,7 @@
         <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
           Wpisz Kod PIN
         </h1>
-        <p class="text-xs text-slate-300 font-medium">Zaloguj się wybierając profil i podając kod PIN</p>
-      </div>
-
-      <!-- User Profiles Selection -->
-      <div class="grid grid-cols-4 gap-2 text-center pt-1">
-        <button type="button" onclick="selectUser('Adrian')" id="user-btn-Adrian" class="user-chip active py-2.5 px-2 rounded-2xl glass-btn border border-indigo-400/50 bg-indigo-500/30 text-white font-semibold text-xs flex flex-col items-center gap-1 shadow-lg shadow-indigo-500/20">
-          <span class="text-base">👑</span>
-          <span class="truncate w-full text-[11px]">Adrian</span>
-        </button>
-        <button type="button" onclick="selectUser('Maciek')" id="user-btn-Maciek" class="user-chip py-2.5 px-2 rounded-2xl glass-btn text-slate-300 font-semibold text-xs flex flex-col items-center gap-1">
-          <span class="text-base">👤</span>
-          <span class="truncate w-full text-[11px]">Maciek</span>
-        </button>
-        <button type="button" onclick="selectUser('Karolina')" id="user-btn-Karolina" class="user-chip py-2.5 px-2 rounded-2xl glass-btn text-slate-300 font-semibold text-xs flex flex-col items-center gap-1">
-          <span class="text-base">🌸</span>
-          <span class="truncate w-full text-[11px]">Karolina</span>
-        </button>
-        <button type="button" onclick="selectUser('Patrycja')" id="user-btn-Patrycja" class="user-chip py-2.5 px-2 rounded-2xl glass-btn text-slate-300 font-semibold text-xs flex flex-col items-center gap-1">
-          <span class="text-base">✨</span>
-          <span class="truncate w-full text-[11px]">Patrycja</span>
-        </button>
+        <p class="text-xs text-slate-300 font-medium">Unikalny kod PIN odblokowuje Twoje konto</p>
       </div>
 
       <!-- Error Toast / Box -->
@@ -224,22 +204,7 @@
   </div>
 
   <script>
-    let currentSelectedUser = 'Adrian';
     let enteredPin = '';
-
-    function selectUser(userName) {
-      currentSelectedUser = userName;
-      ['Adrian', 'Maciek', 'Karolina', 'Patrycja'].forEach(u => {
-        const btn = document.getElementById(`user-btn-${u}`);
-        if (!btn) return;
-        if (u === userName) {
-          btn.className = 'user-chip active py-2.5 px-2 rounded-2xl glass-btn border border-indigo-400/50 bg-indigo-500/30 text-white font-semibold text-xs flex flex-col items-center gap-1 shadow-lg shadow-indigo-500/20';
-        } else {
-          btn.className = 'user-chip py-2.5 px-2 rounded-2xl glass-btn text-slate-300 font-semibold text-xs flex flex-col items-center gap-1';
-        }
-      });
-      clearPin();
-    }
 
     function updatePinDots() {
       for (let i = 0; i < 4; i++) {
@@ -298,7 +263,7 @@
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: currentSelectedUser, pin: enteredPin })
+          body: JSON.stringify({ pin: enteredPin })
         });
         const data = await res.json();
 
