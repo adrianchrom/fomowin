@@ -98,7 +98,7 @@ class AuthManager:
         return session_token
 
     def authenticate_pin(self, pin: str, target_user: Optional[str] = None) -> Optional[tuple]:
-        """Authenticate user by 4-digit PIN."""
+        """Authenticate user strictly by 4-digit PIN."""
         clean_pin = (pin or "").strip()
         if not clean_pin:
             return None
@@ -106,9 +106,6 @@ class AuthManager:
         # Check PIN_MAP first
         if clean_pin in PIN_MAP:
             matched_user = PIN_MAP[clean_pin]
-            if target_user and self.get_canonical_user(target_user).lower() != matched_user.lower():
-                # If target_user specified, ensure it matches
-                pass
             token = self.create_session(matched_user)
             return token, matched_user
 
@@ -122,27 +119,21 @@ class AuthManager:
         return None
 
     def authenticate(self, username: str, password: str) -> Optional[tuple]:
-        """Authenticate user credentials or PIN."""
+        """Authenticate user strictly by valid PIN or valid user PIN."""
         clean_pass = (password or "").strip()
         clean_user = (username or "").strip()
 
-        # If password looks like a PIN
-        if clean_pass in PIN_MAP or (clean_pass.isdigit() and len(clean_pass) == 4):
-            auth_res = self.authenticate_pin(clean_pass, clean_user)
-            if auth_res:
-                return auth_res
+        if clean_pass in PIN_MAP:
+            return self.authenticate_pin(clean_pass)
 
-        # If username clean_user is a PIN directly
-        if clean_user in PIN_MAP or (clean_user.isdigit() and len(clean_user) == 4):
-            auth_res = self.authenticate_pin(clean_user)
-            if auth_res:
-                return auth_res
+        if clean_user in PIN_MAP:
+            return self.authenticate_pin(clean_user)
 
-        user_lower = clean_user.lower()
-        if user_lower in USER_NAMES:
-            canonical = USER_NAMES[user_lower]
-            token = self.create_session(canonical)
-            return token, canonical
+        # Strict check against users dictionary
+        for canonical_user, user_pin in self.users.items():
+            if (canonical_user.lower() == clean_user.lower() or canonical_user.lower() == clean_pass.lower()) and (clean_pass == user_pin or clean_user == user_pin):
+                token = self.create_session(canonical_user)
+                return token, canonical_user
 
         return None
 

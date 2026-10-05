@@ -115,24 +115,16 @@ async def serve_login_page(request: Request):
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
-    pin = data.get("pin", "") or data.get("password", "")
-    username = data.get("username", "")
+    pin = (data.get("pin", "") or data.get("password", "") or data.get("username", "")).strip()
 
-    if pin:
-        res = auth_manager.authenticate_pin(pin, username)
-        if res:
-            token, canonical_user = res
-            response = JSONResponse(content={"success": True, "username": canonical_user})
-            response.set_cookie(key="fomo_session", value=token, max_age=86400 * 365, httponly=True, samesite="lax")
-            return response
+    res = auth_manager.authenticate_pin(pin) or auth_manager.authenticate(pin, pin)
+    if not res:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"success": False, "detail": "Nieprawidłowy kod PIN. Brak dostępu."}
+        )
 
-    res = auth_manager.authenticate(username, pin)
-    if res:
-        token, canonical_user = res
-    else:
-        canonical_user = auth_manager.get_canonical_user(username)
-        token = auth_manager.create_session(canonical_user)
-
+    token, canonical_user = res
     response = JSONResponse(content={"success": True, "username": canonical_user})
     response.set_cookie(key="fomo_session", value=token, max_age=86400 * 365, httponly=True, samesite="lax")
     return response
@@ -159,12 +151,18 @@ async def get_user_permissions_route(request: Request):
 
 @app.get("/api/admin/permissions")
 async def get_admin_permissions_route(request: Request):
-    return {"maciek": user_data_mgr.get_user_permissions("Maciek")}
+    return {
+        "maciek": user_data_mgr.get_user_permissions("Maciek"),
+        "karolina": user_data_mgr.get_user_permissions("Karolina"),
+        "patrycja": user_data_mgr.get_user_permissions("Patrycja")
+    }
 
 @app.post("/api/admin/permissions")
 async def update_admin_permissions_route(request: Request, data: Dict[str, Any] = Body(...)):
-    updated = user_data_mgr.update_maciek_permissions(data)
-    return {"success": True, "permissions": updated}
+    target_user = data.get("user", "Maciek") or "Maciek"
+    perms_data = data.get("permissions", data)
+    updated = user_data_mgr.update_user_permissions(target_user, perms_data)
+    return {"success": True, "user": target_user, "permissions": updated}
 
 # WYDATKI ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/wydatki")

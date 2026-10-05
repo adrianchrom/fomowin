@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Logowanie PIN | Panel Aplikacji</title>
+  <title>Weryfikacja Kodem PIN | Glassy OTP</title>
   <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,109 +14,110 @@
   <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
   <style>
     body {
-      background-color: #090d16;
+      background-color: #070913;
       color: #f8fafc;
       font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
       overflow: hidden;
     }
     
     .glass-card {
-      background: rgba(255, 255, 255, 0.07);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     .glass-btn {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-btn:hover {
-      background: rgba(255, 255, 255, 0.18);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
     }
     .glass-btn:active {
       transform: scale(0.92);
-      background: rgba(99, 102, 241, 0.4);
+      background: rgba(59, 130, 246, 0.45);
     }
 
-    .pin-dot {
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* OTP BOXES MOTION ANIMATION STYLES */
+    .otp-box {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .pin-dot.active {
-      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      box-shadow: 0 0 16px rgba(99, 102, 241, 0.8), 0 0 32px rgba(168, 85, 247, 0.4);
-      transform: scale(1.25);
-    }
-    .pin-dot.success {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.95), 0 0 45px rgba(52, 211, 153, 0.7) !important;
-      transform: scale(1.4) !important;
-      animation: emeraldPulse 0.5s infinite alternate ease-in-out;
+    .otp-box.active-focus {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.7), inset 0 0 10px rgba(59, 130, 246, 0.3) !important;
+      transform: scale(1.06);
+      background: rgba(59, 130, 246, 0.12) !important;
     }
 
-    .glass-card.success-border {
-      border-color: rgba(16, 185, 129, 0.8) !important;
-      box-shadow: 0 0 50px rgba(16, 185, 129, 0.4), inset 0 0 25px rgba(16, 185, 129, 0.25) !important;
-      transition: all 0.4s ease;
+    /* MERGED SUCCESS / FAILURE MOTION STYLES */
+    .otp-container.merged .otp-box:not(:first-child) {
+      display: none !important;
+    }
+    .otp-container.merged .otp-box:first-child {
+      width: 100% !important;
+      max-width: 120px !important;
+      height: 110px !important;
+      border-radius: 1.5rem !important;
+      font-size: 3rem !important;
     }
 
-    @keyframes emeraldPulse {
-      0% { transform: scale(1.25); box-shadow: 0 0 15px #10b981; }
-      100% { transform: scale(1.45); box-shadow: 0 0 35px #34d399, 0 0 55px #059669; }
+    .otp-container.merged-success .otp-box:first-child {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border: 2px solid #10b981 !important;
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.8), inset 0 0 20px rgba(16, 185, 129, 0.4) !important;
+      animation: mergeSuccessPulse 0.6s ease-in-out infinite alternate;
     }
 
-    .pin-dot.error {
-      background: #f43f5e;
-      box-shadow: 0 0 16px rgba(244, 63, 94, 0.9);
+    .otp-container.merged-error .otp-box:first-child {
+      background: rgba(244, 63, 94, 0.2) !important;
+      border: 2px solid #f43f5e !important;
+      box-shadow: 0 0 50px rgba(244, 63, 94, 0.8), inset 0 0 20px rgba(244, 63, 94, 0.4) !important;
       animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes mergeSuccessPulse {
+      0% { transform: scale(1.05); }
+      100% { transform: scale(1.15); }
     }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-8px); }
-      40% { transform: translateX(8px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(5px); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
     }
 
-    /* Animated Liquid Ambient Blobs */
+    /* Ambient Liquid Gradient Blobs */
     .blob {
       position: absolute;
       border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.55;
-      animation: floatBlob 12s infinite alternate ease-in-out;
+      filter: blur(90px);
+      opacity: 0.45;
+      animation: floatBlob 14s infinite alternate ease-in-out;
     }
     .blob-1 {
       top: -10%;
       left: -10%;
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, #4f46e5 0%, #7c3aed 100%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #2563eb 0%, #1d4ed8 100%);
     }
     .blob-2 {
       bottom: -15%;
       right: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, #2563eb 0%, #06b6d4 100%);
-      animation-delay: -6s;
-    }
-    .blob-3 {
-      top: 40%;
-      left: 30%;
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, #ec4899 0%, #8b5cf6 100%);
-      animation-delay: -3s;
-      opacity: 0.35;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, #3b82f6 0%, #06b6d4 100%);
+      animation-delay: -7s;
     }
 
     @keyframes floatBlob {
@@ -138,35 +139,44 @@
   <!-- Ambient Liquid Gradient Blobs -->
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
 
   <div class="w-full max-w-md relative z-10 flex flex-col items-center justify-center">
 
-    <!-- LIQUID GLASS LOGIN CARD -->
-    <div id="login-card" class="w-full glass-card p-7 sm:p-8 rounded-3xl space-y-6 transition-all duration-500 text-white">
+    <!-- LIQUID GLASS OTP CARD -->
+    <div id="login-card" class="w-full glass-card p-8 rounded-3xl space-y-6 transition-all duration-500 text-white">
       
+      <!-- Top Accent Bar -->
+      <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-2"></div>
+
       <!-- Header -->
-      <div class="text-center space-y-2">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-300 mb-1 border border-indigo-500/30 backdrop-blur-md shadow-lg shadow-indigo-500/10">
-          <i data-lucide="shield-check" class="w-6 h-6"></i>
-        </div>
-        <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
-          Wpisz Kod PIN
+      <div class="text-center space-y-1.5">
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+          Weryfikacja Kodem PIN
         </h1>
-        <p class="text-xs text-slate-300 font-medium">Unikalny kod PIN odblokowuje Twoje konto</p>
+        <p class="text-xs text-slate-400 font-medium leading-relaxed">
+          Podaj Twój 4-cyfrowy unikalny kod autoryzacji.
+        </p>
       </div>
 
       <!-- Error Toast / Box -->
-      <div id="error-box" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-200 p-2.5 rounded-2xl text-center text-xs font-semibold backdrop-blur-md">
-        Nieprawidłowy kod PIN. Spróbuj ponownie.
+      <div id="error-box" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-200 p-3 rounded-2xl text-center text-xs font-semibold backdrop-blur-md animate-emerge">
+        Nieprawidłowy kod PIN. Brak dostępu.
       </div>
 
-      <!-- PIN Indicator Dots -->
-      <div class="flex items-center justify-center gap-4 py-2">
-        <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-white/30 bg-white/5 pin-dot"></div>
-        <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-white/30 bg-white/5 pin-dot"></div>
-        <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-white/30 bg-white/5 pin-dot"></div>
-        <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-white/30 bg-white/5 pin-dot"></div>
+      <!-- 4 OTP GLASS SQUARE BOXES (IMAGE LAYOUT MATCH) -->
+      <div id="otp-container" class="flex items-center justify-center gap-3.5 py-3 transition-all duration-500">
+        <div id="otp-box-0" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner active-focus">
+          <span id="otp-char-0"></span>
+        </div>
+        <div id="otp-box-1" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner">
+          <span id="otp-char-1"></span>
+        </div>
+        <div id="otp-box-2" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner">
+          <span id="otp-char-2"></span>
+        </div>
+        <div id="otp-box-3" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner">
+          <span id="otp-char-3"></span>
+        </div>
       </div>
 
       <!-- Glass Numpad -->
@@ -180,7 +190,7 @@
         <button type="button" onclick="appendPin('7')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">7</button>
         <button type="button" onclick="appendPin('8')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">8</button>
         <button type="button" onclick="appendPin('9')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">9</button>
-        <button type="button" onclick="clearPin()" class="glass-btn rounded-2xl py-3.5 text-xs font-bold uppercase tracking-wider text-rose-300">C</button>
+        <button type="button" onclick="clearPin()" class="glass-btn rounded-2xl py-3.5 text-xs font-bold uppercase tracking-wider text-rose-400">C</button>
         <button type="button" onclick="appendPin('0')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">0</button>
         <button type="button" onclick="backspacePin()" class="glass-btn rounded-2xl py-3.5 text-sm font-bold flex items-center justify-center text-slate-300">
           <i data-lucide="delete" class="w-5 h-5"></i>
@@ -189,14 +199,14 @@
 
       <!-- Footer Info -->
       <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-white/10 font-medium">
-        System Autoryzacji PIN • FOMO Engine
+        Autoryzacja • FOMO Engine
       </div>
 
     </div>
 
     <!-- PURE WELCOME DISSOLVING GREETING -->
     <div id="liquid-welcome" class="hidden text-center transition-all duration-700 opacity-0 scale-95 z-20">
-      <h1 id="liquid-name" class="text-5xl sm:text-7xl font-black tracking-tight bg-gradient-to-r from-indigo-300 via-purple-300 to-cyan-300 bg-clip-text text-transparent py-4 drop-shadow-2xl">
+      <h1 id="liquid-name" class="text-5xl sm:text-7xl font-black tracking-tight bg-gradient-to-r from-blue-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent py-4 drop-shadow-2xl">
         HEJ...
       </h1>
     </div>
@@ -205,39 +215,57 @@
 
   <script>
     let enteredPin = '';
+    let isSubmitting = false;
 
-    function updatePinDots() {
+    function updateOtpBoxes() {
       for (let i = 0; i < 4; i++) {
-        const dot = document.getElementById(`dot-${i}`);
-        if (!dot) continue;
+        const box = document.getElementById(`otp-box-${i}`);
+        const charSpan = document.getElementById(`otp-char-${i}`);
+        if (!box || !charSpan) continue;
+
         if (i < enteredPin.length) {
-          dot.classList.add('active');
+          charSpan.innerText = enteredPin[i];
+          box.classList.remove('active-focus');
         } else {
-          dot.classList.remove('active', 'error');
+          charSpan.innerText = '';
+          if (i === enteredPin.length) {
+            box.classList.add('active-focus');
+          } else {
+            box.classList.remove('active-focus');
+          }
         }
       }
     }
 
     function appendPin(digit) {
-      if (enteredPin.length >= 4) return;
+      if (isSubmitting || enteredPin.length >= 4) return;
       enteredPin += digit;
-      updatePinDots();
+      updateOtpBoxes();
       if (enteredPin.length === 4) {
+        isSubmitting = true;
         setTimeout(submitPinLogin, 150);
       }
     }
 
     function clearPin() {
       enteredPin = '';
-      updatePinDots();
+      isSubmitting = false;
+      const container = document.getElementById('otp-container');
+      const box0Span = document.getElementById('otp-char-0');
+      
+      if (container) {
+        container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500';
+      }
+      if (box0Span) box0Span.innerText = '';
+
+      updateOtpBoxes();
       document.getElementById('error-box').classList.add('hidden');
     }
 
     function backspacePin() {
-      if (enteredPin.length > 0) {
-        enteredPin = enteredPin.slice(0, -1);
-        updatePinDots();
-      }
+      if (isSubmitting || enteredPin.length === 0) return;
+      enteredPin = enteredPin.slice(0, -1);
+      updateOtpBoxes();
     }
 
     // Keyboard support for numpad
@@ -254,6 +282,8 @@
     async function submitPinLogin() {
       const errBox = document.getElementById('error-box');
       const loginCard = document.getElementById('login-card');
+      const container = document.getElementById('otp-container');
+      const box0Span = document.getElementById('otp-char-0');
       const liquidWelcome = document.getElementById('liquid-welcome');
       const liquidName = document.getElementById('liquid-name');
 
@@ -268,20 +298,14 @@
         const data = await res.json();
 
         if (res.ok && data.success) {
-          const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : currentSelectedUser;
+          const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : 'Użytkownik';
           sessionStorage.setItem('fomo_username', userCap);
 
-          // 1. Green Motion Pulse on 4 PIN dots
-          for (let i = 0; i < 4; i++) {
-            const dot = document.getElementById(`dot-${i}`);
-            if (dot) {
-              dot.classList.remove('active', 'error');
-              dot.classList.add('success');
-            }
-          }
-          loginCard.classList.add('success-border');
+          // 1. MOTION MERGE: Merge 4 boxes into 1 green checkmark square
+          container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500 merged merged-success';
+          box0Span.innerHTML = '✓';
 
-          // 2. Short pause for green motion celebration, then dissolve
+          // 2. Liquid Welcome transition
           setTimeout(() => {
             loginCard.classList.add('opacity-0', 'scale-95');
 
@@ -304,24 +328,29 @@
               }, 1700);
 
             }, 300);
-          }, 450);
+          }, 600);
 
         } else {
-          // Error Shake
-          for (let i = 0; i < 4; i++) {
-            const dot = document.getElementById(`dot-${i}`);
-            if (dot) dot.classList.add('error');
-          }
-          errBox.innerText = data.detail || 'Nieprawidłowy kod PIN.';
+          // 1. MOTION MERGE ERROR: Merge 4 boxes into 1 red cross square with shake
+          container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500 merged merged-error';
+          box0Span.innerHTML = '✕';
+
+          errBox.innerText = data.detail || 'Nieprawidłowy kod PIN. Brak dostępu.';
           errBox.classList.remove('hidden');
+
+          // Un-merge back to 4 empty boxes after 900ms
           setTimeout(() => {
             clearPin();
-          }, 800);
+          }, 1000);
         }
       } catch (err) {
+        container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500 merged merged-error';
+        box0Span.innerHTML = '✕';
         errBox.innerText = 'Błąd połączenia z serwerem logowania.';
         errBox.classList.remove('hidden');
-        clearPin();
+        setTimeout(() => {
+          clearPin();
+        }, 1000);
       }
     }
 

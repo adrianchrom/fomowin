@@ -2058,15 +2058,23 @@
             <i data-lucide="shield-check" class="w-6 h-6 text-purple-600"></i>
             ⚙️ PANEL ADMINISTRATORA (SUPER ADMIN)
           </h2>
-          <p class="text-xs text-slate-600 mt-1">Zarządzanie uprawnieniami dostępu dla konta <b>Maciek</b></p>
+          <p class="text-xs text-slate-600 mt-1">Zarządzanie uprawnieniami dostępu dla kont użytkowników</p>
         </div>
       </div>
 
       <!-- Admin Permissions Box -->
       <div class="clean-card p-6 rounded-3xl space-y-5">
-        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-          <i data-lucide="lock" class="w-4 h-4 text-purple-600"></i> Uprawnienia Modułów dla Użytkownika "Maciek"
-        </h3>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="lock" class="w-4 h-4 text-purple-600"></i> Uprawnienia Modułów
+          </h3>
+          <!-- User Selection Tabs -->
+          <div class="flex items-center gap-1.5">
+            <button onclick="selectAdminTargetUser('Maciek')" id="admin-tab-Maciek" class="btn-anim bg-purple-600 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm">👤 Maciek</button>
+            <button onclick="selectAdminTargetUser('Karolina')" id="admin-tab-Karolina" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">🌸 Karolina</button>
+            <button onclick="selectAdminTargetUser('Patrycja')" id="admin-tab-Patrycja" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">✨ Patrycja</button>
+          </div>
+        </div>
 
         <div class="space-y-3 text-xs">
           
@@ -5134,12 +5142,29 @@
     }
 
     // ==================== MODULE 6: ⚙️ ADMIN PERMISSIONS LOGIC ====================
+    let currentAdminTargetUser = 'Maciek';
+
+    function selectAdminTargetUser(user) {
+      currentAdminTargetUser = user;
+      ['Maciek', 'Karolina', 'Patrycja'].forEach(u => {
+        const btn = document.getElementById(`admin-tab-${u}`);
+        if (!btn) return;
+        if (u === user) {
+          btn.className = 'btn-anim bg-purple-600 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm';
+        } else {
+          btn.className = 'btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs';
+        }
+      });
+      loadAdminPermissions();
+    }
+
     async function loadAdminPermissions() {
       try {
         const res = await fetch('/api/admin/permissions');
         if (res.ok) {
           const data = await res.json();
-          const perms = data.maciek || {};
+          const targetKey = currentAdminTargetUser.toLowerCase();
+          const perms = data[targetKey] || {};
           const w = document.getElementById('admin-perm-wydatki');
           const wy = document.getElementById('admin-perm-wyceny');
           const s = document.getElementById('admin-perm-stopki_email');
@@ -5175,15 +5200,18 @@
       const cc = document.getElementById('admin-perm-currency_calc');
 
       const payload = {
-        wydatki: w ? w.checked : false,
-        wyceny: wy ? wy.checked : false,
-        stopki_email: s ? s.checked : false,
-        kalendarz: k ? k.checked : false,
-        ai_chat: ai ? ai.checked : false,
-        crm: crm ? crm.checked : false,
-        tasks: t ? t.checked : false,
-        password_gen: pg ? pg.checked : false,
-        currency_calc: cc ? cc.checked : false
+        user: currentAdminTargetUser,
+        permissions: {
+          wydatki: w ? w.checked : false,
+          wyceny: wy ? wy.checked : false,
+          stopki_email: s ? s.checked : false,
+          kalendarz: k ? k.checked : false,
+          ai_chat: ai ? ai.checked : false,
+          crm: crm ? crm.checked : false,
+          tasks: t ? t.checked : false,
+          password_gen: pg ? pg.checked : false,
+          currency_calc: cc ? cc.checked : false
+        }
       };
 
       try {
@@ -5195,10 +5223,11 @@
         if (res.ok) {
           const toast = document.getElementById('admin-save-toast');
           if (toast) {
+            toast.innerText = `✓ Uprawnienia dla ${currentAdminTargetUser} zaktualizowane!`;
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
           }
-          showToast("Uprawnienia zostały pomyślnie zapisane!", "success");
+          showToast(`Uprawnienia dla ${currentAdminTargetUser} zostały zapisane!`, "success");
           fetchUser();
         } else {
           showToast("Błąd podczas zapisywania uprawnień", "error");
