@@ -17,51 +17,96 @@
   <!-- Puter.js Free Open-Source LLM API -->
   <script defer src="https://js.puter.com/v2/"></script>
   <style>
+    :root {
+      --font-main: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
     body {
-      background-color: #070913;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.18) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.18) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
-      background-attachment: fixed;
+      background-color: #030712;
       color: #f8fafc;
-      font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-family: var(--font-main);
       overflow-x: hidden;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      margin: 0;
+      padding: 0;
+      position: relative;
     }
 
-    /* DARK GLASS CARDS (FRAMER-MOTION STYLE STACK AS IN JSX SCREENSHOT) */
+    /* Ambient Morphing Liquid Glass Orbs */
+    .liquid-orb {
+      position: fixed;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      filter: blur(120px);
+      opacity: 0.5;
+      animation: liquidMorph 20s infinite ease-in-out alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-cyan {
+      top: -10%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #00f2fe 0%, #4facfe 70%);
+      animation-duration: 18s;
+    }
+    .orb-violet {
+      bottom: -15%;
+      right: -10%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, #7f00ff 0%, #e100ff 70%);
+      animation-delay: -6s;
+      animation-duration: 24s;
+    }
+    .orb-emerald {
+      top: 40%;
+      right: 25%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #10b981 0%, #059669 70%);
+      animation-delay: -12s;
+      opacity: 0.35;
+      animation-duration: 22s;
+    }
+
+    @keyframes liquidMorph {
+      0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) scale(1) translate(0px, 0px); }
+      34% { border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; transform: rotate(120deg) scale(1.1) translate(40px, -30px); }
+      67% { border-radius: 30% 70% 40% 60% / 50% 30% 70% 40%; transform: rotate(240deg) scale(0.95) translate(-30px, 40px); }
+      100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg) scale(1) translate(0px, 0px); }
+    }
+
+    /* MEGA MINIMALIST LIQUID GLASS CARDS */
     .clean-card, .glass-card {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      border-radius: 1.25rem;
-      color: #f8fafc;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(15, 23, 42, 0.45) !important;
+      backdrop-filter: blur(32px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+      border-radius: 1.75rem !important;
+      color: #f8fafc !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
     
-    .clean-card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .clean-card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important; }
     .clean-card-hover:hover {
-      transform: translateY(-5px);
-      background: rgba(15, 23, 42, 0.88);
-      box-shadow: 0 25px 50px -10px rgba(16, 185, 129, 0.25), 0 0 25px rgba(99, 102, 241, 0.2);
-      border-color: rgba(16, 185, 129, 0.45);
+      transform: translateY(-5px) scale(1.005) !important;
+      background: rgba(15, 23, 42, 0.65) !important;
+      box-shadow: 0 30px 70px -10px rgba(0, 242, 254, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      border-color: rgba(0, 242, 254, 0.45) !important;
     }
 
     header {
-      background: rgba(11, 15, 25, 0.85) !important;
-      backdrop-filter: blur(24px) !important;
-      -webkit-backdrop-filter: blur(24px) !important;
+      background: rgba(15, 23, 42, 0.55) !important;
+      backdrop-filter: blur(32px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
     }
 
     #burger-drawer {
-      background: rgba(11, 15, 25, 0.9) !important;
-      backdrop-filter: blur(24px) !important;
-      border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+      background: rgba(15, 23, 42, 0.85) !important;
+      backdrop-filter: blur(40px) saturate(200%) !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
       color: #f8fafc !important;
     }
 
@@ -74,9 +119,15 @@
     }
 
     input, select, textarea {
-      background: rgba(15, 23, 42, 0.75) !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
+      background: rgba(0, 0, 0, 0.45) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
       color: #f8fafc !important;
+      border-radius: 1rem !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #00f2fe !important;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.3) !important;
+      outline: none !important;
     }
 
     .text-slate-900 { color: #f8fafc !important; }
@@ -84,17 +135,17 @@
     .text-slate-700 { color: #e2e8f0 !important; }
     .text-slate-600 { color: #cbd5e1 !important; }
     .text-slate-500 { color: #94a3b8 !important; }
-    .bg-slate-50 { background-color: rgba(15, 23, 42, 0.5) !important; }
-    .bg-slate-100 { background-color: rgba(30, 41, 59, 0.6) !important; }
+    .bg-slate-50 { background-color: rgba(15, 23, 42, 0.35) !important; }
+    .bg-slate-100 { background-color: rgba(255, 255, 255, 0.05) !important; }
     .border-slate-100, .border-slate-200 { border-color: rgba(255, 255, 255, 0.1) !important; }
 
     .btn-anim { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
-    .btn-anim:active { transform: scale(0.98); }
+    .btn-anim:active { transform: scale(0.96); }
 
     /* Badges Styling */
-    .badge-adrian { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .badge-patrycja { background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
-    .badge-shared { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .badge-adrian { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .badge-patrycja { background-color: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+    .badge-shared { background-color: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
 
     /* Pulse animation for active WebSocket */
     @keyframes pulse-dot {
@@ -105,19 +156,19 @@
 
     /* Keyframe Entrance Animation */
     @keyframes animateEmerge {
-      0% { opacity: 0; transform: translateY(8px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .animate-emerge { animation: animateEmerge 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-emerge { animation: animateEmerge 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
     /* PDF A4 Paper & Modal Styles */
     .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(6px); z-index: 50; display: flex; items: center; justify-content: center; padding: 1rem;
+      position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(12px); z-index: 50; display: flex; items: center; justify-content: center; padding: 1rem;
     }
     .pdf-modal-container {
-      background: #ffffff; border-radius: 1.5rem; width: 100%; max-width: 900px; max-height: 92vh;
-      display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      background: #ffffff; border-radius: 1.75rem; width: 100%; max-width: 900px; max-height: 92vh;
+      display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     }
     .a4-paper {
       background: #ffffff !important; color: #0f172a !important; width: 100%; max-width: 800px; margin: 0 auto; padding: 2.5rem;
@@ -134,12 +185,17 @@
 
     /* Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 242, 254, 0.5); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-12">
+<body class="min-h-screen flex flex-col bg-[#030712] text-slate-100 pb-12 relative selection:bg-cyan-500/30">
+
+  <!-- Ambient Morphing Liquid Orbs -->
+  <div class="liquid-orb orb-cyan"></div>
+  <div class="liquid-orb orb-violet"></div>
+  <div class="liquid-orb orb-emerald"></div>
 
   <!-- TOP EXECUTIVE HEADER BAR -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">

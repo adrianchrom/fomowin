@@ -1,129 +1,174 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weryfikacja Kodem PIN | Glassy OTP</title>
-  <!-- Google Fonts: Poppins -->
+  <title>Weryfikacja Kodem PIN | Glassy OTP V2</title>
+  <!-- Google Fonts: Poppins & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
   <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
   <style>
-    body {
-      background-color: #070913;
-      color: #f8fafc;
-      font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      overflow: hidden;
+    :root {
+      --font-main: 'Inter', 'Poppins', -apple-system, sans-serif;
     }
-    
-    .glass-card {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    body {
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: var(--font-main);
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
 
-    .glass-btn {
-      background: rgba(255, 255, 255, 0.06);
+    /* Ambient Morphing Liquid Glass Orbs */
+    .liquid-orb {
+      position: absolute;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      filter: blur(110px);
+      opacity: 0.65;
+      animation: liquidMorph 18s infinite ease-in-out alternate;
+      pointer-events: none;
+    }
+    .orb-cyan {
+      top: -10%;
+      left: -10%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, #00f2fe 0%, #4facfe 70%);
+      animation-duration: 16s;
+    }
+    .orb-violet {
+      bottom: -15%;
+      right: -10%;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, #7f00ff 0%, #e100ff 70%);
+      animation-delay: -5s;
+      animation-duration: 22s;
+    }
+    .orb-emerald {
+      top: 35%;
+      right: 20%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, #10b981 0%, #059669 70%);
+      animation-delay: -9s;
+      opacity: 0.45;
+      animation-duration: 20s;
+    }
+
+    @keyframes liquidMorph {
+      0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) scale(1) translate(0px, 0px); }
+      34% { border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; transform: rotate(120deg) scale(1.1) translate(40px, -30px); }
+      67% { border-radius: 30% 70% 40% 60% / 50% 30% 70% 40%; transform: rotate(240deg) scale(0.95) translate(-30px, 40px); }
+      100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg) scale(1) translate(0px, 0px); }
+    }
+
+    /* GLASS CARD MAIN STYLING */
+    .liquid-glass-card {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 30px 80px -15px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+      border-radius: 2.25rem;
+    }
+
+    /* NUMPAD BUTTON STYLING */
+    .numpad-btn {
+      background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      user-select: none;
     }
-    .glass-btn:hover {
-      background: rgba(59, 130, 246, 0.2);
-      border-color: rgba(59, 130, 246, 0.4);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    .numpad-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(0, 242, 254, 0.4);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.25);
     }
-    .glass-btn:active {
+    .numpad-btn:active {
       transform: scale(0.92);
-      background: rgba(59, 130, 246, 0.45);
+      background: rgba(0, 242, 254, 0.3);
+      border-color: rgba(0, 242, 254, 0.7);
     }
 
-    /* OTP BOXES MOTION ANIMATION STYLES */
-    .otp-box {
-      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* OTP BOXES STYLING */
+    .otp-square {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
     }
-    .otp-box.active-focus {
-      border-color: #3b82f6 !important;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.7), inset 0 0 10px rgba(59, 130, 246, 0.3) !important;
-      transform: scale(1.06);
-      background: rgba(59, 130, 246, 0.12) !important;
-    }
-
-    /* MERGED SUCCESS / FAILURE MOTION STYLES */
-    .otp-container.merged .otp-box:not(:first-child) {
-      display: none !important;
-    }
-    .otp-container.merged .otp-box:first-child {
-      width: 100% !important;
-      max-width: 120px !important;
-      height: 110px !important;
-      border-radius: 1.5rem !important;
-      font-size: 3rem !important;
+    .otp-square.focused {
+      border-color: #00f2fe !important;
+      background: rgba(0, 242, 254, 0.12) !important;
+      box-shadow: 
+        0 0 25px rgba(0, 242, 254, 0.65), 
+        inset 0 0 10px rgba(0, 242, 254, 0.3) !important;
+      transform: scale(1.08) translateY(-2px);
     }
 
-    .otp-container.merged-success .otp-box:first-child {
-      background: rgba(16, 185, 129, 0.2) !important;
+    /* MERGE ANIMATION: 4 BOXES -> 1 BOX */
+    .otp-wrapper {
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .otp-wrapper.merged {
+      gap: 0 !important;
+    }
+    .otp-wrapper.merged .otp-square:not(:first-child) {
+      opacity: 0 !important;
+      transform: scale(0) rotate(-45deg) !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      overflow: hidden !important;
+    }
+    .otp-wrapper.merged .otp-square:first-child {
+      width: 100px !important;
+      height: 100px !important;
+      border-radius: 1.75rem !important;
+      font-size: 3.5rem !important;
+    }
+
+    .otp-wrapper.merged-success .otp-square:first-child {
+      background: rgba(16, 185, 129, 0.25) !important;
       border: 2px solid #10b981 !important;
-      box-shadow: 0 0 50px rgba(16, 185, 129, 0.8), inset 0 0 20px rgba(16, 185, 129, 0.4) !important;
-      animation: mergeSuccessPulse 0.6s ease-in-out infinite alternate;
+      box-shadow: 0 0 60px rgba(16, 185, 129, 0.9), inset 0 0 25px rgba(16, 185, 129, 0.5) !important;
+      animation: successPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    .otp-container.merged-error .otp-box:first-child {
-      background: rgba(244, 63, 94, 0.2) !important;
+    .otp-wrapper.merged-error .otp-square:first-child {
+      background: rgba(244, 63, 94, 0.25) !important;
       border: 2px solid #f43f5e !important;
-      box-shadow: 0 0 50px rgba(244, 63, 94, 0.8), inset 0 0 20px rgba(244, 63, 94, 0.4) !important;
+      box-shadow: 0 0 60px rgba(244, 63, 94, 0.9), inset 0 0 25px rgba(244, 63, 94, 0.5) !important;
       animation: shake 0.4s ease-in-out;
     }
 
-    @keyframes mergeSuccessPulse {
-      0% { transform: scale(1.05); }
-      100% { transform: scale(1.15); }
+    @keyframes successPop {
+      0% { transform: scale(0.9); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1.05); }
     }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-10px); }
-      40% { transform: translateX(10px); }
-      60% { transform: translateX(-6px); }
-      80% { transform: translateX(6px); }
-    }
-
-    /* Ambient Liquid Gradient Blobs */
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.45;
-      animation: floatBlob 14s infinite alternate ease-in-out;
-    }
-    .blob-1 {
-      top: -10%;
-      left: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, #2563eb 0%, #1d4ed8 100%);
-    }
-    .blob-2 {
-      bottom: -15%;
-      right: -10%;
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, #3b82f6 0%, #06b6d4 100%);
-      animation-delay: -7s;
-    }
-
-    @keyframes floatBlob {
-      0% { transform: translate(0px, 0px) scale(1); }
-      50% { transform: translate(30px, -40px) scale(1.08); }
-      100% { transform: translate(-20px, 30px) scale(0.95); }
+      20% { transform: translateX(-12px); }
+      40% { transform: translateX(12px); }
+      60% { transform: translateX(-7px); }
+      80% { transform: translateX(7px); }
     }
 
     .text-dissolve {
@@ -134,71 +179,72 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative">
+<body class="min-h-screen flex items-center justify-center p-4 relative selection:bg-cyan-500/30">
 
-  <!-- Ambient Liquid Gradient Blobs -->
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+  <!-- Ambient Morphing Liquid Orbs -->
+  <div class="liquid-orb orb-cyan"></div>
+  <div class="liquid-orb orb-violet"></div>
+  <div class="liquid-orb orb-emerald"></div>
 
   <div class="w-full max-w-md relative z-10 flex flex-col items-center justify-center">
 
-    <!-- LIQUID GLASS OTP CARD -->
-    <div id="login-card" class="w-full glass-card p-8 rounded-3xl space-y-6 transition-all duration-500 text-white">
+    <!-- MEGA MINIMALIST LIQUID GLASS OTP CARD -->
+    <div id="login-card" class="w-full liquid-glass-card p-8 rounded-[2.25rem] space-y-6 transition-all duration-500 text-white">
       
-      <!-- Top Accent Bar -->
+      <!-- Top Drag Bar / Glass Accent Handle (As in Screenshot) -->
       <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-2"></div>
 
-      <!-- Header -->
+      <!-- Header Title & Subtitle -->
       <div class="text-center space-y-1.5">
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
           Weryfikacja Kodem PIN
         </h1>
-        <p class="text-xs text-slate-400 font-medium leading-relaxed">
+        <p class="text-xs text-slate-400 font-medium leading-relaxed max-w-xs mx-auto">
           Podaj Twój 4-cyfrowy unikalny kod autoryzacji.
         </p>
       </div>
 
-      <!-- Error Toast / Box -->
-      <div id="error-box" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-200 p-3 rounded-2xl text-center text-xs font-semibold backdrop-blur-md animate-emerge">
+      <!-- Error Toast -->
+      <div id="error-box" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-200 p-3 rounded-2xl text-center text-xs font-semibold backdrop-blur-md transition-all duration-300">
         Nieprawidłowy kod PIN. Brak dostępu.
       </div>
 
-      <!-- 4 OTP GLASS SQUARE BOXES (IMAGE LAYOUT MATCH) -->
-      <div id="otp-container" class="flex items-center justify-center gap-3.5 py-3 transition-all duration-500">
-        <div id="otp-box-0" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner active-focus">
+      <!-- 4 OTP GLASS SQUARE BOXES -->
+      <div id="otp-wrapper" class="otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500">
+        <div id="otp-box-0" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white focused">
           <span id="otp-char-0"></span>
         </div>
-        <div id="otp-box-1" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner">
+        <div id="otp-box-1" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
           <span id="otp-char-1"></span>
         </div>
-        <div id="otp-box-2" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner">
+        <div id="otp-box-2" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
           <span id="otp-char-2"></span>
         </div>
-        <div id="otp-box-3" class="otp-box w-14 h-16 sm:w-16 sm:h-20 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center text-3xl font-black text-white shadow-inner">
+        <div id="otp-box-3" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
           <span id="otp-char-3"></span>
         </div>
       </div>
 
       <!-- Glass Numpad -->
       <div class="grid grid-cols-3 gap-3 pt-2">
-        <button type="button" onclick="appendPin('1')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">1</button>
-        <button type="button" onclick="appendPin('2')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">2</button>
-        <button type="button" onclick="appendPin('3')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">3</button>
-        <button type="button" onclick="appendPin('4')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">4</button>
-        <button type="button" onclick="appendPin('5')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">5</button>
-        <button type="button" onclick="appendPin('6')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">6</button>
-        <button type="button" onclick="appendPin('7')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">7</button>
-        <button type="button" onclick="appendPin('8')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">8</button>
-        <button type="button" onclick="appendPin('9')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">9</button>
-        <button type="button" onclick="clearPin()" class="glass-btn rounded-2xl py-3.5 text-xs font-bold uppercase tracking-wider text-rose-400">C</button>
-        <button type="button" onclick="appendPin('0')" class="glass-btn rounded-2xl py-3.5 text-xl font-bold">0</button>
-        <button type="button" onclick="backspacePin()" class="glass-btn rounded-2xl py-3.5 text-sm font-bold flex items-center justify-center text-slate-300">
+        <button type="button" onclick="appendPin('1')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">1</button>
+        <button type="button" onclick="appendPin('2')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">2</button>
+        <button type="button" onclick="appendPin('3')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">3</button>
+        <button type="button" onclick="appendPin('4')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">4</button>
+        <button type="button" onclick="appendPin('5')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">5</button>
+        <button type="button" onclick="appendPin('6')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">6</button>
+        <button type="button" onclick="appendPin('7')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">7</button>
+        <button type="button" onclick="appendPin('8')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">8</button>
+        <button type="button" onclick="appendPin('9')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">9</button>
+        <button type="button" onclick="clearPin()" class="numpad-btn rounded-2xl py-3.5 text-xs font-extrabold uppercase tracking-wider text-rose-400">C</button>
+        <button type="button" onclick="appendPin('0')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">0</button>
+        <button type="button" onclick="backspacePin()" class="numpad-btn rounded-2xl py-3.5 text-sm font-bold flex items-center justify-center text-slate-300">
           <i data-lucide="delete" class="w-5 h-5"></i>
         </button>
       </div>
 
       <!-- Footer Info -->
-      <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-white/10 font-medium">
+      <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-white/10 font-medium tracking-wide">
         Autoryzacja • FOMO Engine
       </div>
 
@@ -206,7 +252,7 @@
 
     <!-- PURE WELCOME DISSOLVING GREETING -->
     <div id="liquid-welcome" class="hidden text-center transition-all duration-700 opacity-0 scale-95 z-20">
-      <h1 id="liquid-name" class="text-5xl sm:text-7xl font-black tracking-tight bg-gradient-to-r from-blue-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent py-4 drop-shadow-2xl">
+      <h1 id="liquid-name" class="text-5xl sm:text-7xl font-black tracking-tight bg-gradient-to-r from-cyan-300 via-blue-400 to-emerald-300 bg-clip-text text-transparent py-4 drop-shadow-2xl">
         HEJ...
       </h1>
     </div>
@@ -225,13 +271,13 @@
 
         if (i < enteredPin.length) {
           charSpan.innerText = enteredPin[i];
-          box.classList.remove('active-focus');
+          box.classList.remove('focused');
         } else {
           charSpan.innerText = '';
           if (i === enteredPin.length) {
-            box.classList.add('active-focus');
+            box.classList.add('focused');
           } else {
-            box.classList.remove('active-focus');
+            box.classList.remove('focused');
           }
         }
       }
@@ -250,11 +296,11 @@
     function clearPin() {
       enteredPin = '';
       isSubmitting = false;
-      const container = document.getElementById('otp-container');
+      const wrapper = document.getElementById('otp-wrapper');
       const box0Span = document.getElementById('otp-char-0');
       
-      if (container) {
-        container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500';
+      if (wrapper) {
+        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500';
       }
       if (box0Span) box0Span.innerText = '';
 
@@ -268,7 +314,7 @@
       updateOtpBoxes();
     }
 
-    // Keyboard support for numpad
+    // Keyboard support for numpad & physical keys
     document.addEventListener('keydown', (e) => {
       if (e.key >= '0' && e.key <= '9') {
         appendPin(e.key);
@@ -282,7 +328,7 @@
     async function submitPinLogin() {
       const errBox = document.getElementById('error-box');
       const loginCard = document.getElementById('login-card');
-      const container = document.getElementById('otp-container');
+      const wrapper = document.getElementById('otp-wrapper');
       const box0Span = document.getElementById('otp-char-0');
       const liquidWelcome = document.getElementById('liquid-welcome');
       const liquidName = document.getElementById('liquid-name');
@@ -302,7 +348,7 @@
           sessionStorage.setItem('fomo_username', userCap);
 
           // 1. MOTION MERGE: Merge 4 boxes into 1 green checkmark square
-          container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500 merged merged-success';
+          wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500 merged merged-success';
           box0Span.innerHTML = '✓';
 
           // 2. Liquid Welcome transition
@@ -332,7 +378,7 @@
 
         } else {
           // 1. MOTION MERGE ERROR: Merge 4 boxes into 1 red cross square with shake
-          container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500 merged merged-error';
+          wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500 merged merged-error';
           box0Span.innerHTML = '✕';
 
           errBox.innerText = data.detail || 'Nieprawidłowy kod PIN. Brak dostępu.';
@@ -344,7 +390,7 @@
           }, 1000);
         }
       } catch (err) {
-        container.className = 'flex items-center justify-center gap-3.5 py-3 transition-all duration-500 merged merged-error';
+        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500 merged merged-error';
         box0Span.innerHTML = '✕';
         errBox.innerText = 'Błąd połączenia z serwerem logowania.';
         errBox.classList.remove('hidden');
