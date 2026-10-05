@@ -18,89 +18,75 @@
   <script defer src="https://js.puter.com/v2/"></script>
   <style>
     body {
-      background-color: #0b0f19;
+      background-color: #070913;
       background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
       background-attachment: fixed;
-      color: #0f172a;
+      color: #f8fafc;
       font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
       overflow-x: hidden;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* LIQUID GLASSMODE STYLING */
-    .clean-card {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
+    /* DARK GLASS CARDS (FRAMER-MOTION STYLE STACK AS IN JSX SCREENSHOT) */
+    .clean-card, .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border-radius: 1.25rem;
+      color: #f8fafc;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     
-    .clean-card-hover { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    .clean-card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     .clean-card-hover:hover {
-      transform: translateY(-3px) scale(1.01);
-      box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.18), 0 8px 20px -4px rgba(0, 0, 0, 0.04);
-      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-5px);
+      background: rgba(15, 23, 42, 0.88);
+      box-shadow: 0 25px 50px -10px rgba(16, 185, 129, 0.25), 0 0 25px rgba(99, 102, 241, 0.2);
+      border-color: rgba(16, 185, 129, 0.45);
     }
 
-    /* DARK MODE LIQUID GLASS */
-    body.dark {
-      background-color: #070a12;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.22) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.22) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.18) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.18) 0px, transparent 50%);
-      color: #f1f5f9;
+    header {
+      background: rgba(11, 15, 25, 0.85) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
     }
-    body.dark header {
-      background: rgba(11, 15, 25, 0.75);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-color: rgba(255, 255, 255, 0.1);
+
+    #burger-drawer {
+      background: rgba(11, 15, 25, 0.9) !important;
+      backdrop-filter: blur(24px) !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #f8fafc !important;
     }
-    body.dark #burger-drawer {
-      background: rgba(11, 15, 25, 0.85);
-      backdrop-filter: blur(24px);
-      border-color: rgba(255, 255, 255, 0.1);
-      color: #f1f5f9;
-    }
-    body.dark #burger-drawer nav button {
+
+    #burger-drawer nav button {
       color: #cbd5e1;
     }
-    body.dark #burger-drawer nav button:hover {
-      background: rgba(255, 255, 255, 0.08);
+    #burger-drawer nav button:hover {
+      background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
     }
-    body.dark .clean-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #f1f5f9;
-    }
-    body.dark .clean-card-hover:hover {
-      border-color: rgba(99, 102, 241, 0.5);
-      box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.3);
-    }
-    body.dark input, body.dark select, body.dark textarea {
-      background: rgba(15, 23, 42, 0.8) !important;
+
+    input, select, textarea {
+      background: rgba(15, 23, 42, 0.75) !important;
       border-color: rgba(255, 255, 255, 0.15) !important;
-      color: #f1f5f9 !important;
+      color: #f8fafc !important;
     }
-    body.dark .text-slate-900 { color: #f8fafc !important; }
-    body.dark .text-slate-800 { color: #f1f5f9 !important; }
-    body.dark .text-slate-700 { color: #e2e8f0 !important; }
-    body.dark .text-slate-600 { color: #cbd5e1 !important; }
-    body.dark .text-slate-500 { color: #94a3b8 !important; }
-    body.dark .bg-slate-50 { background-color: #0b0f19 !important; }
-    body.dark .bg-slate-100 { background-color: #1f2937 !important; }
-    body.dark .border-slate-100, body.dark .border-slate-200 { border-color: #1f2937 !important; }
+
+    .text-slate-900 { color: #f8fafc !important; }
+    .text-slate-800 { color: #f1f5f9 !important; }
+    .text-slate-700 { color: #e2e8f0 !important; }
+    .text-slate-600 { color: #cbd5e1 !important; }
+    .text-slate-500 { color: #94a3b8 !important; }
+    .bg-slate-50 { background-color: rgba(15, 23, 42, 0.5) !important; }
+    .bg-slate-100 { background-color: rgba(30, 41, 59, 0.6) !important; }
+    .border-slate-100, .border-slate-200 { border-color: rgba(255, 255, 255, 0.1) !important; }
 
     .btn-anim { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
     .btn-anim:active { transform: scale(0.98); }

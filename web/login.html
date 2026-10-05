@@ -54,6 +54,24 @@
       box-shadow: 0 0 16px rgba(99, 102, 241, 0.8), 0 0 32px rgba(168, 85, 247, 0.4);
       transform: scale(1.25);
     }
+    .pin-dot.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.95), 0 0 45px rgba(52, 211, 153, 0.7) !important;
+      transform: scale(1.4) !important;
+      animation: emeraldPulse 0.5s infinite alternate ease-in-out;
+    }
+
+    .glass-card.success-border {
+      border-color: rgba(16, 185, 129, 0.8) !important;
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.4), inset 0 0 25px rgba(16, 185, 129, 0.25) !important;
+      transition: all 0.4s ease;
+    }
+
+    @keyframes emeraldPulse {
+      0% { transform: scale(1.25); box-shadow: 0 0 15px #10b981; }
+      100% { transform: scale(1.45); box-shadow: 0 0 35px #34d399, 0 0 55px #059669; }
+    }
+
     .pin-dot.error {
       background: #f43f5e;
       box-shadow: 0 0 16px rgba(244, 63, 94, 0.9);
@@ -288,34 +306,40 @@
           const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : currentSelectedUser;
           sessionStorage.setItem('fomo_username', userCap);
 
-          // Animate Dots to Success Glow
+          // 1. Green Motion Pulse on 4 PIN dots
           for (let i = 0; i < 4; i++) {
             const dot = document.getElementById(`dot-${i}`);
-            if (dot) dot.classList.add('active');
+            if (dot) {
+              dot.classList.remove('active', 'error');
+              dot.classList.add('success');
+            }
           }
+          loginCard.classList.add('success-border');
 
-          // Dissolve Card into Liquid Welcome Wave
-          loginCard.classList.add('opacity-0', 'scale-95');
-
+          // 2. Short pause for green motion celebration, then dissolve
           setTimeout(() => {
-            loginCard.classList.add('hidden');
-            liquidName.innerText = `HEJ ${userCap.toUpperCase()}!`;
-            liquidWelcome.classList.remove('hidden');
+            loginCard.classList.add('opacity-0', 'scale-95');
 
             setTimeout(() => {
-              liquidWelcome.classList.remove('opacity-0', 'scale-95');
-              liquidWelcome.classList.add('opacity-100', 'scale-100');
-            }, 50);
+              loginCard.classList.add('hidden');
+              liquidName.innerText = `HEJ ${userCap.toUpperCase()}!`;
+              liquidWelcome.classList.remove('hidden');
 
-            setTimeout(() => {
-              liquidWelcome.classList.add('text-dissolve');
-            }, 900);
+              setTimeout(() => {
+                liquidWelcome.classList.remove('opacity-0', 'scale-95');
+                liquidWelcome.classList.add('opacity-100', 'scale-100');
+              }, 50);
 
-            setTimeout(() => {
-              window.location.href = '/';
-            }, 1800);
+              setTimeout(() => {
+                liquidWelcome.classList.add('text-dissolve');
+              }, 900);
 
-          }, 300);
+              setTimeout(() => {
+                window.location.href = '/';
+              }, 1700);
+
+            }, 300);
+          }, 450);
 
         } else {
           // Error Shake
