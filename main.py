@@ -122,25 +122,32 @@ async def serve_login_page(request: Request):
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
-    username = (data.get("username", "") or "").strip()
-    pin = (data.get("pin", "") or data.get("password", "")).strip()
-
-    if not username:
+    if "username" in data and not str(data["username"]).strip():
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"success": False, "detail": "Wprowadź swój login."}
+            content={"success": False, "detail": "Wprowadź nazwę użytkownika."}
         )
-    if not pin:
+
+    username = (data.get("username", "") or "").strip()
+    pin = (data.get("pin", "") or data.get("password", "") or "").strip()
+
+    if not pin.isdigit() or len(pin) != 4:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"success": False, "detail": "Wprowadź 4-cyfrowy kod PIN."}
         )
 
-    res = auth_manager.authenticate_user_pin(username, pin)
+    # PIN-only login: each PIN is unique and maps to exactly one account.
+    # If a username is also sent (legacy clients), it must match that PIN.
+    if username:
+        res = auth_manager.authenticate_user_pin(username, pin)
+    else:
+        res = auth_manager.authenticate_pin(pin)
+
     if not res:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"success": False, "detail": "Nieprawidłowy login lub kod PIN. Brak dostępu."}
+            content={"success": False, "detail": "Nieprawidłowy kod PIN. Brak dostępu."}
         )
 
     token, canonical_user = res
@@ -170,10 +177,11 @@ async def get_current_user(request: Request):
     if not user:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"authenticated": False, "username": None, "permissions": {}}
+            content={"authenticated": False, "username": None, "permissions": {}, "profile": {}}
         )
     perms = user_data_mgr.get_user_permissions(user)
-    return {"authenticated": True, "username": user, "permissions": perms}
+    profile = user_data_mgr.get_user_profile(user)
+    return {"authenticated": True, "username": user, "permissions": perms, "profile": profile}
 
 @app.get("/api/permissions")
 async def get_user_permissions_route(request: Request):
@@ -199,43 +207,118 @@ async def update_admin_permissions_route(request: Request, data: Dict[str, Any] 
     updated = user_data_mgr.update_user_permissions(target_user, perms_data)
     return {"success": True, "user": target_user, "permissions": updated}
 
+@app.get("/api/admin/generate-pin")
+async def generate_random_pin_route(request: Request):
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
+    import secrets
+    existing_pins = set(str(p).strip() for p in auth_manager.users.values())
+    for _ in range(1000):
+        val = secrets.randbelow(9000) + 1000
+        cand = str(val)
+        if len(set(cand)) > 1 and cand not in existing_pins and cand not in ["1234", "4321", "1111", "0000"]:
+            return {"success": True, "pin": cand}
+    return {"success": True, "pin": "7391"}
+
 @app.get("/api/admin/users")
 async def get_admin_users_route(request: Request):
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
     user_list = []
     for u, pin in auth_manager.users.items():
         perms = user_data_mgr.get_user_permissions(u)
+        prof = user_data_mgr.get_user_profile(u)
         user_list.append({
             "username": u,
             "pin": pin,
             "is_admin": u.lower() == "adrian",
-            "permissions": perms
+            "permissions": perms,
+            "profile": prof
         })
     return {"success": True, "users": user_list}
 
 @app.post("/api/admin/users")
 async def create_or_update_user_route(request: Request, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
     username = (data.get("username", "")).strip()
     pin = (data.get("pin", "")).strip()
     initial_perms = data.get("permissions", {})
+    p1 = (data.get("p1", "") or username).strip()
+    p2 = (data.get("p2", "") or "Partner").strip()
+    household = (data.get("household", "") or "").strip()
+
     if not username:
         return JSONResponse(status_code=400, content={"success": False, "detail": "Nazwa konta jest wymagana."})
-    if not pin or len(pin) < 4:
-        return JSONResponse(status_code=400, content={"success": False, "detail": "PIN musi mieć co najmniej 4 cyfry."})
+    if not pin or len(pin) != 4 or not pin.isdigit():
+        return JSONResponse(status_code=400, content={"success": False, "detail": "PIN musi mieć dokładnie 4 cyfry."})
     
-    canonical = auth_manager.add_or_update_user(username, pin)
+    try:
+        canonical = auth_manager.add_or_update_user(username, pin)
+    except ValueError as ve:
+        return JSONResponse(status_code=400, content={"success": False, "detail": str(ve)})
+
     if initial_perms:
         user_data_mgr.update_user_permissions(canonical, initial_perms)
     else:
         user_data_mgr.get_user_permissions(canonical)
+
+    prof = user_data_mgr.update_user_profile(canonical, {
+        "p1": p1,
+        "p2": p2,
+        "household": household or f"PAIR_{canonical.upper()}"
+    })
+
     return {
         "success": True, 
         "username": canonical, 
         "pin": pin, 
-        "permissions": user_data_mgr.get_user_permissions(canonical)
+        "permissions": user_data_mgr.get_user_permissions(canonical),
+        "profile": prof
+    }
+
+@app.put("/api/admin/users/{target_username}")
+async def update_user_admin_route(request: Request, target_username: str, data: Dict[str, Any] = Body(...)):
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
+    
+    pin = (data.get("pin", "") or "").strip()
+    if pin:
+        if not pin.isdigit() or len(pin) != 4:
+            return JSONResponse(status_code=400, content={"success": False, "detail": "PIN musi mieć dokładnie 4 cyfry."})
+        try:
+            auth_manager.add_or_update_user(target_username, pin)
+        except ValueError as ve:
+            return JSONResponse(status_code=400, content={"success": False, "detail": str(ve)})
+
+    if "permissions" in data and isinstance(data["permissions"], dict):
+        user_data_mgr.update_user_permissions(target_username, data["permissions"])
+
+    prof_updates = {}
+    if "p1" in data: prof_updates["p1"] = data["p1"]
+    if "p2" in data: prof_updates["p2"] = data["p2"]
+    if "household" in data: prof_updates["household"] = data["household"]
+    if prof_updates:
+        user_data_mgr.update_user_profile(target_username, prof_updates)
+
+    canonical = user_data_mgr.resolve_canonical(target_username)
+    return {
+        "success": True,
+        "username": canonical,
+        "pin": auth_manager.users.get(canonical, ""),
+        "permissions": user_data_mgr.get_user_permissions(canonical),
+        "profile": user_data_mgr.get_user_profile(canonical)
     }
 
 @app.delete("/api/admin/users/{username}")
 async def delete_user_route(request: Request, username: str):
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
     if username.lower() == "adrian":
         return JSONResponse(status_code=400, content={"success": False, "detail": "Nie można usunąć głównego konta administratora."})
     deleted = auth_manager.delete_user(username)
@@ -253,10 +336,13 @@ async def get_wydatki_route(request: Request):
     return user_data_mgr.get_user_wydatki(user)
 
 @app.post("/api/wydatki")
-async def add_wydatki_route(request: Request, data: Dict[str, Any] = Body(...)):
+async def add_or_save_wydatki_route(request: Request, data: Dict[str, Any] = Body(...)):
     user = get_auth_user(request)
     if not user:
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
+    if "baseIncomes" in data or "gigs" in data or "expenses" in data:
+        res = user_data_mgr.save_user_wydatki(user, data)
+        return {"success": True, "data": res}
     res = user_data_mgr.add_user_wydatki(user, data)
     return {"success": True, "entry": res}
 

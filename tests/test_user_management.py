@@ -128,6 +128,93 @@ class TestUserManagementAndMonika(unittest.TestCase):
         res_missing = client.post("/api/login", json={"username": "", "pin": "5274"})
         self.assertEqual(res_missing.status_code, 400)
 
+        # 6. Pure PIN-only login (no username provided)
+        res_pin_only = client.post("/api/login", json={"pin": "8492"})
+        self.assertEqual(res_pin_only.status_code, 200)
+        self.assertEqual(res_pin_only.json().get("username"), "Adrian")
+
+        res_pin_maciek = client.post("/api/login", json={"pin": "4729"})
+        self.assertEqual(res_pin_maciek.status_code, 200)
+        self.assertEqual(res_pin_maciek.json().get("username"), "Maciek")
+
+        res_pin_karolina = client.post("/api/login", json={"pin": "6183"})
+        self.assertEqual(res_pin_karolina.status_code, 200)
+        self.assertEqual(res_pin_karolina.json().get("username"), "Karolina")
+
+        res_pin_patrycja = client.post("/api/login", json={"pin": "9351"})
+        self.assertEqual(res_pin_patrycja.status_code, 200)
+        self.assertEqual(res_pin_patrycja.json().get("username"), "Patrycja")
+
+        res_pin_monika = client.post("/api/login", json={"pin": "5274"})
+        self.assertEqual(res_pin_monika.status_code, 200)
+        self.assertEqual(res_pin_monika.json().get("username"), "Monika")
+
+    def test_admin_lockdown_and_user_creation_with_profiles(self):
+        from fastapi.testclient import TestClient
+        from main import app
+        client = TestClient(app)
+
+        # 1. Non-admin (Maciek) cannot access admin routes
+        client.post("/api/login", json={"pin": "4729"})
+        res_admin_users = client.get("/api/admin/users")
+        self.assertEqual(res_admin_users.status_code, 403)
+        res_gen_pin = client.get("/api/admin/generate-pin")
+        self.assertEqual(res_gen_pin.status_code, 403)
+
+        # 2. Admin (Adrian) can generate random unique PIN
+        client.post("/api/login", json={"pin": "8492"})
+        res_gen = client.get("/api/admin/generate-pin")
+        self.assertEqual(res_gen.status_code, 200)
+        gen_pin = res_gen.json().get("pin")
+        self.assertTrue(gen_pin.isdigit() and len(gen_pin) == 4)
+
+        # 3. Admin creates new user with custom persons for Wydatki
+        res_create = client.post("/api/admin/users", json={
+            "username": "Zofia",
+            "pin": gen_pin,
+            "permissions": {"wydatki": True, "fomo": False},
+            "p1": "Zofia",
+            "p2": "Kamil",
+            "household": "PAIR_ZOFIA_KAMIL"
+        })
+        self.assertEqual(res_create.status_code, 200)
+        created_data = res_create.json()
+        self.assertEqual(created_data.get("username"), "Zofia")
+        self.assertEqual(created_data.get("profile", {}).get("p1"), "Zofia")
+        self.assertEqual(created_data.get("profile", {}).get("p2"), "Kamil")
+
+        # 4. Zofia can log in with her generated PIN alone
+        client_zofia = TestClient(app)
+        res_zofia_login = client_zofia.post("/api/login", json={"pin": gen_pin})
+        self.assertEqual(res_zofia_login.status_code, 200)
+        self.assertEqual(res_zofia_login.json().get("username"), "Zofia")
+
+        res_zofia_user = client_zofia.get("/api/user")
+        self.assertEqual(res_zofia_user.status_code, 200)
+        self.assertEqual(res_zofia_user.json().get("profile", {}).get("p1"), "Zofia")
+        self.assertEqual(res_zofia_user.json().get("profile", {}).get("p2"), "Kamil")
+
+        # 5. Clean up created user Zofia
+        res_del = client.delete("/api/admin/users/Zofia")
+        self.assertEqual(res_del.status_code, 200)
+
+    def test_strict_crm_and_tasks_isolation(self):
+        # Karolina and Patrycja have independent isolated tasks and CRM
+        c_karo = user_data_mgr.add_user_crm_client("Karolina", {"name": "Klient Karoliny"})
+        c_pat = user_data_mgr.add_user_crm_client("Patrycja", {"name": "Klient Patrycji"})
+
+        crm_karo = user_data_mgr.get_user_crm("Karolina")
+        crm_pat = user_data_mgr.get_user_crm("Patrycja")
+
+        self.assertTrue(any(x.get("name") == "Klient Karoliny" for x in crm_karo))
+        self.assertFalse(any(x.get("name") == "Klient Patrycji" for x in crm_karo))
+        self.assertTrue(any(x.get("name") == "Klient Patrycji" for x in crm_pat))
+        self.assertFalse(any(x.get("name") == "Klient Karoliny" for x in crm_pat))
+
+        # Clean up
+        user_data_mgr.delete_user_crm_client("Karolina", c_karo["id"])
+        user_data_mgr.delete_user_crm_client("Patrycja", c_pat["id"])
+
     @classmethod
     def tearDownClass(cls):
         auth_manager.logout_all()

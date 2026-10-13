@@ -73,15 +73,20 @@ class AuthManager:
             logger.error(f"Error writing credentials file: {e}")
 
     def add_or_update_user(self, username: str, pin: str) -> str:
-        """Add a new user or update existing user's PIN."""
+        """Add a new user or update existing user's PIN. PINs must be unique 4-digit codes."""
         clean_name = (username or "").strip()
         if clean_name and clean_name[0].islower():
             clean_name = clean_name[0].upper() + clean_name[1:]
         clean_pin = (pin or "").strip()
         if not clean_name:
             raise ValueError("Nazwa użytkownika nie może być pusta.")
-        if not clean_pin or len(clean_pin) < 3:
-            raise ValueError("Kod PIN musi mieć co najmniej 4 cyfry.")
+        if not clean_pin.isdigit() or len(clean_pin) != 4:
+            raise ValueError("Kod PIN musi mieć dokładnie 4 cyfry.")
+
+        # PIN-only login requires every PIN to belong to exactly one account
+        for existing_user, existing_pin in self.users.items():
+            if existing_user.lower() != clean_name.lower() and str(existing_pin).strip() == clean_pin:
+                raise ValueError("Ten kod PIN jest już przypisany do innego konta.")
 
         for k in list(self.users.keys()):
             if k.lower() == clean_name.lower():

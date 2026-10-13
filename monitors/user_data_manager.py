@@ -8,6 +8,7 @@ logger = logging.getLogger("UserDataManager")
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PERMISSIONS_FILE = os.path.join(BASE_DIR, "USER_PERMISSIONS.json")
+PROFILES_FILE = os.path.join(BASE_DIR, "USER_PROFILES.json")
 WYDATKI_FILE = os.path.join(BASE_DIR, "DATA_WYDATKI.json")
 WYCENY_FILE = os.path.join(BASE_DIR, "DATA_WYCENY.json")
 COMPANY_FILE = os.path.join(BASE_DIR, "DATA_COMPANY.json")
@@ -30,6 +31,39 @@ DEFAULT_PERMISSIONS = {
     },
     "Monika": {
         "fomo": False, "wydatki": True, "wyceny": False, "stopki_email": False, "kalendarz": False, "ai_chat": False, "crm": False, "tasks": False, "password_gen": False, "currency_calc": False, "is_admin": False
+    }
+}
+
+DEFAULT_PROFILES = {
+    "Adrian": {
+        "p1": "Adrian",
+        "p2": "Patrycja",
+        "household": "PAIR_ADRIAN_PATRYCJA"
+    },
+    "Maciek": {
+        "p1": "Maciek",
+        "p2": "Karolina",
+        "household": "PAIR_MACIEK_KAROLINA"
+    },
+    "Karolina": {
+        "p1": "Maciek",
+        "p2": "Karolina",
+        "household": "PAIR_MACIEK_KAROLINA"
+    },
+    "Patrycja": {
+        "p1": "Adrian",
+        "p2": "Patrycja",
+        "household": "PAIR_ADRIAN_PATRYCJA"
+    },
+    "Monika": {
+        "p1": "Monika",
+        "p2": "Tomek",
+        "household": "PAIR_MONIKA_TOMEK"
+    },
+    "Tomek": {
+        "p1": "Monika",
+        "p2": "Tomek",
+        "household": "PAIR_MONIKA_TOMEK"
     }
 }
 
@@ -88,6 +122,7 @@ class UserDataManager:
 
     def __init__(self):
         self.permissions = self._load_json(PERMISSIONS_FILE, DEFAULT_PERMISSIONS)
+        self.profiles = self._load_json(PROFILES_FILE, DEFAULT_PROFILES)
         self.wydatki = self._load_json(WYDATKI_FILE, DEFAULT_WYDATKI)
         self.wyceny = self._load_json(WYCENY_FILE, DEFAULT_WYCENY)
         self.company = self._load_json(COMPANY_FILE, DEFAULT_COMPANY)
@@ -222,18 +257,74 @@ class UserDataManager:
         if target in self.permissions and target.lower() != "adrian":
             del self.permissions[target]
             self._save_json(PERMISSIONS_FILE, self.permissions)
+        self.delete_user_profile(username)
+
+    # PROFILES MANAGEMENT (DISPLAY NAMES & HOUSEHOLD BUDGET CONFIGURATION)
+    def get_user_profile(self, username: str) -> dict:
+        canonical = self.resolve_canonical(username)
+        if canonical not in self.profiles:
+            self.profiles[canonical] = {
+                "p1": canonical,
+                "p2": "Partner",
+                "household": f"PAIR_{canonical.upper()}"
+            }
+            self._save_json(PROFILES_FILE, self.profiles)
+        return dict(self.profiles[canonical])
+
+    def update_user_profile(self, username: str, profile_data: dict) -> dict:
+        canonical = self.resolve_canonical(username)
+        current = self.get_user_profile(canonical)
+        if "p1" in profile_data and profile_data["p1"]:
+            current["p1"] = str(profile_data["p1"]).strip()
+        if "p2" in profile_data and profile_data["p2"]:
+            current["p2"] = str(profile_data["p2"]).strip()
+        if "household" in profile_data and profile_data["household"]:
+            current["household"] = str(profile_data["household"]).strip()
+        self.profiles[canonical] = current
+        self._save_json(PROFILES_FILE, self.profiles)
+        return self.profiles[canonical]
+
+    def delete_user_profile(self, username: str):
+        canonical = self.resolve_canonical(username)
+        if canonical in self.profiles and canonical.lower() != "adrian":
+            del self.profiles[canonical]
+            self._save_json(PROFILES_FILE, self.profiles)
+
+    def get_all_users_profiles(self) -> dict:
+        try:
+            from monitors.auth_manager import auth_manager
+            all_users = list(auth_manager.users.keys())
+        except Exception:
+            all_users = ["Adrian", "Maciek", "Karolina", "Patrycja", "Monika"]
+        result = {}
+        for u in all_users:
+            result[u] = self.get_user_profile(u)
+        return result
 
     def resolve_wydatki_user(self, username: str) -> str:
         u = (username or "").strip().lower()
         if u in ["adrian", "patrycja"]:
-            return "PAIR_ADRIAN_PATRYCJA"
-        if u in ["monika", "tomek"]:
-            return "PAIR_MONIKA_TOMEK"
-        if u in ["maciek", "karolina"]:
-            return "PAIR_MACIEK_KAROLINA"
-        return f"PAIR_{self.resolve_canonical(username).upper()}"
+            default_hh = "PAIR_ADRIAN_PATRYCJA"
+        elif u in ["monika", "tomek"]:
+            default_hh = "PAIR_MONIKA_TOMEK"
+        elif u in ["maciek", "karolina"]:
+            default_hh = "PAIR_MACIEK_KAROLINA"
+        else:
+            default_hh = None
 
-    # WYDATKI DATA (SHARED PAIRS: ADRIAN+PATRYCJA, MACIEK+KAROLINA)
+        canonical = self.resolve_canonical(username)
+        if canonical in self.profiles and "household" in self.profiles[canonical]:
+            hh = self.profiles[canonical]["household"]
+            if hh:
+                return hh
+
+        if default_hh:
+            return default_hh
+
+        prof = self.get_user_profile(canonical)
+        return prof.get("household", f"PAIR_{canonical.upper()}")
+
+    # WYDATKI DATA (PER-HOUSEHOLD BUDGET ISOLATION)
     def get_user_wydatki(self, username: str) -> dict:
         key = self.resolve_wydatki_user(username)
         val = self.wydatki.get(key)
@@ -283,22 +374,14 @@ class UserDataManager:
 
     # WYCENY DATA (STRICT PER-USER ISOLATION & FULL POI PERSISTENCE)
     def get_user_wyceny(self, username: str) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         val = self.wyceny.get(canonical)
         if isinstance(val, dict) and "quote" in val:
             return val
         
-        default_company = DEFAULT_COMPANY.get(canonical, {
-            "name": "Biuro Usługowe / Twoja Firma",
-            "address": "ul. Przykładowa 12/3, 00-001 Warszawa",
-            "nip": "0000000000",
-            "phone": "+48 000 000 000",
-            "email": "biuro@firma.pl",
-            "bank": "00 0000 0000 0000 0000 0000 0000",
-            "logoBase64": ""
-        })
+        default_company = self.get_user_company(canonical)
 
-        return {
+        default_wycena = {
             "company": default_company,
             "quote": {
                 "number": "",
@@ -322,15 +405,16 @@ class UserDataManager:
             ],
             "historyQuotes": []
         }
+        return default_wycena
 
     def save_user_wyceny(self, username: str, data: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         self.wyceny[canonical] = data
         self._save_json(WYCENY_FILE, self.wyceny)
         return self.wyceny[canonical]
 
     def add_user_wyceny(self, username: str, entry: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         current = self.get_user_wyceny(canonical)
         if "items" in current.get("quote", {}):
             entry["id"] = f"wyc-{int(time.time() * 1000)}"
@@ -339,7 +423,7 @@ class UserDataManager:
         return entry
 
     def delete_user_wyceny(self, username: str, entry_id: str) -> bool:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         current = self.get_user_wyceny(canonical)
         items = current.get("quote", {}).get("items", [])
         filtered = [x for x in items if str(x.get("id")) != str(entry_id)]
@@ -351,11 +435,15 @@ class UserDataManager:
 
     # COMPANY DATA (STRICT PER-USER ISOLATION)
     def get_user_company(self, username: str) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
-        return self.company.get(canonical, DEFAULT_COMPANY.get(canonical, {}))
+        canonical = self.resolve_canonical(username)
+        if canonical in self.company:
+            return self.company[canonical]
+        default = dict(DEFAULT_COMPANY_DATA)
+        default["name"] = f"Firma – {canonical}"
+        return default
 
     def save_user_company(self, username: str, data: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         if canonical not in self.company:
             self.company[canonical] = {}
         self.company[canonical].update(data)
@@ -364,20 +452,20 @@ class UserDataManager:
 
     # KALENDARZ DATA (STRICT PER-USER ISOLATION)
     def get_user_kalendarz(self, username: str) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         val = self.kalendarz.get(canonical)
         if isinstance(val, list):
             return val
         return []
 
     def save_user_kalendarz(self, username: str, events: List[dict]) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         self.kalendarz[canonical] = events
         self._save_json(KALENDARZ_FILE, self.kalendarz)
         return self.kalendarz[canonical]
 
     def add_user_kalendarz_event(self, username: str, event: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         events = self.get_user_kalendarz(canonical)
         if "id" not in event or not event["id"]:
             event["id"] = f"ev-{int(time.time() * 1000)}"
@@ -386,7 +474,7 @@ class UserDataManager:
         return event
 
     def delete_user_kalendarz_event(self, username: str, event_id: str) -> bool:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         events = self.get_user_kalendarz(canonical)
         filtered = [x for x in events if str(x.get("id")) != str(event_id)]
         if len(filtered) < len(events):
@@ -396,20 +484,20 @@ class UserDataManager:
 
     # CRM DATA (STRICT PER-USER ISOLATION)
     def get_user_crm(self, username: str) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         val = self.crm.get(canonical)
         if isinstance(val, list):
             return val
         return []
 
     def save_user_crm(self, username: str, clients: List[dict]) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         self.crm[canonical] = clients
         self._save_json(CRM_FILE, self.crm)
         return self.crm[canonical]
 
     def add_user_crm_client(self, username: str, client: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         clients = self.get_user_crm(canonical)
         if "id" not in client or not client["id"]:
             client["id"] = f"crm-{int(time.time() * 1000)}"
@@ -418,7 +506,7 @@ class UserDataManager:
         return client
 
     def update_user_crm_client(self, username: str, client_id: str, updated_data: dict) -> Optional[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         clients = self.get_user_crm(canonical)
         for client in clients:
             if str(client.get("id")) == str(client_id):
@@ -428,7 +516,7 @@ class UserDataManager:
         return None
 
     def delete_user_crm_client(self, username: str, client_id: str) -> bool:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         clients = self.get_user_crm(canonical)
         filtered = [x for x in clients if str(x.get("id")) != str(client_id)]
         if len(filtered) < len(clients):
@@ -438,20 +526,20 @@ class UserDataManager:
 
     # TASKS (KANBAN / TODO) DATA (STRICT PER-USER ISOLATION)
     def get_user_tasks(self, username: str) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         val = self.tasks.get(canonical)
         if isinstance(val, list):
             return val
         return []
 
     def save_user_tasks(self, username: str, task_list: List[dict]) -> List[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         self.tasks[canonical] = task_list
         self._save_json(TASKS_FILE, self.tasks)
         return self.tasks[canonical]
 
     def add_user_task(self, username: str, task: dict) -> dict:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         task_list = self.get_user_tasks(canonical)
         if "id" not in task or not task["id"]:
             task["id"] = f"task-{int(time.time() * 1000)}"
@@ -462,7 +550,7 @@ class UserDataManager:
         return task
 
     def update_user_task(self, username: str, task_id: str, updated_data: dict) -> Optional[dict]:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         task_list = self.get_user_tasks(canonical)
         for t in task_list:
             if str(t.get("id")) == str(task_id):
@@ -472,7 +560,7 @@ class UserDataManager:
         return None
 
     def delete_user_task(self, username: str, task_id: str) -> bool:
-        canonical = "Adrian" if username.lower() == "adrian" else "Maciek"
+        canonical = self.resolve_canonical(username)
         task_list = self.get_user_tasks(canonical)
         filtered = [x for x in task_list if str(x.get("id")) != str(task_id)]
         if len(filtered) < len(task_list):

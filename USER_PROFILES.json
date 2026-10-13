@@ -1,0 +1,32 @@
+{
+  "Adrian": {
+    "p1": "Adrian",
+    "p2": "Patrycja",
+    "household": "PAIR_ADRIAN_PATRYCJA"
+  },
+  "Maciek": {
+    "p1": "Maciek",
+    "p2": "Karolina",
+    "household": "PAIR_MACIEK_KAROLINA"
+  },
+  "Karolina": {
+    "p1": "Maciek",
+    "p2": "Karolina",
+    "household": "PAIR_MACIEK_KAROLINA"
+  },
+  "Patrycja": {
+    "p1": "Adrian",
+    "p2": "Patrycja",
+    "household": "PAIR_ADRIAN_PATRYCJA"
+  },
+  "Monika": {
+    "p1": "Monika",
+    "p2": "Tomek",
+    "household": "PAIR_MONIKA_TOMEK"
+  },
+  "Tomek": {
+    "p1": "Monika",
+    "p2": "Tomek",
+    "household": "PAIR_MONIKA_TOMEK"
+  }
+}

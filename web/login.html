@@ -197,58 +197,20 @@
       <!-- Header Title & Subtitle -->
       <div class="text-center space-y-1">
         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-          Autoryzacja Konta
+          Podaj kod PIN
         </h1>
         <p class="text-xs text-slate-400 font-medium leading-relaxed max-w-xs mx-auto">
-          Podaj Twój login oraz unikalny 4-cyfrowy kod PIN.
+          Wpisz swój unikalny 4-cyfrowy kod dostępu.
         </p>
       </div>
 
       <!-- Error Toast -->
       <div id="error-box" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-200 p-3 rounded-2xl text-center text-xs font-semibold backdrop-blur-md transition-all duration-300">
-        Nieprawidłowy login lub kod PIN. Brak dostępu.
-      </div>
-
-      <!-- USERNAME INPUT & CHIPS -->
-      <div class="space-y-2 text-left">
-        <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between px-1">
-          <span>Twój Login</span>
-          <span class="text-[10px] text-cyan-400 font-medium">Wybierz lub wpisz</span>
-        </label>
-        
-        <div class="relative flex items-center">
-          <span class="absolute left-3.5 text-cyan-400 pointer-events-none flex items-center">
-            <i data-lucide="user" class="w-4 h-4"></i>
-          </span>
-          <input 
-            id="username-input" 
-            type="text" 
-            placeholder="Wpisz login..." 
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-            oninput="onUsernameChanged()"
-            class="w-full pl-10 pr-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] focus:bg-white/[0.12] border border-white/15 focus:border-cyan-400/80 rounded-2xl text-white placeholder-slate-400 text-sm font-semibold tracking-wide outline-none transition-all duration-200 shadow-inner backdrop-blur-xl focus:ring-2 focus:ring-cyan-400/30"
-          />
-        </div>
-
-        <!-- Quick User Badges -->
-        <div id="user-chips-row" class="flex flex-wrap items-center gap-1.5 pt-1">
-          <button type="button" onclick="selectUser('Adrian')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Adrian</button>
-          <button type="button" onclick="selectUser('Maciek')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Maciek</button>
-          <button type="button" onclick="selectUser('Karolina')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Karolina</button>
-          <button type="button" onclick="selectUser('Patrycja')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Patrycja</button>
-          <button type="button" onclick="selectUser('Monika')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Monika</button>
-        </div>
+        Nieprawidłowy kod PIN. Brak dostępu.
       </div>
 
       <!-- PIN SECTION -->
       <div class="space-y-1.5 pt-1 text-left">
-        <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between px-1">
-          <span>Kod PIN</span>
-          <span class="text-[10px] text-slate-400">4 cyfry</span>
-        </label>
 
         <!-- 4 OTP GLASS SQUARE BOXES -->
         <div id="otp-wrapper" class="otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500">
@@ -305,29 +267,6 @@
     let enteredPin = '';
     let isSubmitting = false;
 
-    function selectUser(name) {
-      const input = document.getElementById('username-input');
-      if (input) {
-        input.value = name;
-        onUsernameChanged();
-      }
-      clearPin();
-    }
-
-    function onUsernameChanged() {
-      const current = (document.getElementById('username-input')?.value || '').trim().toLowerCase();
-      const chips = document.querySelectorAll('.user-chip');
-      chips.forEach(chip => {
-        if (chip.innerText.trim().toLowerCase() === current) {
-          chip.classList.add('bg-cyan-500/30', 'border-cyan-400', 'text-cyan-200');
-          chip.classList.remove('bg-white/[0.06]', 'text-slate-300');
-        } else {
-          chip.classList.remove('bg-cyan-500/30', 'border-cyan-400', 'text-cyan-200');
-          chip.classList.add('bg-white/[0.06]', 'text-slate-300');
-        }
-      });
-      document.getElementById('error-box')?.classList.add('hidden');
-    }
 
     function updateOtpBoxes() {
       for (let i = 0; i < 4; i++) {
@@ -380,19 +319,8 @@
       updateOtpBoxes();
     }
 
-    // Keyboard support for input and numpad
+    // Keyboard support for numpad & physical keys
     document.addEventListener('keydown', (e) => {
-      const activeEl = document.activeElement;
-      const isInputActive = activeEl && activeEl.id === 'username-input';
-
-      if (isInputActive) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          activeEl.blur();
-        }
-        return;
-      }
-
       if (e.key >= '0' && e.key <= '9') {
         appendPin(e.key);
       } else if (e.key === 'Backspace') {
@@ -409,33 +337,19 @@
       const box0Span = document.getElementById('otp-char-0');
       const liquidWelcome = document.getElementById('liquid-welcome');
       const liquidName = document.getElementById('liquid-name');
-      const userInput = document.getElementById('username-input');
 
       errBox.classList.add('hidden');
-
-      const username = (userInput ? userInput.value : '').trim();
-      if (!username) {
-        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-error';
-        box0Span.innerHTML = '✕';
-        errBox.innerText = 'Wprowadź swój login przed wpisaniem PIN.';
-        errBox.classList.remove('hidden');
-        userInput?.focus();
-        setTimeout(() => {
-          clearPin();
-        }, 1000);
-        return;
-      }
 
       try {
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: username, pin: enteredPin })
+          body: JSON.stringify({ pin: enteredPin })
         });
         const data = await res.json();
 
-        if (res.ok && data.success) {
-          const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : username;
+        if (res.ok && data.success && data.username) {
+          const userCap = data.username.charAt(0).toUpperCase() + data.username.slice(1);
           sessionStorage.setItem('fomo_username', userCap);
 
           // 1. MOTION MERGE: Merge 4 boxes into 1 green checkmark square
@@ -472,7 +386,7 @@
           wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-error';
           box0Span.innerHTML = '✕';
 
-          errBox.innerText = data.detail || 'Nieprawidłowy login lub kod PIN. Brak dostępu.';
+          errBox.innerText = data.detail || 'Nieprawidłowy kod PIN. Brak dostępu.';
           errBox.classList.remove('hidden');
 
           setTimeout(() => {

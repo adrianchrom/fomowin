@@ -219,17 +219,17 @@
       </div>
 
       <!-- Right: User Greeting, Theme Toggle & Actions -->
-      <div class="flex items-center gap-2.5 text-xs">
+      <div class="flex items-center gap-1.5 sm:gap-2.5 text-xs">
         
         <!-- Theme Toggle Button (Jasny / Ciemny) -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn-anim flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn-anim flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
           <i id="theme-icon" data-lucide="moon" class="w-3.5 h-3.5 text-indigo-500"></i>
-          <span id="theme-status">Tryb: Ciemny</span>
+          <span id="theme-status" class="hidden sm:inline">Tryb: Ciemny</span>
         </button>
 
-        <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-800 px-3 py-1.5 rounded-xl font-medium">
-          <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-600"></i>
-          <span id="header-greeting" class="font-bold">👋 HEJ...</span>
+        <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-800 px-2.5 sm:px-3 py-1.5 rounded-xl font-medium">
+          <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+          <span id="header-greeting" class="font-bold truncate max-w-[120px] sm:max-w-none">👋 HEJ...</span>
         </div>
 
         <button id="sound-btn" onclick="toggleSound()" class="btn-anim hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
@@ -237,7 +237,7 @@
           <span id="sound-status">Audio: ON</span>
         </button>
 
-        <button onclick="handleLogout()" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1">
+        <button onclick="handleLogout()" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 sm:px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1">
           <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline">Wyloguj</span>
         </button>
@@ -2134,7 +2134,37 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">4-cyfrowy Kod PIN:</label>
-              <input type="text" id="new-user-pin" placeholder="np. 5274" maxlength="6" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-mono font-bold tracking-widest focus:outline-none focus:border-purple-500">
+              <div class="flex gap-2">
+                <input type="text" id="new-user-pin" placeholder="np. 5274" maxlength="4" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-mono font-bold tracking-widest focus:outline-none focus:border-purple-500">
+                <button type="button" onclick="generateRandomPinForNewUser()" class="btn-anim bg-purple-100 hover:bg-purple-200 text-purple-800 text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap flex items-center gap-1 border border-purple-200">
+                  🎲 Losuj PIN
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Osoby w module Wydatki & Zarobki -->
+          <div class="p-4 bg-purple-50/50 rounded-2xl border border-purple-100 space-y-3">
+            <h4 class="text-xs font-bold text-purple-900 flex items-center gap-1.5">
+              <span>💰</span> Konfiguracja Zakładki Wydatki & Zarobki dla tego konta
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Imię Osoba 1 (np. Monika):</label>
+                <input type="text" id="new-user-p1" placeholder="np. Monika (domyślnie login)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-semibold focus:outline-none focus:border-purple-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Imię Osoba 2 / Partner (np. Tomek):</label>
+                <input type="text" id="new-user-p2" placeholder="np. Tomek" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-semibold focus:outline-none focus:border-purple-500">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Gospodarstwo Domowe (Wspólny Budżet):</label>
+              <select id="new-user-household" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-medium focus:outline-none focus:border-purple-500">
+                <option value="">🏠 Osobny budżet domowy dla tej pary</option>
+                <option value="PAIR_MACIEK_KAROLINA">Wspólny budżet z Maciek & Karolina</option>
+                <option value="PAIR_ADRIAN_PATRYCJA">Wspólny budżet z Adrian & Patrycja</option>
+              </select>
             </div>
           </div>
 
@@ -2186,7 +2216,7 @@
 
         <!-- USERS TABLE -->
         <div class="pt-4 border-t border-slate-100">
-          <h4 class="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider">Lista Kont w Systemie (Kody PIN & Dostęp)</h4>
+          <h4 class="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider">Lista Kont w Systemie (Kody PIN, Osoby & Dostęp)</h4>
           <div class="overflow-x-auto">
             <table class="w-full text-xs text-left">
               <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
@@ -2194,6 +2224,7 @@
                   <th class="p-3">Użytkownik</th>
                   <th class="p-3">Kod PIN</th>
                   <th class="p-3">Rola</th>
+                  <th class="p-3">Osoby w Wydatkach</th>
                   <th class="p-3">Aktywne Moduły</th>
                   <th class="p-3 text-right">Akcje</th>
                 </tr>
@@ -2872,6 +2903,64 @@
     </div>
   </div>
 
+  <!-- ==================== MODAL: ADMIN EDIT USER (PIN & WYDATKI) ==================== -->
+  <div id="admin-edit-user-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-emerge">
+      <div class="p-5 bg-purple-900 text-white flex items-center justify-between border-b border-purple-800">
+        <h3 id="edit-user-modal-title" class="font-bold text-sm flex items-center gap-2">
+          <i data-lucide="user-cog" class="w-5 h-5 text-purple-300"></i> Edycja Konta: <span id="edit-user-name-display" class="font-mono text-purple-200"></span>
+        </h3>
+        <button onclick="closeEditUserModal()" class="text-purple-200 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveEditUser(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="edit-user-username">
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">4-cyfrowy Kod PIN:</label>
+          <div class="flex gap-2">
+            <input type="text" id="edit-user-pin" required maxlength="4" placeholder="np. 5274" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold tracking-widest focus:outline-none focus:border-purple-500">
+            <button type="button" onclick="generateRandomPinForEditUser()" class="btn-anim bg-purple-100 hover:bg-purple-200 text-purple-800 text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap flex items-center gap-1 border border-purple-200">
+              🎲 Losuj PIN
+            </button>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-purple-50/60 rounded-2xl border border-purple-100 space-y-3">
+          <span class="font-bold text-purple-900 block text-xs">💰 Osoby w module Wydatki & Zarobki</span>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Imię Osoba 1:</label>
+              <input type="text" id="edit-user-p1" required placeholder="np. Monika" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Imię Osoba 2 / Partner:</label>
+              <input type="text" id="edit-user-p2" required placeholder="np. Tomek" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-purple-500">
+            </div>
+          </div>
+
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Budżet / Gospodarstwo Domowe:</label>
+            <select id="edit-user-household" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-purple-500">
+              <option value="AUTO">🏠 Osobny budżet domowy dla tej pary</option>
+              <option value="PAIR_MACIEK_KAROLINA">Wspólny budżet z Maciek & Karolina</option>
+              <option value="PAIR_ADRIAN_PATRYCJA">Wspólny budżet z Adrian & Patrycja</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeEditUserModal()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Anuluj</button>
+          <button type="submit" class="btn-anim bg-purple-600 hover:bg-purple-700 text-white font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md">
+            <i data-lucide="check" class="w-4 h-4"></i> Zapisz Zmiany
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 
   <!-- ==================== FLOATING AI CHAT BUBBLE WIDGET ==================== -->
   <div id="ai-floating-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
@@ -3050,6 +3139,7 @@
     let currentTab = 'live';
     let currentApp = 'dashboard';
     let currentUser = safeGetStorage('fomo_username', 'Maciek');
+    let currentUserProfile = null;
     let userPermissions = {
       fomo: true,
       wydatki: true,
@@ -3178,6 +3268,7 @@
           if (data.authenticated && data.username) {
             currentUser = data.username.charAt(0).toUpperCase() + data.username.slice(1);
             userPermissions = data.permissions || userPermissions;
+            currentUserProfile = data.profile || null;
             sessionStorage.setItem('fomo_username', currentUser);
             setGreeting(currentUser);
             updatePermissionsUI();
@@ -3566,7 +3657,35 @@
       safeCreateIcons();
     }
 
+    function toGenitive(name) {
+      if (!name) return '';
+      const n = name.trim();
+      const lower = n.toLowerCase();
+      if (lower === 'maciek') return 'Maćka';
+      if (lower === 'tomek') return 'Tomka';
+      if (lower === 'adrian') return 'Adriana';
+      if (lower === 'karolina') return 'Karoliny';
+      if (lower === 'monika') return 'Moniki';
+      if (lower === 'patrycja') return 'Patrycji';
+      if (lower.endsWith('a')) return n.slice(0, -1) + 'y';
+      if (lower.endsWith('ek')) return n.slice(0, -2) + 'ka';
+      return n + 'a';
+    }
+
     function getWydatkiProfile() {
+      if (currentUserProfile && currentUserProfile.p1 && currentUserProfile.p2) {
+        const p1 = currentUserProfile.p1;
+        const p2 = currentUserProfile.p2;
+        const household = currentUserProfile.household || `${p1}_${p2}`.toLowerCase();
+        return {
+          pairId: household,
+          isMaciek: household.toLowerCase().includes('maciek') || p1.toLowerCase() === 'maciek' || p2.toLowerCase() === 'maciek',
+          p1: p1,
+          p2: p2,
+          p1Genitive: toGenitive(p1),
+          p2Genitive: toGenitive(p2)
+        };
+      }
       const user = (currentUser || sessionStorage.getItem('fomo_username') || '').toLowerCase();
       if (user === 'monika' || user === 'tomek') {
         return {
@@ -5414,6 +5533,103 @@
       }).join('');
     }
 
+    async function generateRandomPinForNewUser() {
+      try {
+        const res = await fetch('/api/admin/generate-pin');
+        const data = await res.json();
+        if (data.success && data.pin) {
+          const pinInput = document.getElementById('new-user-pin');
+          if (pinInput) pinInput.value = data.pin;
+          showToast(`Wylosowano PIN: ${data.pin}`, 'info');
+        }
+      } catch (e) {
+        showToast('Błąd losowania PIN', 'error');
+      }
+    }
+
+    async function generateRandomPinForEditUser() {
+      try {
+        const res = await fetch('/api/admin/generate-pin');
+        const data = await res.json();
+        if (data.success && data.pin) {
+          const pinInput = document.getElementById('edit-user-pin');
+          if (pinInput) pinInput.value = data.pin;
+          showToast(`Wylosowano nowy PIN: ${data.pin}`, 'info');
+        }
+      } catch (e) {
+        showToast('Błąd losowania PIN', 'error');
+      }
+    }
+
+    function openEditUserModal(username) {
+      const u = adminUsersCache.find(x => x.username.toLowerCase() === username.toLowerCase());
+      if (!u) return;
+
+      document.getElementById('edit-user-username').value = u.username;
+      document.getElementById('edit-user-name-display').innerText = u.username;
+      document.getElementById('edit-user-pin').value = u.pin || '';
+
+      const p1 = (u.profile && u.profile.p1) ? u.profile.p1 : u.username;
+      const p2 = (u.profile && u.profile.p2) ? u.profile.p2 : (u.username === 'Adrian' ? 'Patrycja' : (u.username === 'Maciek' ? 'Karolina' : 'Partner'));
+      const household = (u.profile && u.profile.household) ? u.profile.household : 'AUTO';
+
+      document.getElementById('edit-user-p1').value = p1;
+      document.getElementById('edit-user-p2').value = p2;
+      
+      const hhSelect = document.getElementById('edit-user-household');
+      if (hhSelect) {
+        if (household === 'PAIR_MACIEK_KAROLINA' || household === 'PAIR_ADRIAN_PATRYCJA') {
+          hhSelect.value = household;
+        } else {
+          hhSelect.value = 'AUTO';
+        }
+      }
+
+      document.getElementById('admin-edit-user-modal').classList.remove('hidden');
+      safeCreateIcons();
+    }
+
+    function closeEditUserModal() {
+      document.getElementById('admin-edit-user-modal').classList.add('hidden');
+    }
+
+    async function handleSaveEditUser(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const username = document.getElementById('edit-user-username').value;
+      const pin = document.getElementById('edit-user-pin').value.trim();
+      const p1 = document.getElementById('edit-user-p1').value.trim();
+      const p2 = document.getElementById('edit-user-p2').value.trim();
+      const householdVal = document.getElementById('edit-user-household').value;
+      const household = householdVal === 'AUTO' ? `PAIR_${username.toUpperCase()}` : householdVal;
+
+      if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        showToast('PIN musi mieć dokładnie 4 cyfry', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin, p1, p2, household })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Zaktualizowano profil dla ${username}`, 'success');
+          closeEditUserModal();
+          await loadAdminUsersList();
+          if (currentUser.toLowerCase() === username.toLowerCase()) {
+            await fetchUser();
+            updateWydatkiProfileDOM();
+          }
+        } else {
+          showToast(data.detail || 'Błąd zapisu profilu', 'error');
+        }
+      } catch (err) {
+        showToast('Błąd połączenia z serwerem', 'error');
+      }
+    }
+
     async function loadAdminUsersList() {
       try {
         const res = await fetch('/api/admin/users');
@@ -5430,21 +5646,28 @@
                 ? '<span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-bold text-[10px]">Super Admin</span>' 
                 : '<span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold text-[10px]">Użytkownik</span>';
               
+              const p1 = (u.profile && u.profile.p1) ? u.profile.p1 : (u.username === 'Adrian' ? 'Adrian' : (u.username === 'Maciek' ? 'Maciek' : u.username));
+              const p2 = (u.profile && u.profile.p2) ? u.profile.p2 : (u.username === 'Adrian' ? 'Patrycja' : (u.username === 'Maciek' ? 'Karolina' : (u.username === 'Monika' ? 'Tomek' : 'Partner')));
+              const personsBadge = `<span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-semibold text-[11px]">${p1} & ${p2}</span>`;
+
               const delBtn = u.is_admin 
                 ? '<span class="text-slate-400 text-xs italic">Główne konto</span>' 
                 : `<button onclick="handleDeleteUser('${u.username}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs ml-2">Usuń</button>`;
               
-              const editBtn = u.is_admin 
-                ? '' 
-                : `<button onclick="selectAdminTargetUser('${u.username}')" class="text-purple-600 hover:text-purple-800 font-bold text-xs">Uprawnienia</button>`;
+              const editBtn = `<button onclick="openEditUserModal('${u.username}')" class="text-purple-600 hover:text-purple-800 font-bold text-xs ml-2">Edytuj PIN / Osoby</button>`;
+              
+              const permsBtn = u.is_admin
+                ? ''
+                : `<button onclick="selectAdminTargetUser('${u.username}')" class="text-blue-600 hover:text-blue-800 font-bold text-xs">Uprawnienia</button>`;
 
               return `
                 <tr class="hover:bg-slate-50 transition text-slate-700">
                   <td class="p-3 font-bold text-slate-900">${u.username}</td>
                   <td class="p-3 font-mono font-bold text-slate-800 bg-slate-100/50 px-2 rounded inline-block my-2">${u.pin}</td>
                   <td class="p-3">${roleBadge}</td>
+                  <td class="p-3">${personsBadge}</td>
                   <td class="p-3 text-slate-600">${u.is_admin ? 'Wszystkie (100%)' : `${activeCount} aktywnych modułów`}</td>
-                  <td class="p-3 text-right">${editBtn} ${delBtn}</td>
+                  <td class="p-3 text-right">${permsBtn} ${editBtn} ${delBtn}</td>
                 </tr>
               `;
             }).join('');
@@ -5495,13 +5718,24 @@
       if (e && e.preventDefault) e.preventDefault();
       const nameInput = document.getElementById('new-user-name');
       const pinInput = document.getElementById('new-user-pin');
+      const p1Input = document.getElementById('new-user-p1');
+      const p2Input = document.getElementById('new-user-p2');
+      const hhSelect = document.getElementById('new-user-household');
       const toast = document.getElementById('new-user-toast');
       
       const username = nameInput ? nameInput.value.trim() : '';
       const pin = pinInput ? pinInput.value.trim() : '';
+      const p1 = p1Input ? p1Input.value.trim() : '';
+      const p2 = p2Input ? p2Input.value.trim() : '';
+      const household = hhSelect ? hhSelect.value : '';
 
       if (!username || !pin) {
         showToast("Wprowadź nazwę użytkownika oraz kod PIN", "error");
+        return;
+      }
+
+      if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        showToast("Kod PIN musi mieć dokładnie 4 cyfry", "error");
         return;
       }
 
@@ -5522,12 +5756,14 @@
         const res = await fetch('/api/admin/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, pin, permissions })
+          body: JSON.stringify({ username, pin, permissions, p1, p2, household })
         });
         const data = await res.json();
         if (res.ok && data.success) {
           if (nameInput) nameInput.value = '';
           if (pinInput) pinInput.value = '';
+          if (p1Input) p1Input.value = '';
+          if (p2Input) p2Input.value = '';
           if (toast) {
             toast.innerText = `✓ Konto ${data.username} utworzone pomyślnie! PIN: ${data.pin}`;
             toast.classList.remove('hidden');
