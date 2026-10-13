@@ -51,12 +51,29 @@
     /* Mobile specific responsive adjustments */
     @media (max-width: 640px) {
       .clean-card, .glass-card {
-        padding: 1rem !important;
+        padding: 0.875rem !important;
         border-radius: 1.25rem !important;
+      }
+      .clean-card.metric-card {
+        padding: 0.625rem 0.75rem !important;
+        border-radius: 1rem !important;
       }
       /* Prevent iOS Safari 100% auto-zoom when tapping inputs */
       input, select, textarea {
         font-size: 16px !important;
+        max-width: 100% !important;
+      }
+      /* Mobile strict viewport containment for Wydatki */
+      #app-container-wydatki {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+      #app-container-wydatki, #app-container-wydatki * {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      #app-container-wydatki table {
+        max-width: none !important;
       }
       .a4-paper {
         padding: 1rem !important;
@@ -245,6 +262,10 @@
     ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(0, 242, 254, 0.5); }
+    /* Prevent Chart.js Canvas blowout */
+    canvas {
+      max-width: 100% !important;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#030712] text-slate-100 pb-24 sm:pb-12 relative selection:bg-cyan-500/30">
@@ -446,7 +467,7 @@
 
 
   <!-- MAIN WORKSPACE CONTAINER -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 mt-3 sm:mt-6 flex-1 space-y-4 sm:space-y-6">
+  <main class="w-full max-w-7xl mx-auto px-2 sm:px-6 mt-2.5 sm:mt-6 flex-1 space-y-4 sm:space-y-6 min-w-0 max-w-full">
 
 
     <!-- ==================== MAIN DASHBOARD: TILES SELECTION GRID ==================== -->
@@ -833,80 +854,80 @@
 
 
     <!-- ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ==================== -->
-    <div id="app-container-wydatki" class="hidden space-y-6 animate-emerge">
+    <div id="app-container-wydatki" class="hidden space-y-4 sm:space-y-6 animate-emerge w-full max-w-full min-w-0 overflow-hidden">
       
       <!-- Module Header -->
-      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
-            <i data-lucide="wallet" class="w-5 h-5"></i>
+      <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 max-w-full min-w-0">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-md shrink-0">
+            <i data-lucide="wallet" class="w-4.5 h-4.5 sm:w-5 sm:h-5"></i>
           </div>
-          <div>
-            <h2 class="text-lg sm:text-xl font-bold text-slate-900">💰 Budżet, Wydatki & Zarobki</h2>
-            <p class="text-xs text-slate-500 font-medium">Śledzenie dochodów, wydatków remontowych i zysku netto</p>
+          <div class="min-w-0">
+            <h2 class="text-base sm:text-xl font-bold text-slate-900 truncate">💰 Budżet, Wydatki & Zarobki</h2>
+            <p class="text-[11px] sm:text-xs text-slate-500 font-medium truncate">Śledzenie dochodów, wydatków i zysku netto</p>
           </div>
         </div>
 
         <!-- Sub-Tabs Navigation for Wydatki -->
-        <nav class="w-full sm:w-auto overflow-x-auto flex items-center gap-1 bg-slate-100 p-1 sm:p-1.5 rounded-2xl text-xs font-bold no-scrollbar shrink-0">
-          <button onclick="switchWydatkiTab('wydatki')" id="wydatki-subtab-wydatki" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition bg-white text-blue-600 shadow-sm">
-            <i data-lucide="receipt" class="w-3.5 h-3.5 inline mr-1"></i> Wydatki
+        <nav class="grid grid-cols-2 sm:flex items-center gap-1 sm:gap-1.5 bg-slate-100 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl text-xs font-bold w-full sm:w-auto shrink-0 max-w-full">
+          <button onclick="switchWydatkiTab('wydatki')" id="wydatki-subtab-wydatki" class="btn-anim flex items-center justify-center gap-1 px-2 py-2 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition bg-white text-blue-600 shadow-sm text-[11px] sm:text-xs text-center truncate">
+            <i data-lucide="receipt" class="w-3.5 h-3.5 shrink-0"></i> <span>Wydatki</span>
           </button>
-          <button onclick="switchWydatkiTab('zarobki')" id="wydatki-subtab-zarobki" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
-            <i data-lucide="wallet" class="w-3.5 h-3.5 inline mr-1"></i> Zarobki & Zlecenia
+          <button onclick="switchWydatkiTab('zarobki')" id="wydatki-subtab-zarobki" class="btn-anim flex items-center justify-center gap-1 px-2 py-2 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition text-slate-600 hover:text-slate-900 text-[11px] sm:text-xs text-center truncate">
+            <i data-lucide="wallet" class="w-3.5 h-3.5 shrink-0"></i> <span>Zarobki & Zlecenia</span>
           </button>
-          <button onclick="switchWydatkiTab('wykresy')" id="wydatki-subtab-wykresy" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
-            <i data-lucide="line-chart" class="w-3.5 h-3.5 inline mr-1"></i> Wykresy
+          <button onclick="switchWydatkiTab('wykresy')" id="wydatki-subtab-wykresy" class="btn-anim flex items-center justify-center gap-1 px-2 py-2 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition text-slate-600 hover:text-slate-900 text-[11px] sm:text-xs text-center truncate">
+            <i data-lucide="line-chart" class="w-3.5 h-3.5 shrink-0"></i> <span>Wykresy</span>
           </button>
-          <button onclick="switchWydatkiTab('podsumowanie')" id="wydatki-subtab-podsumowanie" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
-            <i data-lucide="scale" class="w-3.5 h-3.5 inline mr-1"></i> Podsumowanie
+          <button onclick="switchWydatkiTab('podsumowanie')" id="wydatki-subtab-podsumowanie" class="btn-anim flex items-center justify-center gap-1 px-2 py-2 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition text-slate-600 hover:text-slate-900 text-[11px] sm:text-xs text-center truncate">
+            <i data-lucide="scale" class="w-3.5 h-3.5 shrink-0"></i> <span>Podsumowanie</span>
           </button>
         </nav>
       </div>
 
       <!-- TOP METRICS BANNER (4 CARDS) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-base sm:text-xl font-bold border border-blue-100 shrink-0">
-            <i data-lucide="user" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 max-w-full min-w-0">
+        <div class="clean-card metric-card p-2.5 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-4 overflow-hidden min-w-0">
+          <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm sm:text-xl font-bold border border-blue-100 shrink-0">
+            <i data-lucide="user" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <div class="min-w-0">
-            <p id="topAdrianLabel" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Dochód Adriana</p>
-            <p id="topAdrianIncome" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
-            <span id="topAdrianExtra" class="text-[10px] sm:text-xs text-blue-600 font-medium truncate block">+0 PLN zleceń</span>
-          </div>
-        </div>
-
-        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center text-base sm:text-xl font-bold border border-pink-100 shrink-0">
-            <i data-lucide="user" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
-          </div>
-          <div class="min-w-0">
-            <p id="topPatrycjaLabel" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Dochód Patrycji</p>
-            <p id="topPatrycjaIncome" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
-            <span id="topPatrycjaExtra" class="text-[10px] sm:text-xs text-pink-600 font-medium truncate block">+0 PLN zleceń</span>
+          <div class="min-w-0 flex-1">
+            <p id="topAdrianLabel" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Dochód Osoba 1</p>
+            <p id="topAdrianIncome" class="text-xs sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topAdrianExtra" class="text-[9px] sm:text-xs text-blue-600 font-medium truncate block">+0 PLN zleceń</span>
           </div>
         </div>
 
-        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-base sm:text-xl font-bold border border-amber-100 shrink-0">
-            <i data-lucide="shopping-cart" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
+        <div class="clean-card metric-card p-2.5 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-4 overflow-hidden min-w-0">
+          <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center text-sm sm:text-xl font-bold border border-pink-100 shrink-0">
+            <i data-lucide="user" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
+            <p id="topPatrycjaLabel" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Dochód Partner</p>
+            <p id="topPatrycjaIncome" class="text-xs sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topPatrycjaExtra" class="text-[9px] sm:text-xs text-pink-600 font-medium truncate block">+0 PLN zleceń</span>
+          </div>
+        </div>
+
+        <div class="clean-card metric-card p-2.5 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-4 overflow-hidden min-w-0">
+          <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm sm:text-xl font-bold border border-amber-100 shrink-0">
+            <i data-lucide="shopping-cart" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+          </div>
+          <div class="min-w-0 flex-1">
             <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Łączne Wydatki</p>
-            <p id="topTotalExpenses" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
-            <span id="topExpensesCount" class="text-[10px] sm:text-xs text-slate-500 truncate block">0 pozycji</span>
+            <p id="topTotalExpenses" class="text-xs sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topExpensesCount" class="text-[9px] sm:text-xs text-slate-500 truncate block">0 pozycji</span>
           </div>
         </div>
 
-        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
-          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base sm:text-xl font-bold border border-emerald-100 shrink-0">
-            <i data-lucide="piggy-bank" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
+        <div class="clean-card metric-card p-2.5 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-4 overflow-hidden min-w-0">
+          <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm sm:text-xl font-bold border border-emerald-100 shrink-0">
+            <i data-lucide="piggy-bank" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Pozostały Budżet</p>
-            <p id="topRemainingBudget" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
-            <span id="topBudgetPercent" class="text-[10px] sm:text-xs font-semibold text-emerald-600 truncate block">100% zysk</span>
+            <p id="topRemainingBudget" class="text-xs sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topBudgetPercent" class="text-[9px] sm:text-xs font-semibold text-emerald-600 truncate block">100% zysk</span>
           </div>
         </div>
       </div>
@@ -916,7 +937,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           <!-- Formularz Dodawania Wydatku -->
-          <div class="clean-card p-6 rounded-3xl space-y-4 h-fit">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 h-fit min-w-0 max-w-full">
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
               <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i> Dodaj Nowy Wydatek
             </h3>
@@ -925,26 +946,26 @@
               <input type="hidden" id="selectedExpensePayer" value="Adrian">
               <div>
                 <label class="block font-semibold text-slate-600 mb-1">Kto płacił / na kogo wydatek?</label>
-                <div class="grid grid-cols-3 gap-2">
-                  <button type="button" onclick="selectExpensePayer('Adrian')" id="btn-payer-Adrian" class="py-2.5 px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition">Adrian</button>
-                  <button type="button" onclick="selectExpensePayer('Patrycja')" id="btn-payer-Patrycja" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Maciek/Patrycja</button>
-                  <button type="button" onclick="selectExpensePayer('Wspólne')" id="btn-payer-Wspólne" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Wspólne</button>
+                <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+                  <button type="button" onclick="selectExpensePayer('Adrian')" id="btn-payer-Adrian" class="py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition text-[11px] sm:text-xs truncate text-center">Ja</button>
+                  <button type="button" onclick="selectExpensePayer('Patrycja')" id="btn-payer-Patrycja" class="py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition text-[11px] sm:text-xs truncate text-center">Partner</button>
+                  <button type="button" onclick="selectExpensePayer('Wspólne')" id="btn-payer-Wspólne" class="py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition text-[11px] sm:text-xs truncate text-center">Wspólne</button>
                 </div>
               </div>
 
               <div>
                 <label class="block font-semibold text-slate-600 mb-1" for="expenseTitle">Na co poszły pieniądze? (Opis)</label>
-                <input type="text" id="expenseTitle" required placeholder="np. Kafle w łazience, Panele, Armatura..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
+                <input type="text" id="expenseTitle" required placeholder="np. Kafle w łazience, Panele, Armatura..." class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
               </div>
 
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label class="block font-semibold text-slate-600 mb-1" for="expenseAmount">Kwota (PLN)</label>
-                  <input type="number" id="expenseAmount" step="0.01" min="0.01" required placeholder="11000" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-bold">
+                  <input type="number" id="expenseAmount" step="0.01" min="0.01" required placeholder="11000" class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-bold">
                 </div>
                 <div>
                   <label class="block font-semibold text-slate-600 mb-1" for="expenseCategory">Kategoria</label>
-                  <select id="expenseCategory" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-medium">
+                  <select id="expenseCategory" required class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-medium">
                     <option value="Kafle & Płytki">Kafle & Płytki</option>
                     <option value="Materiały Budowlane">Materiały Budowlane</option>
                     <option value="Robocizna & Fachowcy">Robocizna & Fachowcy</option>
@@ -959,31 +980,31 @@
 
               <div>
                 <label class="block font-semibold text-slate-600 mb-1" for="expenseDate">Data wydatku</label>
-                <input type="date" id="expenseDate" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
+                <input type="date" id="expenseDate" required class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
               </div>
 
-              <button type="submit" class="w-full btn-anim bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-sm text-xs flex items-center justify-center gap-2">
+              <button type="submit" class="w-full btn-anim bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 sm:py-3 rounded-xl shadow-sm text-xs flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Wydatek
               </button>
             </form>
           </div>
 
           <!-- Tabela i Filtry Wydatków -->
-          <div class="lg:col-span-2 space-y-4">
-            <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4">
-              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-slate-100 pb-3">
+          <div class="lg:col-span-2 space-y-4 min-w-0 max-w-full">
+            <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 min-w-0 max-w-full">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-slate-100 pb-3 min-w-0">
                 <div>
                   <h3 class="text-sm font-bold text-slate-900">Rejestr Wydatków</h3>
                   <p class="text-xs text-slate-500">Przeglądaj, filtruj i zarządzaj dokonanymi zakupami.</p>
                 </div>
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto text-xs">
-                  <select id="filterPerson" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full sm:w-auto">
+                <div class="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2 w-full sm:w-auto text-xs min-w-0">
+                  <select id="filterPerson" onchange="renderExpensesUI()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full text-xs">
                     <option value="ALL">Wszyscy</option>
-                    <option value="Adrian" id="opt-filter-p1">Tylko Adrian</option>
-                    <option value="Patrycja" id="opt-filter-p2">Tylko Patrycja</option>
+                    <option value="Adrian" id="opt-filter-p1">Tylko Osoba 1</option>
+                    <option value="Patrycja" id="opt-filter-p2">Tylko Partner</option>
                     <option value="Wspólne">Tylko Wspólne</option>
                   </select>
-                  <select id="filterCategory" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full sm:w-auto">
+                  <select id="filterCategory" onchange="renderExpensesUI()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full text-xs">
                     <option value="ALL">Wszystkie kategorie</option>
                     <option value="Kafle & Płytki">Kafle & Płytki</option>
                     <option value="Materiały Budowlane">Materiały Budowlane</option>
@@ -998,19 +1019,24 @@
               </div>
 
               <!-- Search Bar -->
-              <input type="text" id="searchExpense" onkeyup="renderExpensesUI()" placeholder="Szukaj np. kafle, farby, fachowiec..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900">
+              <input type="text" id="searchExpense" onkeyup="renderExpensesUI()" placeholder="Szukaj np. kafle, farby, fachowiec..." class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900">
 
-              <!-- Tabela -->
-              <div class="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
-                <table class="w-full text-left text-xs">
+              <!-- Widok Mobilny (Telefony) -->
+              <div id="expensesMobileList" class="block sm:hidden divide-y divide-slate-100 max-w-full">
+                <!-- Rendered by JS -->
+              </div>
+
+              <!-- Tabela (Tablety i Ekrany Duże) -->
+              <div class="hidden sm:block overflow-x-auto w-full max-w-full -mx-1 px-1 sm:mx-0 sm:px-0">
+                <table class="w-full text-left text-xs min-w-[500px]">
                   <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
                     <tr>
-                      <th class="p-3">Data</th>
-                      <th class="p-3">Kto</th>
-                      <th class="p-3">Opis</th>
-                      <th class="p-3">Kategoria</th>
-                      <th class="p-3 text-right">Kwota PLN</th>
-                      <th class="p-3 text-center">Usuń</th>
+                      <th class="p-2.5 sm:p-3">Data</th>
+                      <th class="p-2.5 sm:p-3">Kto</th>
+                      <th class="p-2.5 sm:p-3">Opis</th>
+                      <th class="p-2.5 sm:p-3">Kategoria</th>
+                      <th class="p-2.5 sm:p-3 text-right">Kwota PLN</th>
+                      <th class="p-2.5 sm:p-3 text-center">Usuń</th>
                     </tr>
                   </thead>
                   <tbody id="expensesTableBody" class="divide-y divide-slate-100">
@@ -1025,11 +1051,11 @@
       </div>
 
       <!-- SUB-TAB 2: ZAROBKI & ZLECENIA -->
-      <div id="wydatki-content-zarobki" class="hidden space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="wydatki-content-zarobki" class="hidden space-y-4 sm:space-y-6 min-w-0 max-w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 min-w-0 max-w-full">
           
           <!-- Formularz Stałego Dochodu -->
-          <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 min-w-0 max-w-full">
             <div class="border-b border-slate-100 pb-3">
               <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i> Stały Dochód Miesięczny
@@ -1040,17 +1066,17 @@
             <form onsubmit="handleAddMonthlyIncome(event)" class="space-y-3.5 text-xs">
               <div>
                 <label class="block font-semibold text-slate-600 mb-1">Miesiąc:</label>
-                <input type="month" id="incomeMonth" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
+                <input type="month" id="incomeMonth" required class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
               </div>
 
-              <div class="grid grid-cols-2 gap-3">
-                <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100">
-                  <label id="labelAdrianSalary" class="block font-bold text-blue-700 mb-1">Adrian (Stała Pensja):</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                <div class="bg-blue-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-blue-100 min-w-0">
+                  <label id="labelAdrianSalary" class="block font-bold text-blue-700 mb-1 truncate">Twój dochód (Stała Pensja):</label>
                   <input type="number" id="adrianBaseSalary" step="100" min="0" placeholder="8000" required class="w-full px-3 py-2 rounded-xl border border-blue-200 bg-white font-bold text-slate-900">
                 </div>
 
-                <div class="bg-pink-50/50 p-3 rounded-2xl border border-pink-100">
-                  <label id="labelPatrycjaSalary" class="block font-bold text-pink-700 mb-1">Patrycja (Pensja):</label>
+                <div class="bg-pink-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-pink-100 min-w-0">
+                  <label id="labelPatrycjaSalary" class="block font-bold text-pink-700 mb-1 truncate">Dochód partnera (Pensja):</label>
                   <input type="number" id="patrycjaBaseSalary" step="100" min="0" placeholder="7500" required class="w-full px-3 py-2 rounded-xl border border-pink-200 bg-white font-bold text-slate-900">
                 </div>
               </div>
@@ -1062,37 +1088,37 @@
           </div>
 
           <!-- Formularz Dodatkowych Zleceń -->
-          <div class="clean-card p-6 rounded-3xl space-y-4">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 min-w-0 max-w-full">
             <div class="border-b border-slate-100 pb-3">
               <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600"></i> Dodatkowe Zlecenia & Premie
               </h3>
-              <p class="text-xs text-slate-500">Zarobki z prac dorywczych, premii lub fakturowanych zleceń.</p>
+              <p class="text-xs text-slate-500">Zarobki z prac dorywczych, premii lub zleceń.</p>
             </div>
 
             <form onsubmit="handleAddGigIncome(event)" class="space-y-3.5 text-xs">
               <input type="hidden" id="selectedGigPerson" value="Adrian">
               <div>
                 <label class="block font-semibold text-slate-600 mb-1">Dla kogo wypracowany dochód?</label>
-                <div class="grid grid-cols-2 gap-3">
-                  <button type="button" onclick="selectGigPerson(getWydatkiProfile().p1)" id="btn-gig-Adrian" class="py-2.5 px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition">Adrian</button>
-                  <button type="button" onclick="selectGigPerson(getWydatkiProfile().p2)" id="btn-gig-Patrycja" class="py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition">Patrycja</button>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" onclick="selectGigPerson(getWydatkiProfile().p1)" id="btn-gig-Adrian" class="py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-blue-500 bg-blue-100 text-blue-700 transition text-[11px] sm:text-xs truncate text-center">Ja</button>
+                  <button type="button" onclick="selectGigPerson(getWydatkiProfile().p2)" id="btn-gig-Patrycja" class="py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition text-[11px] sm:text-xs truncate text-center">Partner</button>
                 </div>
               </div>
 
               <div>
                 <label class="block font-semibold text-slate-600 mb-1">Opis zlecenia / źródło:</label>
-                <input type="text" id="gigTitle" required placeholder="np. Projekt www, Premia kwartalna..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
+                <input type="text" id="gigTitle" required placeholder="np. Projekt www, Premia kwartalna..." class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
               </div>
 
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label class="block font-semibold text-slate-600 mb-1">Kwota extra (PLN):</label>
-                  <input type="number" id="gigAmount" step="10" min="1" required placeholder="1500" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-bold">
+                  <input type="number" id="gigAmount" step="10" min="1" required placeholder="1500" class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-bold">
                 </div>
                 <div>
                   <label class="block font-semibold text-slate-600 mb-1">Dotyczy miesiąca:</label>
-                  <input type="month" id="gigMonth" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
+                  <input type="month" id="gigMonth" required class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900">
                 </div>
               </div>
 
@@ -1105,18 +1131,23 @@
         </div>
 
         <!-- Tabele Historii Zarobków i Zleceń -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
-          <div class="clean-card p-6 rounded-3xl space-y-3">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 text-xs min-w-0 max-w-full">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 min-w-0 max-w-full">
             <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2">Historia Stałych Zarobków Miesięcznych</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left">
+            
+            <!-- Widok Mobilny (Telefony) -->
+            <div id="baseIncomeMobileList" class="block sm:hidden divide-y divide-slate-100 max-w-full"></div>
+
+            <!-- Tabela (Tablety i Ekrany Duże) -->
+            <div class="hidden sm:block overflow-x-auto w-full max-w-full -mx-1 px-1 sm:mx-0 sm:px-0">
+              <table class="w-full text-left min-w-[340px]">
                 <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
                   <tr>
-                    <th class="p-2.5">Miesiąc</th>
-                    <th class="p-2.5 text-blue-600" id="thBaseP1">Adrian</th>
-                    <th class="p-2.5 text-pink-600" id="thBaseP2">Patrycja</th>
-                    <th class="p-2.5 font-bold">Łącznie</th>
-                    <th class="p-2.5 text-center">Usuń</th>
+                    <th class="p-2 sm:p-2.5">Miesiąc</th>
+                    <th class="p-2 sm:p-2.5 text-blue-600" id="thBaseP1">Osoba 1</th>
+                    <th class="p-2 sm:p-2.5 text-pink-600" id="thBaseP2">Partner</th>
+                    <th class="p-2 sm:p-2.5 font-bold">Łącznie</th>
+                    <th class="p-2 sm:p-2.5 text-center">Usuń</th>
                   </tr>
                 </thead>
                 <tbody id="baseIncomeTableBody" class="divide-y divide-slate-100"></tbody>
@@ -1124,17 +1155,22 @@
             </div>
           </div>
 
-          <div class="clean-card p-6 rounded-3xl space-y-3">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 min-w-0 max-w-full">
             <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2">Dodatkowe Zlecenia & Premie</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left">
+            
+            <!-- Widok Mobilny (Telefony) -->
+            <div id="gigsMobileList" class="block sm:hidden divide-y divide-slate-100 max-w-full"></div>
+
+            <!-- Tabela (Tablety i Ekrany Duże) -->
+            <div class="hidden sm:block overflow-x-auto w-full max-w-full -mx-1 px-1 sm:mx-0 sm:px-0">
+              <table class="w-full text-left min-w-[340px]">
                 <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
                   <tr>
-                    <th class="p-2.5">Miesiąc</th>
-                    <th class="p-2.5">Kto</th>
-                    <th class="p-2.5">Opis</th>
-                    <th class="p-2.5 text-right">Kwota</th>
-                    <th class="p-2.5 text-center">Usuń</th>
+                    <th class="p-2 sm:p-2.5">Miesiąc</th>
+                    <th class="p-2 sm:p-2.5">Kto</th>
+                    <th class="p-2 sm:p-2.5">Opis</th>
+                    <th class="p-2 sm:p-2.5 text-right">Kwota</th>
+                    <th class="p-2 sm:p-2.5 text-center">Usuń</th>
                   </tr>
                 </thead>
                 <tbody id="gigsTableBody" class="divide-y divide-slate-100"></tbody>
@@ -1145,9 +1181,9 @@
       </div>
 
       <!-- SUB-TAB 3: WYKRESY LINOWE -->
-      <div id="wydatki-content-wykresy" class="hidden space-y-6">
-        <div class="clean-card p-6 rounded-3xl space-y-4">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+      <div id="wydatki-content-wykresy" class="hidden space-y-4 sm:space-y-6 min-w-0 max-w-full overflow-hidden">
+        <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5 sm:space-y-4 min-w-0 max-w-full overflow-hidden">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-slate-100 pb-3 min-w-0">
             <div>
               <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <i data-lucide="line-chart" class="w-4 h-4 text-blue-600"></i> Trend Zarobków Miesiąc po Miesiącu
@@ -1156,22 +1192,22 @@
             </div>
           </div>
 
-          <div class="relative h-72 sm:h-80 w-full pt-2">
+          <div class="relative h-56 sm:h-80 w-full max-w-full overflow-hidden min-w-0 pt-2">
             <canvas id="earningsLineChart"></canvas>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="clean-card p-6 rounded-3xl space-y-3">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 min-w-0 max-w-full">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 min-w-0 max-w-full overflow-hidden">
             <h4 class="text-xs font-bold text-slate-900">Struktura Wydatków wg Kategorii</h4>
-            <div class="relative h-60 w-full flex items-center justify-center">
+            <div class="relative h-52 sm:h-60 w-full max-w-full overflow-hidden min-w-0 flex items-center justify-center">
               <canvas id="expenseCategoryPieChart"></canvas>
             </div>
           </div>
 
-          <div class="clean-card p-6 rounded-3xl space-y-3">
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 min-w-0 max-w-full overflow-hidden">
             <h4 class="text-xs font-bold text-slate-900">Porównanie Wydatków wg Osobistości</h4>
-            <div class="relative h-60 w-full">
+            <div class="relative h-52 sm:h-60 w-full max-w-full overflow-hidden min-w-0">
               <canvas id="expensePayerBarChart"></canvas>
             </div>
           </div>
@@ -1179,18 +1215,18 @@
       </div>
 
       <!-- SUB-TAB 4: PODSUMOWANIE BUDŻETU I TROPHY BANNER -->
-      <div id="wydatki-content-podsumowanie" class="hidden space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div id="wydatki-content-podsumowanie" class="hidden space-y-4 sm:space-y-6 min-w-0 max-w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 min-w-0 max-w-full">
           
-          <!-- Karta Adriana -->
-          <div class="clean-card p-6 rounded-3xl space-y-5 border-blue-200 bg-blue-50/20">
-            <div class="flex items-center gap-3 border-b border-blue-100 pb-3">
-              <div class="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-bold text-base shadow-sm">
+          <!-- Karta Osoby 1 -->
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5 border-blue-200 bg-blue-50/20 min-w-0 max-w-full">
+            <div class="flex items-center gap-3 border-b border-blue-100 pb-3 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-base shadow-sm shrink-0">
                 <i data-lucide="user" class="w-5 h-5"></i>
               </div>
-              <div>
-                <h3 id="summaryP1Name" class="text-lg font-bold text-slate-900">Adrian</h3>
-                <p class="text-xs text-blue-600 font-semibold">Podsumowanie finansowe</p>
+              <div class="min-w-0">
+                <h3 id="summaryP1Name" class="text-base sm:text-lg font-bold text-slate-900 truncate">Osoba 1</h3>
+                <p class="text-xs text-blue-600 font-semibold truncate">Podsumowanie finansowe</p>
               </div>
             </div>
 
@@ -1212,15 +1248,15 @@
             </div>
           </div>
 
-          <!-- Karta Maćka / Patrycji -->
-          <div class="clean-card p-6 rounded-3xl space-y-5 border-pink-200 bg-pink-50/20">
-            <div class="flex items-center gap-3 border-b border-pink-100 pb-3">
-              <div class="w-10 h-10 bg-pink-600 text-white rounded-2xl flex items-center justify-center font-bold text-base shadow-sm">
+          <!-- Karta Osoby 2 / Partnera -->
+          <div class="clean-card p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5 border-pink-200 bg-pink-50/20 min-w-0 max-w-full">
+            <div class="flex items-center gap-3 border-b border-pink-100 pb-3 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 bg-pink-600 text-white rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-base shadow-sm shrink-0">
                 <i data-lucide="user" class="w-5 h-5"></i>
               </div>
-              <div>
-                <h3 id="summaryP2Name" class="text-lg font-bold text-slate-900">Patrycja</h3>
-                <p class="text-xs text-pink-600 font-semibold">Podsumowanie finansowe</p>
+              <div class="min-w-0">
+                <h3 id="summaryP2Name" class="text-base sm:text-lg font-bold text-slate-900 truncate">Partner</h3>
+                <p class="text-xs text-pink-600 font-semibold truncate">Podsumowanie finansowe</p>
               </div>
             </div>
 
@@ -1245,21 +1281,21 @@
         </div>
 
         <!-- SPECJALNY BANNER NA DOLE: KTO WIĘCEJ BUDŻETU WYKORZYSTAŁ -->
-        <div id="budgetWinnerCard" class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
-          <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div class="space-y-2 text-center sm:text-left">
+        <div id="budgetWinnerCard" class="bg-slate-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl relative overflow-hidden border border-slate-800 max-w-full min-w-0">
+          <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 min-w-0 max-w-full">
+            <div class="space-y-2 text-center sm:text-left min-w-0 max-w-full">
               <div class="inline-flex items-center gap-2 bg-slate-800 text-amber-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                 🏆 Podliczenie Budżetu
               </div>
-              <h2 class="text-xl sm:text-2xl font-black tracking-tight">Kto wykorzystał więcej budżetu?</h2>
+              <h2 class="text-lg sm:text-2xl font-black tracking-tight">Kto wykorzystał więcej budżetu?</h2>
               <p id="budgetResultDetails" class="text-slate-300 text-xs max-w-xl">
                 Trwa obliczanie dokładnych proporcji...
               </p>
             </div>
 
-            <div class="bg-slate-800/80 backdrop-blur-md p-5 rounded-2xl border border-slate-700 text-center min-w-[240px] space-y-1.5">
+            <div class="bg-slate-800/80 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-slate-700 text-center w-full sm:w-auto sm:min-w-[240px] space-y-1.5 min-w-0">
               <span class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Większy udział w wydatkach:</span>
-              <div id="winnerBadge" class="text-xl font-black text-amber-400 flex items-center justify-center gap-1.5">
+              <div id="winnerBadge" class="text-lg sm:text-xl font-black text-amber-400 flex items-center justify-center gap-1.5 flex-wrap">
                 <!-- Winner Badge -->
               </div>
               <p id="winnerSubtext" class="text-xs text-slate-300 font-medium">
@@ -3343,6 +3379,7 @@
             sessionStorage.setItem('fomo_username', currentUser);
             setGreeting(currentUser);
             updatePermissionsUI();
+            updateWydatkiProfileDOM();
             loadCompanyData();
             return;
           }
@@ -3492,7 +3529,7 @@
       updateAppTitle(titlesMap[appName] || 'Aplikacja');
 
       try { if (appName === 'fomo') loadLiveTokens(); } catch (e) {}
-      try { if (appName === 'wydatki') loadWydatkiData(); } catch (e) {}
+      try { if (appName === 'wydatki') { updateWydatkiProfileDOM(); loadWydatkiData(); } } catch (e) {}
       try {
         if (appName === 'wyceny') {
           loadCompanyData();
@@ -3705,15 +3742,16 @@
 
 
     // ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ====================
+    // ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ====================
     function switchWydatkiTab(subtab) {
       ['wydatki', 'zarobki', 'wykresy', 'podsumowanie'].forEach(st => {
         const btn = document.getElementById(`wydatki-subtab-${st}`);
         const content = document.getElementById(`wydatki-content-${st}`);
         if (btn) {
           if (st === subtab) {
-            btn.className = "btn-anim px-3.5 py-2 rounded-xl transition bg-white text-blue-600 shadow-sm font-bold";
+            btn.className = "btn-anim flex items-center justify-center gap-1 px-2 py-2 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition bg-white text-blue-600 shadow-sm font-bold text-[11px] sm:text-xs text-center truncate";
           } else {
-            btn.className = "btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900 font-bold";
+            btn.className = "btn-anim flex items-center justify-center gap-1 px-2 py-2 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl transition text-slate-600 hover:text-slate-900 font-bold text-[11px] sm:text-xs text-center truncate";
           }
         }
         if (content) {
@@ -3722,6 +3760,7 @@
         }
       });
 
+      updateWydatkiProfileDOM();
       if (subtab === 'wykresy' || subtab === 'podsumowanie') {
         setTimeout(renderWydatkiChartsUI, 50);
       }
@@ -3744,48 +3783,83 @@
     }
 
     function getWydatkiProfile() {
+      let p1 = 'Adrian';
+      let p2 = 'Patrycja';
+      let pair = 'adrian_patrycja';
+
       if (currentUserProfile && currentUserProfile.p1 && currentUserProfile.p2) {
-        const p1 = currentUserProfile.p1;
-        const p2 = currentUserProfile.p2;
-        const household = currentUserProfile.household || `${p1}_${p2}`.toLowerCase();
-        return {
-          pairId: household,
-          isMaciek: household.toLowerCase().includes('maciek') || p1.toLowerCase() === 'maciek' || p2.toLowerCase() === 'maciek',
-          p1: p1,
-          p2: p2,
-          p1Genitive: toGenitive(p1),
-          p2Genitive: toGenitive(p2)
-        };
+        p1 = currentUserProfile.p1;
+        p2 = currentUserProfile.p2;
+        const hh = (currentUserProfile.household || `${p1}_${p2}`).toLowerCase().replace(/^pair_/, '');
+        pair = hh;
+      } else {
+        const user = (currentUser || sessionStorage.getItem('fomo_username') || '').toLowerCase();
+        if (user === 'monika' || user === 'tomek') {
+          p1 = 'Monika';
+          p2 = 'Tomek';
+          pair = 'monika_tomek';
+        } else if (user === 'maciek' || user === 'karolina') {
+          p1 = 'Maciek';
+          p2 = 'Karolina';
+          pair = 'maciek_karolina';
+        } else {
+          p1 = 'Adrian';
+          p2 = 'Patrycja';
+          pair = 'adrian_patrycja';
+        }
       }
-      const user = (currentUser || sessionStorage.getItem('fomo_username') || '').toLowerCase();
-      if (user === 'monika' || user === 'tomek') {
-        return {
-          pairId: 'monika_tomek',
-          isMaciek: false,
-          p1: 'Monika',
-          p2: 'Tomek',
-          p1Genitive: 'Moniki',
-          p2Genitive: 'Tomka'
-        };
-      }
-      if (user === 'maciek' || user === 'karolina') {
-        return {
-          pairId: 'maciek_karolina',
-          isMaciek: true,
-          p1: 'Maciek',
-          p2: 'Karolina',
-          p1Genitive: 'Maćka',
-          p2Genitive: 'Karoliny'
-        };
-      }
+
+      // Canonical pairId without PAIR_ prefix, strictly lowercase
+      const cleanPairId = pair.toLowerCase().replace(/^pair_/, '');
+
       return {
-        pairId: 'adrian_patrycja',
-        isMaciek: false,
-        p1: 'Adrian',
-        p2: 'Patrycja',
-        p1Genitive: 'Adriana',
-        p2Genitive: 'Patrycji'
+        pairId: cleanPairId,
+        rawHousehold: `PAIR_${cleanPairId.toUpperCase()}`,
+        isMaciek: cleanPairId.includes('maciek') || p1.toLowerCase() === 'maciek' || p2.toLowerCase() === 'maciek',
+        isMonika: cleanPairId.includes('monika') || p1.toLowerCase() === 'monika' || p2.toLowerCase() === 'monika',
+        p1: p1,
+        p2: p2,
+        p1Genitive: toGenitive(p1),
+        p2Genitive: toGenitive(p2)
       };
+    }
+
+    function isPerson1(name, profile) {
+      if (!name) return false;
+      const n = name.trim().toLowerCase();
+      if (n === profile.p1.toLowerCase()) return true;
+      if (profile.isMonika) return n === 'monika';
+      if (profile.isMaciek) return n === 'maciek';
+      return n === 'adrian';
+    }
+
+    function isPerson2(name, profile) {
+      if (!name) return false;
+      const n = name.trim().toLowerCase();
+      if (n === profile.p2.toLowerCase()) return true;
+      if (profile.isMonika) return n === 'tomek';
+      if (profile.isMaciek) return n === 'karolina';
+      return n === 'patrycja';
+    }
+
+    function getP1Salary(item, profile) {
+      if (!item) return 0;
+      if (item.p1 !== undefined && item.p1 !== null) return Number(item.p1) || 0;
+      const key = profile.p1.toLowerCase();
+      if (item[key] !== undefined && item[key] !== null) return Number(item[key]) || 0;
+      if (profile.isMonika) return Number(item.monika) || 0;
+      if (profile.isMaciek) return Number(item.maciek || item.adrian) || 0;
+      return Number(item.adrian) || 0;
+    }
+
+    function getP2Salary(item, profile) {
+      if (!item) return 0;
+      if (item.p2 !== undefined && item.p2 !== null) return Number(item.p2) || 0;
+      const key = profile.p2.toLowerCase();
+      if (item[key] !== undefined && item[key] !== null) return Number(item[key]) || 0;
+      if (profile.isMonika) return Number(item.tomek) || 0;
+      if (profile.isMaciek) return Number(item.karolina || item.patrycja) || 0;
+      return Number(item.patrycja) || 0;
     }
 
     function updateWydatkiProfileDOM() {
@@ -3825,11 +3899,26 @@
       if (sumP1) sumP1.innerText = profile.p1;
       const sumP2 = document.getElementById('summaryP2Name');
       if (sumP2) sumP2.innerText = profile.p2;
+
+      // Ensure active payer buttons reflect profile.p1 initially
+      const selPayer = document.getElementById('selectedExpensePayer');
+      if (selPayer && (!selPayer.value || selPayer.value === 'Adrian' || selPayer.value === 'Maciek')) {
+        selectExpensePayer(profile.p1);
+      }
+      const selGig = document.getElementById('selectedGigPerson');
+      if (selGig && (!selGig.value || selGig.value === 'Adrian' || selGig.value === 'Maciek')) {
+        selectGigPerson(profile.p1);
+      }
     }
 
     function selectExpensePayer(payer) {
-      document.getElementById('selectedExpensePayer').value = payer;
       const profile = getWydatkiProfile();
+      let actualPayer = payer;
+      if (payer === 'Adrian' || payer === 'p1') actualPayer = profile.p1;
+      else if (payer === 'Patrycja' || payer === 'p2') actualPayer = profile.p2;
+      else if (payer === 'Wspólne') actualPayer = 'Wspólne';
+
+      document.getElementById('selectedExpensePayer').value = actualPayer;
       const options = [
         { id: 'Adrian', name: profile.p1, activeClass: 'border-blue-500 bg-blue-100 text-blue-700' },
         { id: 'Patrycja', name: profile.p2, activeClass: 'border-pink-500 bg-pink-100 text-pink-700' },
@@ -3839,17 +3928,21 @@
       options.forEach(opt => {
         const btn = document.getElementById(`btn-payer-${opt.id}`);
         if (!btn) return;
-        if (payer === opt.name || payer === opt.id) {
-          btn.className = `py-2.5 px-2 font-bold rounded-xl border transition ${opt.activeClass}`;
+        if (actualPayer === opt.name || (opt.id === 'Wspólne' && actualPayer === 'Wspólne')) {
+          btn.className = `py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border transition text-[11px] sm:text-xs truncate text-center ${opt.activeClass}`;
         } else {
-          btn.className = "py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition";
+          btn.className = "py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition text-[11px] sm:text-xs truncate text-center";
         }
       });
     }
 
     function selectGigPerson(person) {
-      document.getElementById('selectedGigPerson').value = person;
       const profile = getWydatkiProfile();
+      let actualPerson = person;
+      if (person === 'Adrian' || person === 'p1') actualPerson = profile.p1;
+      else if (person === 'Patrycja' || person === 'p2') actualPerson = profile.p2;
+
+      document.getElementById('selectedGigPerson').value = actualPerson;
       const options = [
         { id: 'Adrian', name: profile.p1, activeClass: 'border-blue-500 bg-blue-100 text-blue-700' },
         { id: 'Patrycja', name: profile.p2, activeClass: 'border-pink-500 bg-pink-100 text-pink-700' }
@@ -3858,10 +3951,10 @@
       options.forEach(opt => {
         const btn = document.getElementById(`btn-gig-${opt.id}`);
         if (!btn) return;
-        if (person === opt.name || person === opt.id) {
-          btn.className = `py-2.5 px-2 font-bold rounded-xl border transition ${opt.activeClass}`;
+        if (actualPerson === opt.name) {
+          btn.className = `py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border transition text-[11px] sm:text-xs truncate text-center ${opt.activeClass}`;
         } else {
-          btn.className = "py-2.5 px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition";
+          btn.className = "py-2 px-1 sm:py-2.5 sm:px-2 font-bold rounded-xl border border-slate-200 bg-white text-slate-600 transition text-[11px] sm:text-xs truncate text-center";
         }
       });
     }
@@ -3910,17 +4003,15 @@
       const profile = getWydatkiProfile();
 
       let p1BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
-        const val = curr.p1 !== undefined ? curr.p1 : (curr[profile.p1.toLowerCase()] !== undefined ? curr[profile.p1.toLowerCase()] : (profile.isMaciek ? (curr.maciek || curr.adrian) : curr.adrian));
-        return acc + (Number(val) || 0);
+        return acc + getP1Salary(curr, profile);
       }, 0);
 
       let p2BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
-        const val = curr.p2 !== undefined ? curr.p2 : (curr[profile.p2.toLowerCase()] !== undefined ? curr[profile.p2.toLowerCase()] : (profile.isMaciek ? (curr.karolina || curr.patrycja) : curr.patrycja));
-        return acc + (Number(val) || 0);
+        return acc + getP2Salary(curr, profile);
       }, 0);
 
-      let p1GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p1 || (profile.pairId === 'maciek_karolina' && g.person === 'Maciek') || (profile.pairId === 'monika_tomek' && g.person === 'Monika') || (profile.pairId === 'adrian_patrycja' && g.person === 'Adrian')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-      let p2GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p2 || (profile.pairId === 'maciek_karolina' && g.person === 'Karolina') || (profile.pairId === 'monika_tomek' && g.person === 'Tomek') || (profile.pairId === 'adrian_patrycja' && g.person === 'Patrycja')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p1GigTotal = wydatkiFullData.gigs.filter(g => isPerson1(g.person, profile)).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p2GigTotal = wydatkiFullData.gigs.filter(g => isPerson2(g.person, profile)).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
 
       let totalP1Inc = p1BaseTotal + p1GigTotal;
       let totalP2Inc = p2BaseTotal + p2GigTotal;
@@ -3928,6 +4019,11 @@
 
       let totalExpensesCombined = wydatkiFullData.expenses.reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
       let remainingBudget = totalIncomeCombined - totalExpensesCombined;
+
+      const topAdrianLabel = document.getElementById("topAdrianLabel");
+      if (topAdrianLabel) topAdrianLabel.innerText = `Dochód ${profile.p1Genitive}`;
+      const topPatrycjaLabel = document.getElementById("topPatrycjaLabel");
+      if (topPatrycjaLabel) topPatrycjaLabel.innerText = `Dochód ${profile.p2Genitive}`;
 
       document.getElementById("topAdrianIncome").innerText = formatPLN(totalP1Inc);
       document.getElementById("topAdrianExtra").innerText = `+${formatPLN(p1GigTotal)} zleceń`;
@@ -3944,18 +4040,27 @@
       if (totalIncomeCombined > 0) {
         const percentLeft = Math.round((remainingBudget / totalIncomeCombined) * 100);
         budgetPercentEl.innerText = `${percentLeft}% budżetu na plusie`;
-        budgetPercentEl.className = percentLeft >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-red-600";
+        budgetPercentEl.className = percentLeft >= 0 ? "text-[10px] sm:text-xs font-semibold text-emerald-600 truncate block" : "text-[10px] sm:text-xs font-semibold text-red-600 truncate block";
       } else {
         budgetPercentEl.innerText = "Brak danych o dochodach";
+        budgetPercentEl.className = "text-[10px] sm:text-xs font-semibold text-slate-400 truncate block";
       }
     }
 
     async function handleAddExpense(e) {
       e.preventDefault();
       const profile = getWydatkiProfile();
-      let payer = document.getElementById("selectedExpensePayer").value || profile.p1;
-      if (payer === 'Adrian') payer = profile.p1;
-      if (payer === 'Patrycja') payer = profile.p2;
+      let rawPayer = document.getElementById("selectedExpensePayer").value || profile.p1;
+      let payer = rawPayer;
+      if (rawPayer === 'Wspólne') {
+        payer = 'Wspólne';
+      } else if (isPerson1(rawPayer, profile)) {
+        payer = profile.p1;
+      } else if (isPerson2(rawPayer, profile)) {
+        payer = profile.p2;
+      } else {
+        payer = profile.p1;
+      }
 
       const title = document.getElementById("expenseTitle").value.trim();
       const amount = parseFloat(document.getElementById("expenseAmount").value);
@@ -4003,7 +4108,19 @@
 
       let filtered = wydatkiFullData.expenses.filter(item => {
         const p = item.person || item.payer || profile.p1;
-        const matchPerson = (personFilter === "ALL") || (p === personFilter) || (personFilter === profile.p1 && (p === profile.p1 || p === 'Adrian' || p === 'Maciek' || p === 'Monika')) || (personFilter === profile.p2 && (p === profile.p2 || p === 'Patrycja' || p === 'Karolina' || p === 'Tomek'));
+        let matchPerson = false;
+        if (personFilter === "ALL") {
+          matchPerson = true;
+        } else if (personFilter === "Wspólne") {
+          matchPerson = (p === "Wspólne");
+        } else if (personFilter === profile.p1 || personFilter === 'Adrian' || personFilter === 'p1') {
+          matchPerson = isPerson1(p, profile);
+        } else if (personFilter === profile.p2 || personFilter === 'Patrycja' || personFilter === 'p2') {
+          matchPerson = isPerson2(p, profile);
+        } else {
+          matchPerson = (p === personFilter);
+        }
+
         const matchCategory = (categoryFilter === "ALL") || (item.category === categoryFilter);
         const amt = item.amount_pln || item.amount || 0;
         const matchSearch = item.title.toLowerCase().includes(searchQuery) ||
@@ -4014,32 +4131,78 @@
 
       filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+      const mobileList = document.getElementById("expensesMobileList");
+
       if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">Brak zarejestrowanych wydatków spełniających kryteria...</td></tr>`;
+        if (mobileList) mobileList.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Brak zarejestrowanych wydatków...</div>`;
         return;
       }
 
       tbody.innerHTML = filtered.map(item => {
-        const p = item.person || item.payer || profile.p1;
+        let p = item.person || item.payer || profile.p1;
         let badgeClass = "badge-shared";
-        if (p === profile.p1 || p === "Adrian" || p === "Maciek" || p === "Monika") badgeClass = "badge-adrian";
-        if (p === profile.p2 || p === "Patrycja" || p === "Karolina" || p === "Tomek") badgeClass = "badge-patrycja";
+        if (p === "Wspólne") {
+          badgeClass = "badge-shared";
+        } else if (isPerson1(p, profile)) {
+          badgeClass = "badge-adrian";
+          p = profile.p1;
+        } else if (isPerson2(p, profile)) {
+          badgeClass = "badge-patrycja";
+          p = profile.p2;
+        }
 
         const amt = parseFloat(item.amount_pln || item.amount || 0);
 
         return `
           <tr class="hover:bg-slate-50 transition text-slate-700">
-            <td class="p-3 text-xs text-slate-400 font-medium">${item.date}</td>
-            <td class="p-3"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${badgeClass}">${p}</span></td>
+            <td class="p-3 text-xs text-slate-400 font-medium whitespace-nowrap">${item.date}</td>
+            <td class="p-3 whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${badgeClass}">${p}</span></td>
             <td class="p-3 font-semibold text-slate-800">${item.title}</td>
-            <td class="p-3 text-xs text-slate-500"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${item.category || 'Ogólne'}</span></td>
-            <td class="p-3 text-right font-extrabold text-slate-900">${formatPLN(amt)}</td>
-            <td class="p-3 text-center">
+            <td class="p-3 text-xs text-slate-500 whitespace-nowrap"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${item.category || 'Ogólne'}</span></td>
+            <td class="p-3 text-right font-extrabold text-slate-900 whitespace-nowrap">${formatPLN(amt)}</td>
+            <td class="p-3 text-center whitespace-nowrap">
               <button onclick="handleDeleteWydatki('${item.id}')" class="text-rose-600 hover:text-rose-800 text-xs font-bold">Usuń</button>
             </td>
           </tr>
         `;
       }).join('');
+
+      if (mobileList) {
+        mobileList.innerHTML = filtered.map(item => {
+          let p = item.person || item.payer || profile.p1;
+          let badgeClass = "badge-shared";
+          if (p === "Wspólne") {
+            badgeClass = "badge-shared";
+          } else if (isPerson1(p, profile)) {
+            badgeClass = "badge-adrian";
+            p = profile.p1;
+          } else if (isPerson2(p, profile)) {
+            badgeClass = "badge-patrycja";
+            p = profile.p2;
+          }
+          const amt = parseFloat(item.amount_pln || item.amount || 0);
+
+          return `
+            <div class="py-2.5 flex items-center justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                  <span class="text-[10px] text-slate-400 font-mono">${item.date}</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${p}</span>
+                  <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded truncate max-w-[120px]">${item.category || 'Ogólne'}</span>
+                </div>
+                <p class="font-bold text-slate-800 text-xs break-words">${item.title}</p>
+              </div>
+              <div class="text-right shrink-0 flex items-center gap-2">
+                <span class="font-extrabold text-slate-900 text-xs whitespace-nowrap">${formatPLN(amt)}</span>
+                <button onclick="handleDeleteWydatki('${item.id}')" class="text-rose-600 hover:text-rose-800 p-1 font-bold text-xs">
+                  Usuń
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
     async function handleAddMonthlyIncome(e) {
@@ -4052,27 +4215,34 @@
       if (!month) return;
 
       const idx = wydatkiFullData.baseIncomes.findIndex(item => item.month === month);
+      const p1Key = profile.p1.toLowerCase();
+      const p2Key = profile.p2.toLowerCase();
+
       if (idx >= 0) {
         wydatkiFullData.baseIncomes[idx].p1 = p1Sal;
         wydatkiFullData.baseIncomes[idx].p2 = p2Sal;
-        if (profile.pairId === 'maciek_karolina') {
-          wydatkiFullData.baseIncomes[idx].maciek = p1Sal;
-          wydatkiFullData.baseIncomes[idx].karolina = p2Sal;
-        } else if (profile.pairId === 'monika_tomek') {
+        wydatkiFullData.baseIncomes[idx][p1Key] = p1Sal;
+        wydatkiFullData.baseIncomes[idx][p2Key] = p2Sal;
+        if (profile.isMonika) {
           wydatkiFullData.baseIncomes[idx].monika = p1Sal;
           wydatkiFullData.baseIncomes[idx].tomek = p2Sal;
+        } else if (profile.isMaciek) {
+          wydatkiFullData.baseIncomes[idx].maciek = p1Sal;
+          wydatkiFullData.baseIncomes[idx].karolina = p2Sal;
         } else {
           wydatkiFullData.baseIncomes[idx].adrian = p1Sal;
           wydatkiFullData.baseIncomes[idx].patrycja = p2Sal;
         }
       } else {
         const newInc = { id: Date.now(), month: month, p1: p1Sal, p2: p2Sal };
-        if (profile.pairId === 'maciek_karolina') {
-          newInc.maciek = p1Sal;
-          newInc.karolina = p2Sal;
-        } else if (profile.pairId === 'monika_tomek') {
+        newInc[p1Key] = p1Sal;
+        newInc[p2Key] = p2Sal;
+        if (profile.isMonika) {
           newInc.monika = p1Sal;
           newInc.tomek = p2Sal;
+        } else if (profile.isMaciek) {
+          newInc.maciek = p1Sal;
+          newInc.karolina = p2Sal;
         } else {
           newInc.adrian = p1Sal;
           newInc.patrycja = p2Sal;
@@ -4096,9 +4266,13 @@
     async function handleAddGigIncome(e) {
       e.preventDefault();
       const profile = getWydatkiProfile();
-      let person = document.getElementById("selectedGigPerson").value || profile.p1;
-      if (person === 'Adrian') person = profile.p1;
-      if (person === 'Patrycja') person = profile.p2;
+      let rawPerson = document.getElementById("selectedGigPerson").value || profile.p1;
+      let person = profile.p1;
+      if (isPerson2(rawPerson, profile)) {
+        person = profile.p2;
+      } else {
+        person = profile.p1;
+      }
 
       const title = document.getElementById("gigTitle").value.trim();
       const amount = parseFloat(document.getElementById("gigAmount").value);
@@ -4131,81 +4305,136 @@
     function renderIncomeTablesUI() {
       const profile = getWydatkiProfile();
       const baseBody = document.getElementById("baseIncomeTableBody");
+      const baseMobile = document.getElementById("baseIncomeMobileList");
       if (baseBody) {
         baseBody.innerHTML = "";
         const sortedBase = [...wydatkiFullData.baseIncomes].sort((a, b) => b.month.localeCompare(a.month));
 
         sortedBase.forEach(item => {
-          const p1Val = Number(item.p1 !== undefined ? item.p1 : (item[profile.p1.toLowerCase()] !== undefined ? item[profile.p1.toLowerCase()] : (profile.isMaciek ? (item.maciek || item.adrian) : item.adrian))) || 0;
-          const p2Val = Number(item.p2 !== undefined ? item.p2 : (item[profile.p2.toLowerCase()] !== undefined ? item[profile.p2.toLowerCase()] : (profile.isMaciek ? (item.karolina || item.patrycja) : item.patrycja))) || 0;
+          const p1Val = getP1Salary(item, profile);
+          const p2Val = getP2Salary(item, profile);
           const totalMonth = p1Val + p2Val;
           const tr = document.createElement("tr");
           tr.className = "hover:bg-slate-50 transition";
           tr.innerHTML = `
-            <td class="p-2.5 font-bold text-slate-800">${item.month}</td>
-            <td class="p-2.5 font-semibold text-blue-600">${formatPLN(p1Val)}</td>
-            <td class="p-2.5 font-semibold text-pink-600">${formatPLN(p2Val)}</td>
-            <td class="p-2.5 font-extrabold text-slate-900">${formatPLN(totalMonth)}</td>
-            <td class="p-2.5 text-center">
+            <td class="p-2 sm:p-2.5 font-bold text-slate-800 whitespace-nowrap">${item.month}</td>
+            <td class="p-2 sm:p-2.5 font-semibold text-blue-600 whitespace-nowrap">${formatPLN(p1Val)}</td>
+            <td class="p-2 sm:p-2.5 font-semibold text-pink-600 whitespace-nowrap">${formatPLN(p2Val)}</td>
+            <td class="p-2 sm:p-2.5 font-extrabold text-slate-900 whitespace-nowrap">${formatPLN(totalMonth)}</td>
+            <td class="p-2 sm:p-2.5 text-center whitespace-nowrap">
               <button onclick="deleteBaseIncome('${item.id}')" class="text-rose-600 font-bold">Usuń</button>
             </td>
           `;
           baseBody.appendChild(tr);
         });
+
+        if (baseMobile) {
+          if (sortedBase.length === 0) {
+            baseMobile.innerHTML = '<div class="text-center py-4 text-slate-400 text-xs">Brak stałych dochodów...</div>';
+          } else {
+            baseMobile.innerHTML = sortedBase.map(item => {
+              const p1Val = getP1Salary(item, profile);
+              const p2Val = getP2Salary(item, profile);
+              const totalMonth = p1Val + p2Val;
+              return `
+                <div class="py-2.5 flex items-center justify-between gap-2 text-xs">
+                  <div>
+                    <span class="font-bold text-slate-800 text-xs">${item.month}</span>
+                    <div class="flex items-center gap-2 mt-0.5 text-[11px]">
+                      <span class="text-blue-600 font-semibold">${profile.p1}: ${formatPLN(p1Val)}</span>
+                      <span class="text-pink-600 font-semibold">${profile.p2}: ${formatPLN(p2Val)}</span>
+                    </div>
+                  </div>
+                  <div class="text-right flex items-center gap-2">
+                    <span class="font-extrabold text-slate-900">${formatPLN(totalMonth)}</span>
+                    <button onclick="deleteBaseIncome('${item.id}')" class="text-rose-600 font-bold p-1">Usuń</button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
       }
 
       const gigsBody = document.getElementById("gigsTableBody");
+      const gigsMobile = document.getElementById("gigsMobileList");
       if (gigsBody) {
         gigsBody.innerHTML = "";
         const sortedGigs = [...wydatkiFullData.gigs].sort((a, b) => b.month.localeCompare(a.month));
 
         sortedGigs.forEach(gig => {
-          let badgeClass = (gig.person === profile.p1 || gig.person === 'Adrian' || gig.person === 'Maciek' || gig.person === 'Monika') ? "badge-adrian" : "badge-patrycja";
+          let gigPerson = gig.person;
+          let badgeClass = "badge-patrycja";
+          if (isPerson1(gigPerson, profile)) {
+            gigPerson = profile.p1;
+            badgeClass = "badge-adrian";
+          } else if (isPerson2(gigPerson, profile)) {
+            gigPerson = profile.p2;
+            badgeClass = "badge-patrycja";
+          }
           const tr = document.createElement("tr");
           tr.className = "hover:bg-slate-50 transition";
           tr.innerHTML = `
-            <td class="p-2.5 text-slate-500 font-medium">${gig.month}</td>
-            <td class="p-2.5"><span class="px-2 py-0.5 rounded text-xs font-bold ${badgeClass}">${gig.person}</span></td>
-            <td class="p-2.5 font-medium text-slate-800">${gig.title}</td>
-            <td class="p-2.5 text-right font-extrabold text-emerald-600">+${formatPLN(gig.amount)}</td>
-            <td class="p-2.5 text-center">
+            <td class="p-2 sm:p-2.5 text-slate-500 font-medium whitespace-nowrap">${gig.month}</td>
+            <td class="p-2 sm:p-2.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-bold ${badgeClass}">${gigPerson}</span></td>
+            <td class="p-2 sm:p-2.5 font-medium text-slate-800">${gig.title}</td>
+            <td class="p-2 sm:p-2.5 text-right font-extrabold text-emerald-600 whitespace-nowrap">+${formatPLN(gig.amount)}</td>
+            <td class="p-2 sm:p-2.5 text-center whitespace-nowrap">
               <button onclick="deleteGig('${gig.id}')" class="text-rose-600 font-bold">Usuń</button>
             </td>
           `;
           gigsBody.appendChild(tr);
         });
+
+        if (gigsMobile) {
+          if (sortedGigs.length === 0) {
+            gigsMobile.innerHTML = '<div class="text-center py-4 text-slate-400 text-xs">Brak zleceń...</div>';
+          } else {
+            gigsMobile.innerHTML = sortedGigs.map(gig => {
+              let gigPerson = gig.person;
+              let badgeClass = "badge-patrycja";
+              if (isPerson1(gigPerson, profile)) {
+                gigPerson = profile.p1;
+                badgeClass = "badge-adrian";
+              } else if (isPerson2(gigPerson, profile)) {
+                gigPerson = profile.p2;
+                badgeClass = "badge-patrycja";
+              }
+              return `
+                <div class="py-2.5 flex items-center justify-between gap-2 text-xs">
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 mb-0.5">
+                      <span class="text-slate-400 font-medium text-[10px]">${gig.month}</span>
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${gigPerson}</span>
+                    </div>
+                    <p class="font-medium text-slate-800 truncate">${gig.title}</p>
+                  </div>
+                  <div class="text-right shrink-0 flex items-center gap-2">
+                    <span class="font-extrabold text-emerald-600">+${formatPLN(gig.amount)}</span>
+                    <button onclick="deleteGig('${gig.id}')" class="text-rose-600 font-bold p-1">Usuń</button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
       }
     }
 
     function renderSummarySectionUI() {
       const profile = getWydatkiProfile();
 
-      let p1BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
-        const val = curr.p1 !== undefined ? curr.p1 : (curr[profile.p1.toLowerCase()] !== undefined ? curr[profile.p1.toLowerCase()] : (profile.isMaciek ? (curr.maciek || curr.adrian) : curr.adrian));
-        return acc + (Number(val) || 0);
-      }, 0);
+      let p1BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + getP1Salary(curr, profile), 0);
+      let p2BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => acc + getP2Salary(curr, profile), 0);
 
-      let p2BaseTotal = wydatkiFullData.baseIncomes.reduce((acc, curr) => {
-        const val = curr.p2 !== undefined ? curr.p2 : (curr[profile.p2.toLowerCase()] !== undefined ? curr[profile.p2.toLowerCase()] : (profile.isMaciek ? (curr.karolina || curr.patrycja) : curr.patrycja));
-        return acc + (Number(val) || 0);
-      }, 0);
-
-      let p1GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p1 || (profile.pairId === 'maciek_karolina' && g.person === 'Maciek') || (profile.pairId === 'monika_tomek' && g.person === 'Monika') || (profile.pairId === 'adrian_patrycja' && g.person === 'Adrian')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-      let p2GigTotal = wydatkiFullData.gigs.filter(g => g.person === profile.p2 || (profile.pairId === 'maciek_karolina' && g.person === 'Karolina') || (profile.pairId === 'monika_tomek' && g.person === 'Tomek') || (profile.pairId === 'adrian_patrycja' && g.person === 'Patrycja')).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p1GigTotal = wydatkiFullData.gigs.filter(g => isPerson1(g.person, profile)).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      let p2GigTotal = wydatkiFullData.gigs.filter(g => isPerson2(g.person, profile)).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
 
       let p1TotalIncome = p1BaseTotal + p1GigTotal;
       let p2TotalIncome = p2BaseTotal + p2GigTotal;
 
-      let p1DirectExpenses = wydatkiFullData.expenses.filter(e => {
-        const p = e.person || e.payer;
-        return p === profile.p1 || (profile.pairId === 'maciek_karolina' ? p === 'Maciek' : (profile.pairId === 'monika_tomek' ? p === 'Monika' : p === 'Adrian'));
-      }).reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
-
-      let p2DirectExpenses = wydatkiFullData.expenses.filter(e => {
-        const p = e.person || e.payer;
-        return p === profile.p2 || (profile.pairId === 'maciek_karolina' ? p === 'Karolina' : (profile.pairId === 'monika_tomek' ? p === 'Tomek' : p === 'Patrycja'));
-      }).reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
-
+      let p1DirectExpenses = wydatkiFullData.expenses.filter(e => isPerson1(e.person || e.payer, profile)).reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
+      let p2DirectExpenses = wydatkiFullData.expenses.filter(e => isPerson2(e.person || e.payer, profile)).reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
       let sharedExpenses = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Wspólne").reduce((acc, curr) => acc + (Number(curr.amount_pln || curr.amount) || 0), 0);
 
       let sharedHalf = sharedExpenses / 2;
@@ -4215,6 +4444,12 @@
 
       let p1Percent = p1TotalIncome > 0 ? Math.round((p1TotalSpent / p1TotalIncome) * 100) : 0;
       let p2Percent = p2TotalIncome > 0 ? Math.round((p2TotalSpent / p2TotalIncome) * 100) : 0;
+
+      // Update Names in Card Headers
+      const s1 = document.getElementById("summaryP1Name");
+      if (s1) s1.innerText = profile.p1;
+      const s2 = document.getElementById("summaryP2Name");
+      if (s2) s2.innerText = profile.p2;
 
       // Render Person 1 Card
       document.getElementById("summaryAdrianIncome").innerText = formatPLN(p1TotalIncome);
@@ -4271,11 +4506,11 @@
 
         sortedMonths.forEach(m => {
           const baseItem = wydatkiFullData.baseIncomes.find(b => b.month === m) || {};
-          const p1Val = Number(baseItem.p1 !== undefined ? baseItem.p1 : (baseItem[profile.p1.toLowerCase()] !== undefined ? baseItem[profile.p1.toLowerCase()] : (profile.isMaciek ? (baseItem.maciek || baseItem.adrian) : baseItem.adrian))) || 0;
-          const p2Val = Number(baseItem.p2 !== undefined ? baseItem.p2 : (baseItem[profile.p2.toLowerCase()] !== undefined ? baseItem[profile.p2.toLowerCase()] : (profile.isMaciek ? (baseItem.karolina || baseItem.patrycja) : baseItem.patrycja))) || 0;
+          const p1Val = getP1Salary(baseItem, profile);
+          const p2Val = getP2Salary(baseItem, profile);
 
-          const p1Gigs = wydatkiFullData.gigs.filter(g => g.month === m && (g.person === profile.p1 || (profile.pairId === 'maciek_karolina' && g.person === 'Maciek') || (profile.pairId === 'monika_tomek' && g.person === 'Monika') || (profile.pairId === 'adrian_patrycja' && g.person === 'Adrian'))).reduce((acc, curr) => acc + curr.amount, 0);
-          const p2Gigs = wydatkiFullData.gigs.filter(g => g.month === m && (g.person === profile.p2 || (profile.pairId === 'maciek_karolina' && g.person === 'Karolina') || (profile.pairId === 'monika_tomek' && g.person === 'Tomek') || (profile.pairId === 'adrian_patrycja' && g.person === 'Patrycja'))).reduce((acc, curr) => acc + curr.amount, 0);
+          const p1Gigs = wydatkiFullData.gigs.filter(g => g.month === m && isPerson1(g.person, profile)).reduce((acc, curr) => acc + curr.amount, 0);
+          const p2Gigs = wydatkiFullData.gigs.filter(g => g.month === m && isPerson2(g.person, profile)).reduce((acc, curr) => acc + curr.amount, 0);
 
           const p1Total = p1Val + p1Gigs;
           const p2Total = p2Val + p2Gigs;
@@ -4328,16 +4563,8 @@
         }
 
         // 3. Payer Bar Chart
-        const p1ExpSum = wydatkiFullData.expenses.filter(e => {
-          const p = e.person || e.payer;
-          return p === profile.p1 || (profile.pairId === 'maciek_karolina' ? p === 'Maciek' : (profile.pairId === 'monika_tomek' ? p === 'Monika' : p === 'Adrian'));
-        }).reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
-
-        const p2ExpSum = wydatkiFullData.expenses.filter(e => {
-          const p = e.person || e.payer;
-          return p === profile.p2 || (profile.pairId === 'maciek_karolina' ? p === 'Karolina' : (profile.pairId === 'monika_tomek' ? p === 'Tomek' : p === 'Patrycja'));
-        }).reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
-
+        const p1ExpSum = wydatkiFullData.expenses.filter(e => isPerson1(e.person || e.payer, profile)).reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
+        const p2ExpSum = wydatkiFullData.expenses.filter(e => isPerson2(e.person || e.payer, profile)).reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
         const sharedExpSum = wydatkiFullData.expenses.filter(e => (e.person || e.payer) === "Wspólne").reduce((a, b) => a + parseFloat(b.amount_pln || b.amount || 0), 0);
 
         const barCtx = document.getElementById("expensePayerBarChart");
@@ -7032,6 +7259,7 @@
       try { connectWebSocket(); } catch (e) {}
       try { updateEmailSignaturePreview(); } catch (e) {}
       try { syncMiniAiChatMessages(); } catch (e) {}
+      try { updateWydatkiProfileDOM(); } catch (e) {}
       safeCreateIcons();
       setTimeout(safeCreateIcons, 200);
       setTimeout(safeCreateIcons, 800);
