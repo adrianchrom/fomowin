@@ -81,5 +81,9 @@ class TestNewModules(unittest.TestCase):
         self.assertIn('EUR', data['rates'])
         self.assertIn('USD', data['rates'])
 
+    @classmethod
+    def tearDownClass(cls):
+        auth_manager.logout_all()
+
 if __name__ == '__main__':
     unittest.main()

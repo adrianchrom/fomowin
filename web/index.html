@@ -3175,22 +3175,21 @@
         const res = await fetch('/api/user');
         if (res.ok) {
           const data = await res.json();
-          if (data.username) {
+          if (data.authenticated && data.username) {
             currentUser = data.username.charAt(0).toUpperCase() + data.username.slice(1);
             userPermissions = data.permissions || userPermissions;
             sessionStorage.setItem('fomo_username', currentUser);
             setGreeting(currentUser);
             updatePermissionsUI();
             loadCompanyData();
+            return;
           }
         }
+        sessionStorage.removeItem('fomo_username');
+        window.location.href = '/login';
       } catch (e) {
-        const stored = sessionStorage.getItem('fomo_username');
-        if (stored) {
-          currentUser = stored;
-          setGreeting(stored);
-          updatePermissionsUI();
-        }
+        sessionStorage.removeItem('fomo_username');
+        window.location.href = '/login';
       }
     }
 

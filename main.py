@@ -3,7 +3,7 @@ import logging
 import json
 import os
 import subprocess
-from typing import List, Set, Dict, Any
+from typing import List, Set, Dict, Any, Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Body, Request, Response, HTTPException, status
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse, JSONResponse
 
@@ -99,29 +99,48 @@ async def on_signal_detected(token: TokenListing, signal_info: dict):
 
 token_scanner.set_callbacks(on_token=on_new_token_detected, on_signal=on_signal_detected)
 
+# Helper to get authenticated user
+def get_auth_user(request: Request) -> Optional[str]:
+    return getattr(request.state, "user", None)
+
 # HTTP Middleware for User Session Context
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
     session_token = request.cookies.get("fomo_session")
     user = auth_manager.verify_session(session_token)
-    request.state.user = user if user else "Maciek"
+    request.state.user = user  # Strictly None if not authenticated
     return await call_next(request)
 
 # Auth Routes
 @app.get("/login", response_class=HTMLResponse)
 async def serve_login_page(request: Request):
+    user = getattr(request.state, "user", None)
+    if user:
+        return RedirectResponse(url="/", status_code=302)
     login_html = os.path.join(os.path.dirname(__file__), "web", "login.html")
     return FileResponse(login_html)
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
-    pin = (data.get("pin", "") or data.get("password", "") or data.get("username", "")).strip()
+    username = (data.get("username", "") or "").strip()
+    pin = (data.get("pin", "") or data.get("password", "")).strip()
 
-    res = auth_manager.authenticate_pin(pin) or auth_manager.authenticate(pin, pin)
+    if not username:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"success": False, "detail": "Wprowadź swój login."}
+        )
+    if not pin:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"success": False, "detail": "Wprowadź 4-cyfrowy kod PIN."}
+        )
+
+    res = auth_manager.authenticate_user_pin(username, pin)
     if not res:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"success": False, "detail": "Nieprawidłowy kod PIN. Brak dostępu."}
+            content={"success": False, "detail": "Nieprawidłowy login lub kod PIN. Brak dostępu."}
         )
 
     token, canonical_user = res
@@ -138,24 +157,44 @@ async def logout_api(request: Request):
     response.delete_cookie("fomo_session")
     return response
 
+@app.post("/api/logout-all")
+async def logout_all_api(request: Request):
+    auth_manager.logout_all()
+    response = JSONResponse(content={"success": True, "message": "Wylogowano wszystkie konta."})
+    response.delete_cookie("fomo_session")
+    return response
+
 @app.get("/api/user")
 async def get_current_user(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = getattr(request.state, "user", None)
+    if not user:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"authenticated": False, "username": None, "permissions": {}}
+        )
     perms = user_data_mgr.get_user_permissions(user)
     return {"authenticated": True, "username": user, "permissions": perms}
 
 @app.get("/api/permissions")
 async def get_user_permissions_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = getattr(request.state, "user", None)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_permissions(user)
 
 @app.get("/api/admin/permissions")
 async def get_admin_permissions_route(request: Request):
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
     return user_data_mgr.get_all_users_permissions()
 
 @app.post("/api/admin/permissions")
 async def update_admin_permissions_route(request: Request, data: Dict[str, Any] = Body(...)):
-    target_user = data.get("user", "Maciek") or "Maciek"
+    user = getattr(request.state, "user", None)
+    if not user or user.lower() != "adrian":
+        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"error": "Dostęp tylko dla administratora."})
+    target_user = data.get("user", "")
     perms_data = data.get("permissions", data)
     updated = user_data_mgr.update_user_permissions(target_user, perms_data)
     return {"success": True, "user": target_user, "permissions": updated}
@@ -208,60 +247,80 @@ async def delete_user_route(request: Request, username: str):
 # WYDATKI ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/wydatki")
 async def get_wydatki_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_wydatki(user)
 
 @app.post("/api/wydatki")
 async def add_wydatki_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     res = user_data_mgr.add_user_wydatki(user, data)
     return {"success": True, "entry": res}
 
 @app.delete("/api/wydatki/{entry_id}")
 async def delete_wydatki_route(request: Request, entry_id: str):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     success = user_data_mgr.delete_user_wydatki(user, entry_id)
     return {"success": success}
 
 # WYCENY ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/wyceny")
 async def get_wyceny_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_wyceny(user)
 
 @app.post("/api/wyceny")
 async def save_wyceny_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     res = user_data_mgr.save_user_wyceny(user, data)
     return {"success": True, "data": res}
 
 @app.delete("/api/wyceny/{entry_id}")
 async def delete_wyceny_route(request: Request, entry_id: str):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     success = user_data_mgr.delete_user_wyceny(user, entry_id)
     return {"success": success}
 
 # COMPANY DATA ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/company")
 async def get_company_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_company(user)
 
 @app.post("/api/company")
 async def save_company_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     res = user_data_mgr.save_user_company(user, data)
     return {"success": True, "company": res}
 
 # KALENDARZ ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/kalendarz")
 async def get_kalendarz_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_kalendarz(user)
 
 @app.post("/api/kalendarz")
 async def save_kalendarz_route(request: Request, data: Any = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     if isinstance(data, list):
         res = user_data_mgr.save_user_kalendarz(user, data)
         return {"success": True, "events": res}
@@ -272,55 +331,73 @@ async def save_kalendarz_route(request: Request, data: Any = Body(...)):
 
 @app.delete("/api/kalendarz/{event_id}")
 async def delete_kalendarz_route(request: Request, event_id: str):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     success = user_data_mgr.delete_user_kalendarz_event(user, event_id)
     return {"success": success}
 
 # CRM ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/crm")
 async def get_crm_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_crm(user)
 
 @app.post("/api/crm")
 async def add_crm_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     added = user_data_mgr.add_user_crm_client(user, data)
     return {"success": True, "client": added}
 
 @app.put("/api/crm/{client_id}")
 async def update_crm_route(client_id: str, request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     updated = user_data_mgr.update_user_crm_client(user, client_id, data)
     return {"success": updated is not None, "client": updated}
 
 @app.delete("/api/crm/{client_id}")
 async def delete_crm_route(client_id: str, request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     success = user_data_mgr.delete_user_crm_client(user, client_id)
     return {"success": success}
 
 # TASKS (KANBAN / TODO) ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/tasks")
 async def get_tasks_route(request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     return user_data_mgr.get_user_tasks(user)
 
 @app.post("/api/tasks")
 async def add_task_route(request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     added = user_data_mgr.add_user_task(user, data)
     return {"success": True, "task": added}
 
 @app.put("/api/tasks/{task_id}")
 async def update_task_route(task_id: str, request: Request, data: Dict[str, Any] = Body(...)):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     updated = user_data_mgr.update_user_task(user, task_id, data)
     return {"success": updated is not None, "task": updated}
 
 @app.delete("/api/tasks/{task_id}")
 async def delete_task_route(task_id: str, request: Request):
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     success = user_data_mgr.delete_user_task(user, task_id)
     return {"success": success}
 
@@ -382,7 +459,10 @@ async def clear_llm_chat_route():
 
 # Main Application Routes
 @app.get("/", response_class=HTMLResponse)
-async def serve_dashboard():
+async def serve_dashboard(request: Request):
+    user = getattr(request.state, "user", None)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
     html_path = os.path.join(os.path.dirname(__file__), "web", "index.html")
     return FileResponse(html_path)
 
@@ -451,8 +531,10 @@ USER_FOMO_CONNECTIONS: Dict[str, str] = {} # username -> profile_or_wallet
 @app.get("/api/user-positions")
 async def get_user_positions(request: Request):
     """Returns connected user fomo.family trade positions with risk of drop vs probability of growth analysis."""
-    user = getattr(request.state, "user", "Maciek")
-    profile = USER_FOMO_CONNECTIONS.get(user, "https://fomo.family/profile/maciek_trader")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
+    profile = USER_FOMO_CONNECTIONS.get(user, f"https://fomo.family/profile/{user.lower()}_trader")
     
     return {
         "connected": True,
@@ -495,7 +577,9 @@ async def get_user_positions(request: Request):
 @app.post("/api/connect-fomo")
 async def connect_fomo_account(request: Request, data: Dict[str, Any] = Body(...)):
     """Connect fomo.family profile or wallet to current session."""
-    user = getattr(request.state, "user", "Maciek")
+    user = get_auth_user(request)
+    if not user:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Brak autoryzacji"})
     input_text = data.get("input", "").strip()
     if not input_text:
         return JSONResponse(status_code=400, content={"success": False, "detail": "Wprowadź profil fomo.family lub adres portfela."})

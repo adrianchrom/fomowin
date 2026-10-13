@@ -189,56 +189,98 @@
   <div class="w-full max-w-md relative z-10 flex flex-col items-center justify-center">
 
     <!-- MEGA MINIMALIST LIQUID GLASS OTP CARD -->
-    <div id="login-card" class="w-full liquid-glass-card p-8 rounded-[2.25rem] space-y-6 transition-all duration-500 text-white">
+    <div id="login-card" class="w-full liquid-glass-card p-7 sm:p-8 rounded-[2.25rem] space-y-5 transition-all duration-500 text-white">
       
-      <!-- Top Drag Bar / Glass Accent Handle (As in Screenshot) -->
-      <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-2"></div>
+      <!-- Top Drag Bar / Glass Accent Handle -->
+      <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-1"></div>
 
       <!-- Header Title & Subtitle -->
-      <div class="text-center space-y-1.5">
+      <div class="text-center space-y-1">
         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-          Weryfikacja Kodem PIN
+          Autoryzacja Konta
         </h1>
         <p class="text-xs text-slate-400 font-medium leading-relaxed max-w-xs mx-auto">
-          Podaj Twój 4-cyfrowy unikalny kod autoryzacji.
+          Podaj Twój login oraz unikalny 4-cyfrowy kod PIN.
         </p>
       </div>
 
       <!-- Error Toast -->
       <div id="error-box" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-200 p-3 rounded-2xl text-center text-xs font-semibold backdrop-blur-md transition-all duration-300">
-        Nieprawidłowy kod PIN. Brak dostępu.
+        Nieprawidłowy login lub kod PIN. Brak dostępu.
       </div>
 
-      <!-- 4 OTP GLASS SQUARE BOXES -->
-      <div id="otp-wrapper" class="otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500">
-        <div id="otp-box-0" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white focused">
-          <span id="otp-char-0"></span>
+      <!-- USERNAME INPUT & CHIPS -->
+      <div class="space-y-2 text-left">
+        <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between px-1">
+          <span>Twój Login</span>
+          <span class="text-[10px] text-cyan-400 font-medium">Wybierz lub wpisz</span>
+        </label>
+        
+        <div class="relative flex items-center">
+          <span class="absolute left-3.5 text-cyan-400 pointer-events-none flex items-center">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </span>
+          <input 
+            id="username-input" 
+            type="text" 
+            placeholder="Wpisz login..." 
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            oninput="onUsernameChanged()"
+            class="w-full pl-10 pr-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] focus:bg-white/[0.12] border border-white/15 focus:border-cyan-400/80 rounded-2xl text-white placeholder-slate-400 text-sm font-semibold tracking-wide outline-none transition-all duration-200 shadow-inner backdrop-blur-xl focus:ring-2 focus:ring-cyan-400/30"
+          />
         </div>
-        <div id="otp-box-1" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
-          <span id="otp-char-1"></span>
+
+        <!-- Quick User Badges -->
+        <div id="user-chips-row" class="flex flex-wrap items-center gap-1.5 pt-1">
+          <button type="button" onclick="selectUser('Adrian')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Adrian</button>
+          <button type="button" onclick="selectUser('Maciek')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Maciek</button>
+          <button type="button" onclick="selectUser('Karolina')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Karolina</button>
+          <button type="button" onclick="selectUser('Patrycja')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Patrycja</button>
+          <button type="button" onclick="selectUser('Monika')" class="user-chip px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-white/[0.06] hover:bg-cyan-500/20 hover:border-cyan-400/50 border border-white/10 text-slate-300 hover:text-cyan-200 transition-all">Monika</button>
         </div>
-        <div id="otp-box-2" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
-          <span id="otp-char-2"></span>
-        </div>
-        <div id="otp-box-3" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
-          <span id="otp-char-3"></span>
+      </div>
+
+      <!-- PIN SECTION -->
+      <div class="space-y-1.5 pt-1 text-left">
+        <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between px-1">
+          <span>Kod PIN</span>
+          <span class="text-[10px] text-slate-400">4 cyfry</span>
+        </label>
+
+        <!-- 4 OTP GLASS SQUARE BOXES -->
+        <div id="otp-wrapper" class="otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500">
+          <div id="otp-box-0" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white focused">
+            <span id="otp-char-0"></span>
+          </div>
+          <div id="otp-box-1" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
+            <span id="otp-char-1"></span>
+          </div>
+          <div id="otp-box-2" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
+            <span id="otp-char-2"></span>
+          </div>
+          <div id="otp-box-3" class="otp-square w-14 h-16 sm:w-16 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white">
+            <span id="otp-char-3"></span>
+          </div>
         </div>
       </div>
 
       <!-- Glass Numpad -->
-      <div class="grid grid-cols-3 gap-3 pt-2">
-        <button type="button" onclick="appendPin('1')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">1</button>
-        <button type="button" onclick="appendPin('2')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">2</button>
-        <button type="button" onclick="appendPin('3')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">3</button>
-        <button type="button" onclick="appendPin('4')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">4</button>
-        <button type="button" onclick="appendPin('5')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">5</button>
-        <button type="button" onclick="appendPin('6')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">6</button>
-        <button type="button" onclick="appendPin('7')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">7</button>
-        <button type="button" onclick="appendPin('8')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">8</button>
-        <button type="button" onclick="appendPin('9')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">9</button>
-        <button type="button" onclick="clearPin()" class="numpad-btn rounded-2xl py-3.5 text-xs font-extrabold uppercase tracking-wider text-rose-400">C</button>
-        <button type="button" onclick="appendPin('0')" class="numpad-btn rounded-2xl py-3.5 text-xl font-bold">0</button>
-        <button type="button" onclick="backspacePin()" class="numpad-btn rounded-2xl py-3.5 text-sm font-bold flex items-center justify-center text-slate-300">
+      <div class="grid grid-cols-3 gap-2.5 pt-1">
+        <button type="button" onclick="appendPin('1')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">1</button>
+        <button type="button" onclick="appendPin('2')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">2</button>
+        <button type="button" onclick="appendPin('3')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">3</button>
+        <button type="button" onclick="appendPin('4')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">4</button>
+        <button type="button" onclick="appendPin('5')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">5</button>
+        <button type="button" onclick="appendPin('6')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">6</button>
+        <button type="button" onclick="appendPin('7')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">7</button>
+        <button type="button" onclick="appendPin('8')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">8</button>
+        <button type="button" onclick="appendPin('9')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">9</button>
+        <button type="button" onclick="clearPin()" class="numpad-btn rounded-2xl py-3 text-xs font-extrabold uppercase tracking-wider text-rose-400">C</button>
+        <button type="button" onclick="appendPin('0')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">0</button>
+        <button type="button" onclick="backspacePin()" class="numpad-btn rounded-2xl py-3 text-sm font-bold flex items-center justify-center text-slate-300">
           <i data-lucide="delete" class="w-5 h-5"></i>
         </button>
       </div>
@@ -262,6 +304,30 @@
   <script>
     let enteredPin = '';
     let isSubmitting = false;
+
+    function selectUser(name) {
+      const input = document.getElementById('username-input');
+      if (input) {
+        input.value = name;
+        onUsernameChanged();
+      }
+      clearPin();
+    }
+
+    function onUsernameChanged() {
+      const current = (document.getElementById('username-input')?.value || '').trim().toLowerCase();
+      const chips = document.querySelectorAll('.user-chip');
+      chips.forEach(chip => {
+        if (chip.innerText.trim().toLowerCase() === current) {
+          chip.classList.add('bg-cyan-500/30', 'border-cyan-400', 'text-cyan-200');
+          chip.classList.remove('bg-white/[0.06]', 'text-slate-300');
+        } else {
+          chip.classList.remove('bg-cyan-500/30', 'border-cyan-400', 'text-cyan-200');
+          chip.classList.add('bg-white/[0.06]', 'text-slate-300');
+        }
+      });
+      document.getElementById('error-box')?.classList.add('hidden');
+    }
 
     function updateOtpBoxes() {
       for (let i = 0; i < 4; i++) {
@@ -300,12 +366,12 @@
       const box0Span = document.getElementById('otp-char-0');
       
       if (wrapper) {
-        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500';
+        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500';
       }
       if (box0Span) box0Span.innerText = '';
 
       updateOtpBoxes();
-      document.getElementById('error-box').classList.add('hidden');
+      document.getElementById('error-box')?.classList.add('hidden');
     }
 
     function backspacePin() {
@@ -314,8 +380,19 @@
       updateOtpBoxes();
     }
 
-    // Keyboard support for numpad & physical keys
+    // Keyboard support for input and numpad
     document.addEventListener('keydown', (e) => {
+      const activeEl = document.activeElement;
+      const isInputActive = activeEl && activeEl.id === 'username-input';
+
+      if (isInputActive) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          activeEl.blur();
+        }
+        return;
+      }
+
       if (e.key >= '0' && e.key <= '9') {
         appendPin(e.key);
       } else if (e.key === 'Backspace') {
@@ -332,23 +409,37 @@
       const box0Span = document.getElementById('otp-char-0');
       const liquidWelcome = document.getElementById('liquid-welcome');
       const liquidName = document.getElementById('liquid-name');
+      const userInput = document.getElementById('username-input');
 
       errBox.classList.add('hidden');
+
+      const username = (userInput ? userInput.value : '').trim();
+      if (!username) {
+        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-error';
+        box0Span.innerHTML = '✕';
+        errBox.innerText = 'Wprowadź swój login przed wpisaniem PIN.';
+        errBox.classList.remove('hidden');
+        userInput?.focus();
+        setTimeout(() => {
+          clearPin();
+        }, 1000);
+        return;
+      }
 
       try {
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pin: enteredPin })
+          body: JSON.stringify({ username: username, pin: enteredPin })
         });
         const data = await res.json();
 
         if (res.ok && data.success) {
-          const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : 'Użytkownik';
+          const userCap = data.username ? (data.username.charAt(0).toUpperCase() + data.username.slice(1)) : username;
           sessionStorage.setItem('fomo_username', userCap);
 
           // 1. MOTION MERGE: Merge 4 boxes into 1 green checkmark square
-          wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500 merged merged-success';
+          wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-success';
           box0Span.innerHTML = '✓';
 
           // 2. Liquid Welcome transition
@@ -378,19 +469,18 @@
 
         } else {
           // 1. MOTION MERGE ERROR: Merge 4 boxes into 1 red cross square with shake
-          wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500 merged merged-error';
+          wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-error';
           box0Span.innerHTML = '✕';
 
-          errBox.innerText = data.detail || 'Nieprawidłowy kod PIN. Brak dostępu.';
+          errBox.innerText = data.detail || 'Nieprawidłowy login lub kod PIN. Brak dostępu.';
           errBox.classList.remove('hidden');
 
-          // Un-merge back to 4 empty boxes after 900ms
           setTimeout(() => {
             clearPin();
           }, 1000);
         }
       } catch (err) {
-        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-4 transition-all duration-500 merged merged-error';
+        wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-error';
         box0Span.innerHTML = '✕';
         errBox.innerText = 'Błąd połączenia z serwerem logowania.';
         errBox.classList.remove('hidden');

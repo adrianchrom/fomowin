@@ -131,27 +131,58 @@ class AuthManager:
 
     def get_canonical_user(self, username: str) -> str:
         u_clean = (username or "").strip()
+        if not u_clean:
+            return ""
         u_lower = u_clean.lower()
         for uname in self.users.keys():
             if uname.lower() == u_lower:
                 return uname
         if u_lower in USER_NAMES:
             return USER_NAMES[u_lower]
-        return u_clean.capitalize() if u_clean else "Maciek"
+        return u_clean.capitalize()
 
     def create_session(self, username: str) -> str:
         """Create a new session token for the given user."""
         canonical_user = self.get_canonical_user(username)
+        if not canonical_user:
+            return ""
         session_token = secrets.token_hex(24)
         self.active_sessions[session_token] = canonical_user
         self.save_sessions()
         return session_token
+
+    def authenticate_user_pin(self, username: str, pin: str) -> Optional[tuple]:
+        """Authenticate user strictly by username and matching assigned PIN."""
+        clean_user = (username or "").strip()
+        clean_pin = (pin or "").strip()
+        if not clean_user or not clean_pin:
+            return None
+
+        # Match user case-insensitively
+        matched_user = None
+        for u in self.users.keys():
+            if u.lower() == clean_user.lower():
+                matched_user = u
+                break
+
+        if not matched_user:
+            return None
+
+        expected_pin = str(self.users[matched_user]).strip()
+        if clean_pin == expected_pin:
+            token = self.create_session(matched_user)
+            return token, matched_user
+
+        return None
 
     def authenticate_pin(self, pin: str, target_user: Optional[str] = None) -> Optional[tuple]:
         """Authenticate user strictly by PIN."""
         clean_pin = (pin or "").strip()
         if not clean_pin:
             return None
+
+        if target_user:
+            return self.authenticate_user_pin(target_user, clean_pin)
 
         # Check in self.users values
         for user_name, user_pin in self.users.items():
@@ -169,9 +200,15 @@ class AuthManager:
         return None
 
     def authenticate(self, username: str, password: str) -> Optional[tuple]:
-        """Authenticate user strictly by valid PIN or valid user PIN."""
+        """Authenticate user strictly by valid username & PIN."""
         clean_pass = (password or "").strip()
         clean_user = (username or "").strip()
+
+        # If username and password provided, authenticate as user + PIN
+        if clean_user and clean_pass:
+            res = self.authenticate_user_pin(clean_user, clean_pass)
+            if res:
+                return res
 
         if clean_pass in PIN_MAP or any(str(p).strip() == clean_pass for p in self.users.values()):
             return self.authenticate_pin(clean_pass)
@@ -198,5 +235,10 @@ class AuthManager:
         if session_token and session_token in self.active_sessions:
             del self.active_sessions[session_token]
             self.save_sessions()
+
+    def logout_all(self):
+        """Revoke all active sessions immediately."""
+        self.active_sessions.clear()
+        self.save_sessions()
 
 auth_manager = AuthManager()
