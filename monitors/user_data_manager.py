@@ -27,6 +27,9 @@ DEFAULT_PERMISSIONS = {
     },
     "Patrycja": {
         "fomo": True, "wydatki": True, "wyceny": True, "stopki_email": True, "kalendarz": True, "ai_chat": True, "crm": True, "tasks": True, "password_gen": True, "currency_calc": True, "is_admin": False
+    },
+    "Monika": {
+        "fomo": False, "wydatki": True, "wyceny": False, "stopki_email": False, "kalendarz": False, "ai_chat": False, "crm": False, "tasks": False, "password_gen": False, "currency_calc": False, "is_admin": False
     }
 }
 
@@ -115,31 +118,55 @@ class UserDataManager:
         if u == "maciek": return "Maciek"
         if u == "karolina": return "Karolina"
         if u == "patrycja": return "Patrycja"
-        return "Maciek"
+        if u == "monika": return "Monika"
+        if u == "tomek": return "Tomek"
+        try:
+            from monitors.auth_manager import auth_manager
+            for k in auth_manager.users.keys():
+                if k.lower() == u:
+                    return k
+        except Exception:
+            pass
+        return (username or "Użytkownik").strip().capitalize()
 
     # PERMISSIONS MANAGEMENT
     def get_user_permissions(self, username: str) -> dict:
         canonical = self.resolve_canonical(username)
         if canonical not in self.permissions:
-            self.permissions[canonical] = {
-                "fomo": True,
-                "wydatki": True,
-                "wyceny": True,
-                "stopki_email": True,
-                "kalendarz": True,
-                "ai_chat": True,
-                "crm": True,
-                "tasks": True,
-                "password_gen": True,
-                "currency_calc": True,
-                "is_admin": False
-            }
+            if canonical == "Monika":
+                self.permissions[canonical] = {
+                    "fomo": False,
+                    "wydatki": True,
+                    "wyceny": False,
+                    "stopki_email": False,
+                    "kalendarz": False,
+                    "ai_chat": False,
+                    "crm": False,
+                    "tasks": False,
+                    "password_gen": False,
+                    "currency_calc": False,
+                    "is_admin": False
+                }
+            else:
+                self.permissions[canonical] = {
+                    "fomo": True,
+                    "wydatki": True,
+                    "wyceny": True,
+                    "stopki_email": True,
+                    "kalendarz": True,
+                    "ai_chat": True,
+                    "crm": True,
+                    "tasks": True,
+                    "password_gen": True,
+                    "currency_calc": True,
+                    "is_admin": False
+                }
             self._save_json(PERMISSIONS_FILE, self.permissions)
         
         # Ensure keys exist
-        for key in ["kalendarz", "ai_chat", "crm", "tasks", "password_gen", "currency_calc"]:
+        for key in ["fomo", "wydatki", "wyceny", "stopki_email", "kalendarz", "ai_chat", "crm", "tasks", "password_gen", "currency_calc"]:
             if key not in self.permissions[canonical]:
-                self.permissions[canonical][key] = True
+                self.permissions[canonical][key] = (canonical != "Monika" or key == "wydatki")
                 self._save_json(PERMISSIONS_FILE, self.permissions)
 
         # Adrian always retains super admin access
@@ -165,13 +192,12 @@ class UserDataManager:
             return self.get_user_permissions("Adrian")
 
         if target not in self.permissions:
-            self.permissions[target] = {}
+            self.permissions[target] = self.get_user_permissions(target).copy()
         
-        for k in ["wydatki", "wyceny", "stopki_email", "kalendarz", "ai_chat", "crm", "tasks", "password_gen", "currency_calc"]:
+        for k in ["fomo", "wydatki", "wyceny", "stopki_email", "kalendarz", "ai_chat", "crm", "tasks", "password_gen", "currency_calc"]:
             if k in new_perms:
                 self.permissions[target][k] = bool(new_perms[k])
         
-        self.permissions[target]["fomo"] = True
         self.permissions[target]["is_admin"] = False
         self._save_json(PERMISSIONS_FILE, self.permissions)
         return self.permissions[target]
@@ -179,11 +205,33 @@ class UserDataManager:
     def update_maciek_permissions(self, new_perms: dict) -> dict:
         return self.update_user_permissions("Maciek", new_perms)
 
+    def get_all_users_permissions(self) -> dict:
+        result = {}
+        try:
+            from monitors.auth_manager import auth_manager
+            all_users = list(auth_manager.users.keys())
+        except Exception:
+            all_users = ["Maciek", "Karolina", "Patrycja", "Monika"]
+        for u in all_users:
+            if u.lower() != "adrian":
+                result[u.lower()] = self.get_user_permissions(u)
+        return result
+
+    def delete_user_permissions(self, username: str):
+        target = self.resolve_canonical(username)
+        if target in self.permissions and target.lower() != "adrian":
+            del self.permissions[target]
+            self._save_json(PERMISSIONS_FILE, self.permissions)
+
     def resolve_wydatki_user(self, username: str) -> str:
         u = (username or "").strip().lower()
         if u in ["adrian", "patrycja"]:
             return "PAIR_ADRIAN_PATRYCJA"
-        return "PAIR_MACIEK_KAROLINA"
+        if u in ["monika", "tomek"]:
+            return "PAIR_MONIKA_TOMEK"
+        if u in ["maciek", "karolina"]:
+            return "PAIR_MACIEK_KAROLINA"
+        return f"PAIR_{self.resolve_canonical(username).upper()}"
 
     # WYDATKI DATA (SHARED PAIRS: ADRIAN+PATRYCJA, MACIEK+KAROLINA)
     def get_user_wydatki(self, username: str) -> dict:

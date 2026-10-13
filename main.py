@@ -151,11 +151,7 @@ async def get_user_permissions_route(request: Request):
 
 @app.get("/api/admin/permissions")
 async def get_admin_permissions_route(request: Request):
-    return {
-        "maciek": user_data_mgr.get_user_permissions("Maciek"),
-        "karolina": user_data_mgr.get_user_permissions("Karolina"),
-        "patrycja": user_data_mgr.get_user_permissions("Patrycja")
-    }
+    return user_data_mgr.get_all_users_permissions()
 
 @app.post("/api/admin/permissions")
 async def update_admin_permissions_route(request: Request, data: Dict[str, Any] = Body(...)):
@@ -163,6 +159,51 @@ async def update_admin_permissions_route(request: Request, data: Dict[str, Any] 
     perms_data = data.get("permissions", data)
     updated = user_data_mgr.update_user_permissions(target_user, perms_data)
     return {"success": True, "user": target_user, "permissions": updated}
+
+@app.get("/api/admin/users")
+async def get_admin_users_route(request: Request):
+    user_list = []
+    for u, pin in auth_manager.users.items():
+        perms = user_data_mgr.get_user_permissions(u)
+        user_list.append({
+            "username": u,
+            "pin": pin,
+            "is_admin": u.lower() == "adrian",
+            "permissions": perms
+        })
+    return {"success": True, "users": user_list}
+
+@app.post("/api/admin/users")
+async def create_or_update_user_route(request: Request, data: Dict[str, Any] = Body(...)):
+    username = (data.get("username", "")).strip()
+    pin = (data.get("pin", "")).strip()
+    initial_perms = data.get("permissions", {})
+    if not username:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Nazwa konta jest wymagana."})
+    if not pin or len(pin) < 4:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "PIN musi mieć co najmniej 4 cyfry."})
+    
+    canonical = auth_manager.add_or_update_user(username, pin)
+    if initial_perms:
+        user_data_mgr.update_user_permissions(canonical, initial_perms)
+    else:
+        user_data_mgr.get_user_permissions(canonical)
+    return {
+        "success": True, 
+        "username": canonical, 
+        "pin": pin, 
+        "permissions": user_data_mgr.get_user_permissions(canonical)
+    }
+
+@app.delete("/api/admin/users/{username}")
+async def delete_user_route(request: Request, username: str):
+    if username.lower() == "adrian":
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Nie można usunąć głównego konta administratora."})
+    deleted = auth_manager.delete_user(username)
+    if deleted:
+        user_data_mgr.delete_user_permissions(username)
+        return {"success": True}
+    return JSONResponse(status_code=404, content={"success": False, "detail": "Użytkownik nie został znaleziony."})
 
 # WYDATKI ENDPOINTS (STRICT PER-USER ISOLATION)
 @app.get("/api/wydatki")

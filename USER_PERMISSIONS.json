@@ -24,5 +24,57 @@
     "tasks": true,
     "password_gen": true,
     "currency_calc": true
+  },
+  "Karolina": {
+    "fomo": true,
+    "wydatki": true,
+    "wyceny": true,
+    "stopki_email": true,
+    "kalendarz": true,
+    "is_admin": false,
+    "ai_chat": true,
+    "crm": true,
+    "tasks": true,
+    "password_gen": true,
+    "currency_calc": true
+  },
+  "Patrycja": {
+    "fomo": true,
+    "wydatki": true,
+    "wyceny": true,
+    "stopki_email": true,
+    "kalendarz": true,
+    "is_admin": false,
+    "ai_chat": true,
+    "crm": true,
+    "tasks": true,
+    "password_gen": true,
+    "currency_calc": true
+  },
+  "Monika": {
+    "fomo": false,
+    "wydatki": true,
+    "wyceny": false,
+    "stopki_email": false,
+    "kalendarz": false,
+    "is_admin": false,
+    "ai_chat": false,
+    "crm": false,
+    "tasks": false,
+    "password_gen": false,
+    "currency_calc": false
+  },
+  "TestUser": {
+    "fomo": false,
+    "wydatki": true,
+    "wyceny": true,
+    "stopki_email": true,
+    "kalendarz": true,
+    "ai_chat": true,
+    "crm": true,
+    "tasks": true,
+    "password_gen": true,
+    "currency_calc": true,
+    "is_admin": false
   }
 }
