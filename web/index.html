@@ -20,14 +20,71 @@
     :root {
       --font-main: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
     }
+    html {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
       background-color: #030712;
       color: #f8fafc;
       font-family: var(--font-main);
-      overflow-x: hidden;
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
       margin: 0;
       padding: 0;
       position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Hide scrollbars for pill tabs while allowing smooth touch scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none !important;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Mobile specific responsive adjustments */
+    @media (max-width: 640px) {
+      .clean-card, .glass-card {
+        padding: 1rem !important;
+        border-radius: 1.25rem !important;
+      }
+      /* Prevent iOS Safari 100% auto-zoom when tapping inputs */
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+      .a4-paper {
+        padding: 1rem !important;
+        font-size: 11px !important;
+      }
+      .modal-backdrop {
+        padding: 0.5rem !important;
+      }
+      .pdf-modal-container {
+        border-radius: 1.25rem !important;
+        max-height: 94vh !important;
+      }
+      .liquid-orb {
+        filter: blur(70px) !important;
+        opacity: 0.3 !important;
+      }
+      .orb-cyan {
+        width: 320px !important;
+        height: 320px !important;
+      }
+      .orb-violet {
+        width: 350px !important;
+        height: 350px !important;
+      }
+      .orb-emerald {
+        width: 260px !important;
+        height: 260px !important;
+      }
     }
 
     /* Ambient Morphing Liquid Glass Orbs */
@@ -190,7 +247,7 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(0, 242, 254, 0.5); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#030712] text-slate-100 pb-12 relative selection:bg-cyan-500/30">
+<body class="min-h-screen flex flex-col bg-[#030712] text-slate-100 pb-24 sm:pb-12 relative selection:bg-cyan-500/30">
 
   <!-- Ambient Morphing Liquid Orbs -->
   <div class="liquid-orb orb-cyan"></div>
@@ -199,45 +256,46 @@
 
   <!-- TOP EXECUTIVE HEADER BAR -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-2.5 sm:px-6 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-4">
       
       <!-- Left: Burger Menu Button & App Title -->
-      <div class="flex items-center gap-3">
-        <button onclick="toggleBurgerDrawer()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-2 rounded-xl flex items-center gap-2 border border-slate-200 font-semibold text-xs shadow-sm">
+      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        <button onclick="toggleBurgerDrawer()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-800 p-2 sm:px-3 sm:py-2 rounded-xl flex items-center gap-1.5 border border-slate-200 font-semibold text-xs shadow-sm">
           <i data-lucide="menu" class="w-4 h-4 text-blue-600"></i>
-          <span>Menu</span>
+          <span class="hidden sm:inline">Menu</span>
         </button>
 
-        <div class="h-5 w-px bg-slate-200 hidden sm:block"></div>
+        <div class="h-4 sm:h-5 w-px bg-slate-200 hidden xs:block sm:block"></div>
 
         <!-- Current Module Breadcrumb Title -->
-        <div class="flex items-center gap-2">
-          <span id="current-app-badge" class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-            <span>🏠</span> <span>Dashboard</span>
+        <div class="flex items-center gap-1 sm:gap-1.5">
+          <span id="current-app-badge" class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-1 truncate max-w-[100px] sm:max-w-none">
+            <span>🏠</span> <span class="truncate">Dashboard</span>
           </span>
         </div>
       </div>
 
       <!-- Right: User Greeting, Theme Toggle & Actions -->
-      <div class="flex items-center gap-1.5 sm:gap-2.5 text-xs">
+      <div class="flex items-center gap-1 sm:gap-2.5 text-xs shrink-0">
         
         <!-- Theme Toggle Button (Jasny / Ciemny) -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn-anim flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" title="Zmień motyw" class="btn-anim flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 font-medium">
           <i id="theme-icon" data-lucide="moon" class="w-3.5 h-3.5 text-indigo-500"></i>
-          <span id="theme-status" class="hidden sm:inline">Tryb: Ciemny</span>
+          <span id="theme-status" class="hidden md:inline">Tryb: Ciemny</span>
         </button>
 
-        <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-800 px-2.5 sm:px-3 py-1.5 rounded-xl font-medium">
-          <i data-lucide="user-check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
-          <span id="header-greeting" class="font-bold truncate max-w-[120px] sm:max-w-none">👋 HEJ...</span>
+        <!-- User Greeting Chip -->
+        <div class="flex items-center gap-1 bg-blue-50/80 border border-blue-100 text-blue-800 px-2 sm:px-3 py-1.5 rounded-xl font-medium">
+          <i data-lucide="user" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+          <span id="header-greeting" class="font-bold truncate max-w-[70px] sm:max-w-[130px] md:max-w-none text-xs">HEJ...</span>
         </div>
 
-        <button id="sound-btn" onclick="toggleSound()" class="btn-anim hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
+        <button id="sound-btn" onclick="toggleSound()" title="Audio" class="btn-anim hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 font-medium">
           <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-500"></i>
           <span id="sound-status">Audio: ON</span>
         </button>
 
-        <button onclick="handleLogout()" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 sm:px-3 py-1.5 rounded-xl font-semibold flex items-center gap-1">
+        <button onclick="handleLogout()" title="Wyloguj" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 p-2 sm:px-3 sm:py-1.5 rounded-xl font-semibold flex items-center gap-1">
           <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline">Wyloguj</span>
         </button>
@@ -388,17 +446,17 @@
 
 
   <!-- MAIN WORKSPACE CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 flex-1 space-y-6">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 mt-3 sm:mt-6 flex-1 space-y-4 sm:space-y-6">
 
 
     <!-- ==================== MAIN DASHBOARD: TILES SELECTION GRID ==================== -->
-    <div id="app-container-dashboard" class="space-y-6 animate-emerge">
+    <div id="app-container-dashboard" class="space-y-4 sm:space-y-6 animate-emerge">
       
       <!-- Welcome Header Card -->
-      <div class="clean-card p-6 sm:p-8 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 id="greeting-title" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">HEJ...</h1>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Wybierz moduł z poniższych kafelków lub użyj menu bocznego.</p>
+          <h1 id="greeting-title" class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">HEJ...</h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5 sm:mt-1">Wybierz moduł z poniższych kafelków lub użyj menu bocznego.</p>
         </div>
         <div class="flex items-center gap-2 text-xs font-mono bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600">
           <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-blue"></span>
@@ -407,7 +465,7 @@
       </div>
 
       <!-- Tiles Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
         
         <!-- Tile 1: FOMO Engine -->
         <div onclick="switchApp('fomo')" class="clean-card clean-card-hover p-6 rounded-3xl cursor-pointer flex flex-col justify-between space-y-4">
@@ -638,38 +696,38 @@
     <div id="app-container-fomo" class="hidden space-y-6">
       
       <!-- Sub-Tabs Navigation for FOMO -->
-      <div class="clean-card p-2.5 rounded-2xl flex flex-wrap justify-between items-center gap-3">
-        <div class="flex flex-wrap items-center gap-1.5">
-          <button id="tab-live-btn" onclick="switchTab('live')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm">
+      <div class="clean-card p-2 sm:p-2.5 rounded-2xl flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5 sm:gap-3">
+        <div class="w-full sm:w-auto overflow-x-auto flex items-center gap-1.5 no-scrollbar py-0.5">
+          <button id="tab-live-btn" onclick="switchTab('live')" class="btn-anim shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm whitespace-nowrap">
             <i data-lucide="activity" class="w-4 h-4"></i>
-            <span>Sygnały Live (0-30m)</span>
+            <span>Sygnały Live</span>
           </button>
           
-          <button id="tab-insiders-btn" onclick="switchTab('insiders')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100">
+          <button id="tab-insiders-btn" onclick="switchTab('insiders')" class="btn-anim shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 whitespace-nowrap">
             <i data-lucide="users" class="w-4 h-4 text-purple-600"></i>
             <span>Feed Insiderów</span>
           </button>
 
-          <button id="tab-scanner-btn" onclick="switchTab('scanner')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100">
+          <button id="tab-scanner-btn" onclick="switchTab('scanner')" class="btn-anim shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 whitespace-nowrap">
             <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i>
-            <span>Skaner CA / Linku</span>
+            <span>Skaner CA</span>
           </button>
 
-          <button id="tab-alerts-btn" onclick="switchTab('alerts')" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100">
+          <button id="tab-alerts-btn" onclick="switchTab('alerts')" class="btn-anim shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 whitespace-nowrap">
             <i data-lucide="bell" class="w-4 h-4 text-cyan-600"></i>
-            <span>Alerty & Powiadomienia</span>
+            <span>Alerty</span>
           </button>
         </div>
 
         <!-- ENGINE ON / OFF TOGGLE & STATUS BADGE -->
-        <div class="flex items-center gap-2.5">
-          <span id="fomo-engine-status-badge" class="px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+          <span id="fomo-engine-status-badge" class="px-2.5 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             AKTYWNY 🟢
           </span>
-          <button id="btn-toggle-fomo" onclick="handleToggleFomoEngine()" class="btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md">
+          <button id="btn-toggle-fomo" onclick="handleToggleFomoEngine()" class="btn-anim flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition text-white bg-rose-600 hover:bg-rose-700 shadow-md">
             <i data-lucide="power" class="w-4 h-4"></i>
-            <span>Wyłącz Silnik</span>
+            <span>Wyłącz</span>
           </button>
         </div>
       </div>
@@ -778,77 +836,77 @@
     <div id="app-container-wydatki" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+          <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
             <i data-lucide="wallet" class="w-5 h-5"></i>
           </div>
           <div>
-            <h2 class="text-xl font-bold text-slate-900">💰 Budżet, Wydatki & Zarobki</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">💰 Budżet, Wydatki & Zarobki</h2>
             <p class="text-xs text-slate-500 font-medium">Śledzenie dochodów, wydatków remontowych i zysku netto</p>
           </div>
         </div>
 
         <!-- Sub-Tabs Navigation for Wydatki -->
-        <nav class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
-          <button onclick="switchWydatkiTab('wydatki')" id="wydatki-subtab-wydatki" class="btn-anim px-3.5 py-2 rounded-xl transition bg-white text-blue-600 shadow-sm">
+        <nav class="w-full sm:w-auto overflow-x-auto flex items-center gap-1 bg-slate-100 p-1 sm:p-1.5 rounded-2xl text-xs font-bold no-scrollbar shrink-0">
+          <button onclick="switchWydatkiTab('wydatki')" id="wydatki-subtab-wydatki" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition bg-white text-blue-600 shadow-sm">
             <i data-lucide="receipt" class="w-3.5 h-3.5 inline mr-1"></i> Wydatki
           </button>
-          <button onclick="switchWydatkiTab('zarobki')" id="wydatki-subtab-zarobki" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+          <button onclick="switchWydatkiTab('zarobki')" id="wydatki-subtab-zarobki" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
             <i data-lucide="wallet" class="w-3.5 h-3.5 inline mr-1"></i> Zarobki & Zlecenia
           </button>
-          <button onclick="switchWydatkiTab('wykresy')" id="wydatki-subtab-wykresy" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+          <button onclick="switchWydatkiTab('wykresy')" id="wydatki-subtab-wykresy" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
             <i data-lucide="line-chart" class="w-3.5 h-3.5 inline mr-1"></i> Wykresy
           </button>
-          <button onclick="switchWydatkiTab('podsumowanie')" id="wydatki-subtab-podsumowanie" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
-            <i data-lucide="scale" class="w-3.5 h-3.5 inline mr-1"></i> Podsumowanie Budżetu
+          <button onclick="switchWydatkiTab('podsumowanie')" id="wydatki-subtab-podsumowanie" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="scale" class="w-3.5 h-3.5 inline mr-1"></i> Podsumowanie
           </button>
         </nav>
       </div>
 
       <!-- TOP METRICS BANNER (4 CARDS) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold border border-blue-100">
-            <i data-lucide="user" class="w-6 h-6"></i>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-base sm:text-xl font-bold border border-blue-100 shrink-0">
+            <i data-lucide="user" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
           </div>
-          <div>
-            <p id="topAdrianLabel" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Adriana</p>
-            <p id="topAdrianIncome" class="text-xl font-extrabold text-slate-900">0 PLN</p>
-            <span id="topAdrianExtra" class="text-xs text-blue-600 font-medium">+0 PLN zleceń</span>
-          </div>
-        </div>
-
-        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center text-xl font-bold border border-pink-100">
-            <i data-lucide="user" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <p id="topPatrycjaLabel" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dochód Patrycji</p>
-            <p id="topPatrycjaIncome" class="text-xl font-extrabold text-slate-900">0 PLN</p>
-            <span id="topPatrycjaExtra" class="text-xs text-pink-600 font-medium">+0 PLN zleceń</span>
+          <div class="min-w-0">
+            <p id="topAdrianLabel" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Dochód Adriana</p>
+            <p id="topAdrianIncome" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topAdrianExtra" class="text-[10px] sm:text-xs text-blue-600 font-medium truncate block">+0 PLN zleceń</span>
           </div>
         </div>
 
-        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold border border-amber-100">
-            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center text-base sm:text-xl font-bold border border-pink-100 shrink-0">
+            <i data-lucide="user" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
           </div>
-          <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Łączne Wydatki</p>
-            <p id="topTotalExpenses" class="text-xl font-extrabold text-slate-900">0 PLN</p>
-            <span id="topExpensesCount" class="text-xs text-slate-500">0 pozycji</span>
+          <div class="min-w-0">
+            <p id="topPatrycjaLabel" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Dochód Patrycji</p>
+            <p id="topPatrycjaIncome" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topPatrycjaExtra" class="text-[10px] sm:text-xs text-pink-600 font-medium truncate block">+0 PLN zleceń</span>
           </div>
         </div>
 
-        <div class="clean-card p-5 rounded-2xl flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold border border-emerald-100">
-            <i data-lucide="piggy-bank" class="w-6 h-6"></i>
+        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-base sm:text-xl font-bold border border-amber-100 shrink-0">
+            <i data-lucide="shopping-cart" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
           </div>
-          <div>
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pozostały Budżet</p>
-            <p id="topRemainingBudget" class="text-xl font-extrabold text-slate-900">0 PLN</p>
-            <span id="topBudgetPercent" class="text-xs font-semibold text-emerald-600">100% zysk</span>
+          <div class="min-w-0">
+            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Łączne Wydatki</p>
+            <p id="topTotalExpenses" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topExpensesCount" class="text-[10px] sm:text-xs text-slate-500 truncate block">0 pozycji</span>
+          </div>
+        </div>
+
+        <div class="clean-card p-3 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-4 overflow-hidden">
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base sm:text-xl font-bold border border-emerald-100 shrink-0">
+            <i data-lucide="piggy-bank" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Pozostały Budżet</p>
+            <p id="topRemainingBudget" class="text-sm sm:text-xl font-extrabold text-slate-900 truncate">0 PLN</p>
+            <span id="topBudgetPercent" class="text-[10px] sm:text-xs font-semibold text-emerald-600 truncate block">100% zysk</span>
           </div>
         </div>
       </div>
@@ -912,20 +970,20 @@
 
           <!-- Tabela i Filtry Wydatków -->
           <div class="lg:col-span-2 space-y-4">
-            <div class="clean-card p-6 rounded-3xl space-y-4">
-              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+            <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-slate-100 pb-3">
                 <div>
                   <h3 class="text-sm font-bold text-slate-900">Rejestr Wydatków</h3>
                   <p class="text-xs text-slate-500">Przeglądaj, filtruj i zarządzaj dokonanymi zakupami.</p>
                 </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto text-xs">
-                  <select id="filterPerson" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto text-xs">
+                  <select id="filterPerson" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full sm:w-auto">
                     <option value="ALL">Wszyscy</option>
                     <option value="Adrian" id="opt-filter-p1">Tylko Adrian</option>
                     <option value="Patrycja" id="opt-filter-p2">Tylko Patrycja</option>
                     <option value="Wspólne">Tylko Wspólne</option>
                   </select>
-                  <select id="filterCategory" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium">
+                  <select id="filterCategory" onchange="renderExpensesUI()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full sm:w-auto">
                     <option value="ALL">Wszystkie kategorie</option>
                     <option value="Kafle & Płytki">Kafle & Płytki</option>
                     <option value="Materiały Budowlane">Materiały Budowlane</option>
@@ -943,7 +1001,7 @@
               <input type="text" id="searchExpense" onkeyup="renderExpensesUI()" placeholder="Szukaj np. kafle, farby, fachowiec..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-900">
 
               <!-- Tabela -->
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
                 <table class="w-full text-left text-xs">
                   <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-[11px] border-b border-slate-200">
                     <tr>
@@ -1219,30 +1277,30 @@
     <div id="app-container-wyceny" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header with 4 Sub-Tabs Navigation -->
-      <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+          <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
             <i data-lucide="file-text" class="w-5 h-5"></i>
           </div>
           <div>
-            <h2 class="text-xl font-bold text-slate-900">🏷️ Wyceny, Magazyn & Finanse</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">🏷️ Wyceny, Magazyn & Finanse</h2>
             <p class="text-xs text-slate-500 font-medium">Kosztorysy PDF, gospodarka magazynowa i ewidencja zleceń</p>
           </div>
         </div>
 
         <!-- Sub-Tabs Navigation for POI Wyceny -->
-        <nav class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
-          <button onclick="switchWycenySubtab('wyceny')" id="wyceny-subtab-wyceny" class="btn-anim px-3.5 py-2 rounded-xl transition bg-white text-purple-600 shadow-sm">
+        <nav class="w-full sm:w-auto overflow-x-auto flex items-center gap-1 bg-slate-100 p-1 sm:p-1.5 rounded-2xl text-xs font-bold no-scrollbar shrink-0">
+          <button onclick="switchWycenySubtab('wyceny')" id="wyceny-subtab-wyceny" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition bg-white text-purple-600 shadow-sm">
             <i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1"></i> Wyceny (PDF)
           </button>
-          <button onclick="switchWycenySubtab('magazyn')" id="wyceny-subtab-magazyn" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+          <button onclick="switchWycenySubtab('magazyn')" id="wyceny-subtab-magazyn" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
             <i data-lucide="package" class="w-3.5 h-3.5 inline mr-1"></i> Magazyn
           </button>
-          <button onclick="switchWycenySubtab('finanse')" id="wyceny-subtab-finanse" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
-            <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 inline mr-1"></i> Finanse & Zlecenia
+          <button onclick="switchWycenySubtab('finanse')" id="wyceny-subtab-finanse" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 inline mr-1"></i> Finanse
           </button>
-          <button onclick="switchWycenySubtab('ustawienia')" id="wyceny-subtab-ustawienia" class="btn-anim px-3.5 py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
-            <i data-lucide="settings" class="w-3.5 h-3.5 inline mr-1"></i> Kopia & Ustawienia
+          <button onclick="switchWycenySubtab('ustawienia')" id="wyceny-subtab-ustawienia" class="btn-anim shrink-0 whitespace-nowrap px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl transition text-slate-600 hover:text-slate-900">
+            <i data-lucide="settings" class="w-3.5 h-3.5 inline mr-1"></i> Ustawienia
           </button>
         </nav>
       </div>
@@ -1672,7 +1730,7 @@
     <div id="app-container-stopki_email" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="mail" class="w-6 h-6 text-cyan-600"></i>
@@ -1834,7 +1892,7 @@
             <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
               <i data-lucide="eye" class="w-4 h-4 text-emerald-600"></i> Podgląd Wizualny Podpisu E-mail
             </h3>
-            <div id="email-sig-preview-box" class="p-5 bg-white border border-slate-200 rounded-2xl shadow-inner min-h-[160px] flex items-center">
+            <div id="email-sig-preview-box" class="p-3 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-inner min-h-[160px] flex items-center overflow-x-auto">
               <!-- Live HTML rendered here -->
             </div>
           </div>
@@ -1866,13 +1924,13 @@
     <div id="app-container-kalendarz" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+          <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
             <i data-lucide="calendar" class="w-5 h-5"></i>
           </div>
           <div>
-            <h2 class="text-xl font-bold text-slate-900">📅 Kalendarz & Terminarz Przypomnień</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">📅 Kalendarz & Terminarz Przypomnień</h2>
             <p class="text-xs text-slate-500 font-medium">Planowanie zdarzeń na wybrane dni, notatki, rangi wagi oraz przypomnienia</p>
           </div>
         </div>
@@ -1885,7 +1943,7 @@
       </div>
 
       <!-- Metrics Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
         <div class="clean-card p-5 rounded-3xl border border-slate-200 flex items-center justify-between">
           <div>
             <p class="text-[11px] uppercase font-bold text-slate-400">Wszystkie Wydarzenia</p>
@@ -1980,16 +2038,16 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left: Month Calendar Grid (7 cols) -->
-        <div class="lg:col-span-7 clean-card p-6 rounded-3xl space-y-4">
+        <div class="lg:col-span-7 clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4">
           
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2">
-              <button onclick="changeCalMonth(-1)" class="btn-anim px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-xs">◀ Poprzedni</button>
-              <h3 id="cal-month-title" class="text-sm font-black text-slate-900 text-center min-w-[140px]">Wrzesień 2026</h3>
-              <button onclick="changeCalMonth(1)" class="btn-anim px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-xs">Następny ▶</button>
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+            <div class="flex items-center gap-1 sm:gap-2">
+              <button onclick="changeCalMonth(-1)" class="btn-anim p-1.5 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-xs"><span class="sm:hidden">◀</span><span class="hidden sm:inline">◀ Poprzedni</span></button>
+              <h3 id="cal-month-title" class="text-xs sm:text-sm font-black text-slate-900 text-center min-w-[105px] sm:min-w-[140px]">Wrzesień 2026</h3>
+              <button onclick="changeCalMonth(1)" class="btn-anim p-1.5 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-bold text-xs"><span class="sm:hidden">▶</span><span class="hidden sm:inline">Następny ▶</span></button>
             </div>
-            <button onclick="resetCalToToday()" class="btn-anim px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-bold">
-              Idź do Dziś
+            <button onclick="resetCalToToday()" class="btn-anim px-2.5 sm:px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-bold shrink-0">
+              <span class="sm:hidden">Dziś</span><span class="hidden sm:inline">Idź do Dziś</span>
             </button>
           </div>
 
@@ -2042,45 +2100,45 @@
     <div id="app-container-ai_chat" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-tr from-rose-600 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+          <div class="w-10 h-10 bg-gradient-to-tr from-rose-600 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
             <i data-lucide="bot" class="w-5 h-5"></i>
           </div>
           <div>
-            <h2 class="text-xl font-bold text-slate-900">🤖 Asystent AI & Generator Tekstu</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">🤖 Asystent AI & Generator Tekstu</h2>
             <p class="text-xs text-slate-500 font-medium">Model tekstowy Open-Source (Qwen2.5 / Llama 3.2) — odpowiedzi w języku polskim</p>
           </div>
         </div>
 
         <div class="flex items-center gap-2 text-xs">
-          <a href="https://huggingface.co/Qwen/Qwen2.5-7B-Instruct" target="_blank" class="px-3 py-1.5 rounded-xl font-mono font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 flex items-center gap-1.5 shadow-sm transition">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> REPO: Qwen2.5-7B (HuggingFace) ↗
+          <a href="https://huggingface.co/Qwen/Qwen2.5-7B-Instruct" target="_blank" class="px-2.5 sm:px-3 py-1.5 rounded-xl font-mono font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 flex items-center gap-1.5 shadow-sm transition text-[11px] sm:text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Qwen2.5-7B ↗
           </a>
-          <button onclick="handleClearAiChat()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl font-bold border border-slate-200 flex items-center gap-1.5">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Wyczyść Czat
+          <button onclick="handleClearAiChat()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 sm:px-3 py-1.5 rounded-xl font-bold border border-slate-200 flex items-center gap-1.5 text-xs">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> <span class="hidden sm:inline">Wyczyść</span>
           </button>
         </div>
       </div>
 
       <!-- Quick Action Prompts -->
-      <div class="flex flex-wrap gap-2 text-xs font-semibold">
-        <button onclick="fillAiPrompt('Napisz profesjonalny e-mail do klienta z informacją o załączonej wycenie A4')" class="btn-anim bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
+      <div class="w-full overflow-x-auto flex items-center gap-2 text-xs font-semibold no-scrollbar py-1">
+        <button onclick="fillAiPrompt('Napisz profesjonalny e-mail do klienta z informacją o załączonej wycenie A4')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
           📄 "Napisz e-mail z ofertą wyceny"
         </button>
-        <button onclick="fillAiPrompt('Jakie są podstawowe zasady weryfikacji ryzyka kontraktu tokena krypto?')" class="btn-anim bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
+        <button onclick="fillAiPrompt('Jakie są podstawowe zasady weryfikacji ryzyka kontraktu tokena krypto?')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
           ⚡ "Sprawdź ryzyko kontraktu krypto"
         </button>
-        <button onclick="fillAiPrompt('Doradź jak zoptymalizować budżet i wydatki remontowe w tym miesiącu')" class="btn-anim bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
+        <button onclick="fillAiPrompt('Doradź jak zoptymalizować budżet i wydatki remontowe w tym miesiącu')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
           💰 "Doradź w zarządzaniu budżetem"
         </button>
-        <button onclick="fillAiPrompt('Jak ustawić przypomnienie i priorytet w Kalendarzu?')" class="btn-anim bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
+        <button onclick="fillAiPrompt('Jak ustawić przypomnienie i priorytet w Kalendarzu?')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
           📅 "Planowanie zadań w Kalendarzu"
         </button>
       </div>
 
       <!-- Chat History Box -->
-      <div class="clean-card p-6 rounded-3xl space-y-4 min-h-[420px] flex flex-col justify-between">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 min-h-[420px] flex flex-col justify-between">
         <div id="ai-chat-messages" class="space-y-4 overflow-y-auto pr-2 max-h-[480px]">
           <!-- Chat messages rendered by JS -->
           <div class="flex items-start gap-3">
@@ -2108,10 +2166,10 @@
     <div id="app-container-admin" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-purple-200 bg-purple-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-purple-200 bg-purple-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h2 class="text-xl font-bold text-purple-950 flex items-center gap-2">
-            <i data-lucide="shield-check" class="w-6 h-6 text-purple-600"></i>
+          <h2 class="text-lg sm:text-xl font-bold text-purple-950 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600"></i>
             ⚙️ PANEL ADMINISTRATORA (SUPER ADMIN)
           </h2>
           <p class="text-xs text-slate-600 mt-1">Zarządzanie uprawnieniami dostępu dla kont użytkowników</p>
@@ -2119,7 +2177,7 @@
       </div>
 
       <!-- CREATE NEW USER & MANAGE USERS CARD -->
-      <div class="clean-card p-6 rounded-3xl space-y-5">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="user-plus" class="w-4 h-4 text-purple-600"></i> Tworzenie Nowego Konta Użytkownika
@@ -2217,7 +2275,7 @@
         <!-- USERS TABLE -->
         <div class="pt-4 border-t border-slate-100">
           <h4 class="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider">Lista Kont w Systemie (Kody PIN, Osoby & Dostęp)</h4>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
             <table class="w-full text-xs text-left">
               <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                 <tr>
@@ -2238,13 +2296,13 @@
       </div>
 
       <!-- Admin Permissions Box -->
-      <div class="clean-card p-6 rounded-3xl space-y-5">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-3">
           <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="lock" class="w-4 h-4 text-purple-600"></i> Uprawnienia Modułów
           </h3>
           <!-- Dynamic User Selection Tabs -->
-          <div id="admin-user-tabs" class="flex flex-wrap items-center gap-1.5">
+          <div id="admin-user-tabs" class="w-full sm:w-auto overflow-x-auto flex items-center gap-1.5 no-scrollbar py-1 shrink-0">
             <!-- Dynamically populated buttons -->
           </div>
         </div>
@@ -2410,59 +2468,59 @@
     <div id="app-container-crm" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-indigo-200 bg-indigo-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-200 bg-indigo-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h2 class="text-xl font-bold text-indigo-950 flex items-center gap-2">
-            <i data-lucide="users" class="w-6 h-6 text-indigo-600"></i>
+          <h2 class="text-lg sm:text-xl font-bold text-indigo-950 flex items-center gap-2">
+            <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600"></i>
             👥 MODUŁ CRM — BAZA KLIENTÓW
           </h2>
           <p class="text-xs text-slate-600 mt-1">Zarządzanie relacjami z klientami, statusami szans i notatkami</p>
         </div>
-        <button onclick="openCrmModal()" class="btn-anim bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md">
+        <button onclick="openCrmModal()" class="btn-anim bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md shrink-0">
           <i data-lucide="user-plus" class="w-4 h-4"></i> Dodaj Nowego Klienta
         </button>
       </div>
 
       <!-- KPI Summary Cards -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base">👥</div>
-          <div>
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Wszyscy Klienci</span>
-            <span id="crm-stat-total" class="text-xl font-bold text-slate-900">0</span>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="clean-card p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-3 overflow-hidden">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm sm:text-base shrink-0">👥</div>
+          <div class="min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-wider block truncate">Wszyscy</span>
+            <span id="crm-stat-total" class="text-base sm:text-xl font-bold text-slate-900 truncate block">0</span>
           </div>
         </div>
-        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-base">⭐</div>
-          <div>
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Zainteresowani</span>
-            <span id="crm-stat-interested" class="text-xl font-bold text-emerald-700">0</span>
+        <div class="clean-card p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-3 overflow-hidden">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm sm:text-base shrink-0">⭐</div>
+          <div class="min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-wider block truncate">Zainteresowani</span>
+            <span id="crm-stat-interested" class="text-base sm:text-xl font-bold text-emerald-700 truncate block">0</span>
           </div>
         </div>
-        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-base">🤝</div>
-          <div>
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">W trakcie</span>
-            <span id="crm-stat-in-progress" class="text-xl font-bold text-amber-700">0</span>
+        <div class="clean-card p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-3 overflow-hidden">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-sm sm:text-base shrink-0">🤝</div>
+          <div class="min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-wider block truncate">W trakcie</span>
+            <span id="crm-stat-in-progress" class="text-base sm:text-xl font-bold text-amber-700 truncate block">0</span>
           </div>
         </div>
-        <div class="clean-card p-4 rounded-2xl flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-base">💰</div>
-          <div>
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Wartość Szans</span>
-            <span id="crm-stat-value" class="text-xl font-bold text-purple-700">0 zł</span>
+        <div class="clean-card p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-2.5 sm:gap-3 overflow-hidden">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm sm:text-base shrink-0">💰</div>
+          <div class="min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-wider block truncate">Wartość Szans</span>
+            <span id="crm-stat-value" class="text-base sm:text-xl font-bold text-purple-700 truncate block">0 zł</span>
           </div>
         </div>
       </div>
 
       <!-- Filters & Search Bar -->
-      <div class="clean-card p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="clean-card p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
         <div class="relative w-full sm:w-72">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-          <input type="text" id="crm-search-input" oninput="renderCrmListUI()" placeholder="Szukaj klienta, firmy lub notatki..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
+          <input type="text" id="crm-search-input" oninput="renderCrmListUI()" placeholder="Szukaj klienta, firmy..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500">
         </div>
         <div class="flex items-center gap-2 w-full sm:w-auto">
-          <span class="text-xs font-bold text-slate-600 shrink-0">Filter:</span>
+          <span class="text-xs font-bold text-slate-600 shrink-0">Status:</span>
           <select id="crm-status-filter" onchange="renderCrmListUI()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-indigo-500 w-full sm:w-auto">
             <option value="all">Wszystkie statusy</option>
             <option value="Zainteresowany">Zainteresowany</option>
@@ -2485,24 +2543,37 @@
     <div id="app-container-tasks" class="hidden space-y-6 animate-emerge">
       
       <!-- Module Header -->
-      <div class="clean-card p-6 rounded-3xl border border-teal-200 bg-teal-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-teal-200 bg-teal-50/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h2 class="text-xl font-bold text-teal-950 flex items-center gap-2">
-            <i data-lucide="check-square" class="w-6 h-6 text-teal-600"></i>
+          <h2 class="text-lg sm:text-xl font-bold text-teal-950 flex items-center gap-2">
+            <i data-lucide="check-square" class="w-5 h-5 sm:w-6 sm:h-6 text-teal-600"></i>
             📋 LISTA ZADAŃ — TABLICA KANBAN
           </h2>
           <p class="text-xs text-slate-600 mt-1">Organizacja pracy, statusy zadań i śledzenie terminów wykonania</p>
         </div>
-        <button onclick="openTaskModal()" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md">
+        <button onclick="openTaskModal()" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md shrink-0">
           <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Zadanie
         </button>
       </div>
 
+      <!-- Mobile Column Switcher (visible on <md) -->
+      <div class="flex md:hidden items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold">
+        <button id="tasks-tab-btn-todo" onclick="switchTasksMobileCol('todo')" class="btn-anim flex-1 py-2 px-1 text-center rounded-xl bg-white text-teal-800 shadow-sm transition">
+          📌 Do zrobienia (<span id="tasks-count-todo-mobile">0</span>)
+        </button>
+        <button id="tasks-tab-btn-in_progress" onclick="switchTasksMobileCol('in_progress')" class="btn-anim flex-1 py-2 px-1 text-center rounded-xl text-slate-600 hover:text-slate-900 transition">
+          ⚡ W trakcie (<span id="tasks-count-in_progress-mobile">0</span>)
+        </button>
+        <button id="tasks-tab-btn-done" onclick="switchTasksMobileCol('done')" class="btn-anim flex-1 py-2 px-1 text-center rounded-xl text-slate-600 hover:text-slate-900 transition">
+          ✅ Zrobione (<span id="tasks-count-done-mobile">0</span>)
+        </button>
+      </div>
+
       <!-- Kanban Board Columns Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         
         <!-- Column 1: DO ZROBIENIA -->
-        <div class="bg-slate-100/70 border border-slate-200 p-4 rounded-3xl space-y-4 min-h-[400px]">
+        <div id="tasks-col-wrapper-todo" class="block bg-slate-100/70 border border-slate-200 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 min-h-[300px] sm:min-h-[400px]">
           <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <h3 class="font-bold text-xs text-slate-700 uppercase tracking-wider flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> 📌 DO ZROBIENIA
@@ -2515,7 +2586,7 @@
         </div>
 
         <!-- Column 2: W TRAKCIE -->
-        <div class="bg-blue-50/40 border border-blue-200 p-4 rounded-3xl space-y-4 min-h-[400px]">
+        <div id="tasks-col-wrapper-in_progress" class="hidden md:block bg-blue-50/40 border border-blue-200 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 min-h-[300px] sm:min-h-[400px]">
           <div class="flex items-center justify-between border-b border-blue-200 pb-3">
             <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ⚡ W TRAKCIE
@@ -2528,7 +2599,7 @@
         </div>
 
         <!-- Column 3: ZROBIONE -->
-        <div class="bg-emerald-50/40 border border-emerald-200 p-4 rounded-3xl space-y-4 min-h-[400px]">
+        <div id="tasks-col-wrapper-done" class="hidden md:block bg-emerald-50/40 border border-emerald-200 p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 min-h-[300px] sm:min-h-[400px]">
           <div class="flex items-center justify-between border-b border-emerald-200 pb-3">
             <h3 class="font-bold text-xs text-emerald-900 uppercase tracking-wider flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ✅ ZROBIONE
@@ -2752,14 +2823,14 @@
   <!-- ==================== MODAL PODGLĄDU I DRUKOWANIA PDF WYCENY ==================== -->
   <div id="pdf-preview-modal" class="hidden modal-backdrop">
     <div class="pdf-modal-container">
-      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="file-text" class="w-5 h-5 text-purple-400"></i>
-          <span class="font-bold text-sm">Podgląd Wydruku PDF — Wycena / Kosztorys</span>
+      <div class="p-3 sm:p-4 bg-slate-900 text-white flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="file-text" class="w-5 h-5 text-purple-400 shrink-0"></i>
+          <span class="font-bold text-xs sm:text-sm truncate">Podgląd PDF — Wycena</span>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="printCurrentQuotePdf()" class="btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="printer" class="w-4 h-4"></i> Drukuj / Zapisz jako PDF
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <button onclick="printCurrentQuotePdf()" class="btn-anim bg-purple-700 hover:bg-purple-800 text-white font-bold px-3 sm:px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">Drukuj / PDF</span><span class="sm:hidden">Drukuj</span>
           </button>
           <button onclick="closePdfModal()" class="btn-anim bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-xl text-xs">
             <i data-lucide="x" class="w-5 h-5"></i>
@@ -2767,7 +2838,7 @@
         </div>
       </div>
 
-      <div class="p-6 overflow-y-auto flex-1 bg-slate-100">
+      <div class="p-3 sm:p-6 overflow-y-auto flex-1 bg-slate-100">
         <div id="pdf-paper-content" class="a4-paper">
           <!-- A4 PDF Content rendered here -->
         </div>
@@ -2777,10 +2848,10 @@
 
 
   <!-- ==================== MODAL: CRM CLIENT (DODAJ / EDYTUJ) ==================== -->
-  <div id="crm-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-emerge">
-      <div class="p-5 bg-indigo-900 text-white flex items-center justify-between border-b border-indigo-800">
-        <h3 id="crm-modal-title" class="font-bold text-sm flex items-center gap-2">
+  <div id="crm-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto animate-emerge">
+      <div class="p-4 sm:p-5 bg-indigo-900 text-white flex items-center justify-between border-b border-indigo-800 sticky top-0 z-10">
+        <h3 id="crm-modal-title" class="font-bold text-xs sm:text-sm flex items-center gap-2">
           <i data-lucide="user-plus" class="w-5 h-5 text-indigo-400"></i> Dodaj Nowego Klienta CRM
         </h3>
         <button onclick="closeCrmModal()" class="text-indigo-200 hover:text-white p-1 rounded-lg">
@@ -2788,7 +2859,7 @@
         </button>
       </div>
 
-      <form onsubmit="handleSaveCrmClient(event)" class="p-6 space-y-4 text-xs">
+      <form onsubmit="handleSaveCrmClient(event)" class="p-4 sm:p-6 space-y-3.5 sm:space-y-4 text-xs">
         <input type="hidden" id="crm-client-id">
         
         <div>
@@ -2845,10 +2916,10 @@
 
 
   <!-- ==================== MODAL: TASK (DODAJ / EDYTUJ) ==================== -->
-  <div id="tasks-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-emerge">
-      <div class="p-5 bg-teal-900 text-white flex items-center justify-between border-b border-teal-800">
-        <h3 id="tasks-modal-title" class="font-bold text-sm flex items-center gap-2">
+  <div id="tasks-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto animate-emerge">
+      <div class="p-4 sm:p-5 bg-teal-900 text-white flex items-center justify-between border-b border-teal-800 sticky top-0 z-10">
+        <h3 id="tasks-modal-title" class="font-bold text-xs sm:text-sm flex items-center gap-2">
           <i data-lucide="plus-circle" class="w-5 h-5 text-teal-400"></i> Dodaj Zadanie
         </h3>
         <button onclick="closeTaskModal()" class="text-teal-200 hover:text-white p-1 rounded-lg">
@@ -2856,7 +2927,7 @@
         </button>
       </div>
 
-      <form onsubmit="handleSaveTask(event)" class="p-6 space-y-4 text-xs">
+      <form onsubmit="handleSaveTask(event)" class="p-4 sm:p-6 space-y-3.5 sm:space-y-4 text-xs">
         <input type="hidden" id="task-input-id">
         
         <div>
@@ -2904,10 +2975,10 @@
   </div>
 
   <!-- ==================== MODAL: ADMIN EDIT USER (PIN & WYDATKI) ==================== -->
-  <div id="admin-edit-user-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-emerge">
-      <div class="p-5 bg-purple-900 text-white flex items-center justify-between border-b border-purple-800">
-        <h3 id="edit-user-modal-title" class="font-bold text-sm flex items-center gap-2">
+  <div id="admin-edit-user-modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full max-h-[92vh] overflow-y-auto animate-emerge">
+      <div class="p-4 sm:p-5 bg-purple-900 text-white flex items-center justify-between border-b border-purple-800 sticky top-0 z-10">
+        <h3 id="edit-user-modal-title" class="font-bold text-xs sm:text-sm flex items-center gap-2">
           <i data-lucide="user-cog" class="w-5 h-5 text-purple-300"></i> Edycja Konta: <span id="edit-user-name-display" class="font-mono text-purple-200"></span>
         </h3>
         <button onclick="closeEditUserModal()" class="text-purple-200 hover:text-white p-1 rounded-lg">
@@ -2915,7 +2986,7 @@
         </button>
       </div>
 
-      <form onsubmit="handleSaveEditUser(event)" class="p-6 space-y-4 text-xs">
+      <form onsubmit="handleSaveEditUser(event)" class="p-4 sm:p-6 space-y-3.5 sm:space-y-4 text-xs">
         <input type="hidden" id="edit-user-username">
 
         <div>
@@ -2963,25 +3034,25 @@
 
 
   <!-- ==================== FLOATING AI CHAT BUBBLE WIDGET ==================== -->
-  <div id="ai-floating-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+  <div id="ai-floating-widget" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3">
     
     <!-- Floating Mini Chat Window (Hidden by default) -->
-    <div id="ai-mini-chat-card" class="hidden w-[360px] sm:w-[400px] h-[500px] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden animate-emerge">
+    <div id="ai-mini-chat-card" class="hidden fixed inset-x-3 bottom-16 sm:static sm:inset-auto sm:bottom-auto sm:right-auto w-[calc(100vw-24px)] max-w-[400px] sm:w-[400px] h-[75vh] sm:h-[500px] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden animate-emerge">
       
       <!-- Mini Chat Header -->
-      <div class="bg-gradient-to-r from-slate-900 to-rose-950 p-4 text-white flex items-center justify-between border-b border-rose-900/40">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center font-bold text-white shadow-sm">
+      <div class="bg-gradient-to-r from-slate-900 to-rose-950 p-3 sm:p-4 text-white flex items-center justify-between border-b border-rose-900/40">
+        <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center font-bold text-white shadow-sm shrink-0">
             <i data-lucide="bot" class="w-4.5 h-4.5"></i>
           </div>
-          <div>
-            <h4 class="font-bold text-xs text-white">🤖 Asystent AI (Qwen2.5 / Llama)</h4>
+          <div class="min-w-0">
+            <h4 class="font-bold text-xs text-white truncate">🤖 Asystent AI</h4>
             <span class="text-[10px] text-emerald-400 font-mono font-medium flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gotowy do pomocy
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gotowy
             </span>
           </div>
         </div>
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1 shrink-0">
           <button onclick="switchApp('ai_chat')" title="Otwórz na pełnym ekranie" class="btn-anim text-slate-300 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
             <i data-lucide="maximize-2" class="w-4 h-4"></i>
           </button>
@@ -2995,28 +3066,28 @@
       </div>
 
       <!-- Quick Pills in Mini Chat -->
-      <div class="bg-slate-50 px-3 py-2 border-b border-slate-200 flex gap-1.5 overflow-x-auto text-[10px] font-semibold shrink-0">
-        <button onclick="fillAiPrompt('Napisz e-mail z wyceną')" class="btn-anim shrink-0 bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
+      <div class="bg-slate-50 px-3 py-2 border-b border-slate-200 flex gap-1.5 overflow-x-auto text-[10px] font-semibold shrink-0 no-scrollbar">
+        <button onclick="fillAiPrompt('Napisz e-mail z wyceną')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
           📄 Wycena
         </button>
-        <button onclick="fillAiPrompt('Sprawdź ryzyko kontraktu krypto')" class="btn-anim shrink-0 bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
+        <button onclick="fillAiPrompt('Sprawdź ryzyko kontraktu krypto')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
           ⚡ Krypto CA
         </button>
-        <button onclick="fillAiPrompt('Zoptymalizuj budżet i wydatki')" class="btn-anim shrink-0 bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
+        <button onclick="fillAiPrompt('Zoptymalizuj budżet i wydatki')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
           💰 Budżet
         </button>
-        <button onclick="fillAiPrompt('Jak dodać przypomnienie w Kalendarzu?')" class="btn-anim shrink-0 bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
+        <button onclick="fillAiPrompt('Jak dodać przypomnienie w Kalendarzu?')" class="btn-anim shrink-0 whitespace-nowrap bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 rounded-lg border border-slate-200">
           📅 Kalendarz
         </button>
       </div>
 
       <!-- Mini Chat Messages Container -->
-      <div id="ai-mini-chat-messages" class="p-4 space-y-3 overflow-y-auto flex-1 text-xs">
+      <div id="ai-mini-chat-messages" class="p-3 sm:p-4 space-y-3 overflow-y-auto flex-1 text-xs">
         <!-- Rendered dynamically by JS -->
       </div>
 
       <!-- Mini Input Form -->
-      <form onsubmit="handleSendAiMessage(event, true)" class="p-3 bg-white border-t border-slate-100 flex items-center gap-2">
+      <form onsubmit="handleSendAiMessage(event, true)" class="p-2.5 sm:p-3 bg-white border-t border-slate-100 flex items-center gap-2">
         <input type="text" id="ai-mini-chat-input" placeholder="Zapytaj Asystenta AI..." required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:border-rose-500 focus:outline-none font-medium">
         <button type="submit" id="btn-send-mini-ai" class="btn-anim bg-rose-600 hover:bg-rose-700 text-white font-bold p-2 rounded-xl text-xs shadow-md">
           <i data-lucide="send" class="w-4 h-4"></i>
@@ -3026,13 +3097,13 @@
     </div>
 
     <!-- Floating Toggle Button (Dymek Czat) -->
-    <button id="ai-floating-btn" onclick="toggleMiniAiChat()" class="btn-anim group relative bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white font-bold px-4 py-3 rounded-full shadow-2xl border-2 border-white/60 flex items-center gap-2.5 transition-all transform hover:scale-105">
+    <button id="ai-floating-btn" onclick="toggleMiniAiChat()" title="Asystent AI Czat" class="btn-anim group relative bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white font-bold p-3 sm:px-4 sm:py-3 rounded-full shadow-2xl border-2 border-white/60 flex items-center gap-2 transition-all transform hover:scale-105">
       <div class="relative flex items-center justify-center">
         <i data-lucide="bot" class="w-5 h-5"></i>
         <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></span>
       </div>
       <span class="text-xs font-extrabold tracking-wide hidden sm:inline">Asystent AI</span>
-      <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-mono">Czat</span>
+      <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-mono hidden sm:inline">Czat</span>
     </button>
   </div>
 
@@ -6585,6 +6656,9 @@
       if (document.getElementById('tasks-count-todo')) document.getElementById('tasks-count-todo').innerText = todoTasks.length;
       if (document.getElementById('tasks-count-in_progress')) document.getElementById('tasks-count-in_progress').innerText = inProgTasks.length;
       if (document.getElementById('tasks-count-done')) document.getElementById('tasks-count-done').innerText = doneTasks.length;
+      if (document.getElementById('tasks-count-todo-mobile')) document.getElementById('tasks-count-todo-mobile').innerText = todoTasks.length;
+      if (document.getElementById('tasks-count-in_progress-mobile')) document.getElementById('tasks-count-in_progress-mobile').innerText = inProgTasks.length;
+      if (document.getElementById('tasks-count-done-mobile')) document.getElementById('tasks-count-done-mobile').innerText = doneTasks.length;
 
       const renderCard = (t) => {
         let prioBadge = 'bg-slate-100 text-slate-700';
@@ -6642,6 +6716,31 @@
       }
 
       safeCreateIcons();
+    }
+
+    function switchTasksMobileCol(status) {
+      ['todo', 'in_progress', 'done'].forEach(s => {
+        const wrap = document.getElementById(`tasks-col-wrapper-${s}`);
+        const btn = document.getElementById(`tasks-tab-btn-${s}`);
+        if (wrap) {
+          if (s === status) {
+            wrap.classList.remove('hidden');
+            wrap.classList.add('block');
+          } else {
+            wrap.classList.remove('block');
+            wrap.classList.add('hidden');
+          }
+        }
+        if (btn) {
+          if (s === status) {
+            btn.classList.add('bg-white', 'text-teal-800', 'shadow-sm');
+            btn.classList.remove('text-slate-600');
+          } else {
+            btn.classList.remove('bg-white', 'text-teal-800', 'shadow-sm');
+            btn.classList.add('text-slate-600');
+          }
+        }
+      });
     }
 
     function openTaskModal(taskId = null, defaultStatus = 'todo') {
