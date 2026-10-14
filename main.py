@@ -118,7 +118,7 @@ async def serve_login_page(request: Request):
     if user:
         return RedirectResponse(url="/", status_code=302)
     login_html = os.path.join(os.path.dirname(__file__), "web", "login.html")
-    return FileResponse(login_html)
+    return FileResponse(login_html, headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"})
 
 @app.post("/api/login")
 async def login_api(data: Dict[str, str] = Body(...)):
@@ -550,7 +550,7 @@ async def serve_dashboard(request: Request):
     if not user:
         return RedirectResponse(url="/login", status_code=302)
     html_path = os.path.join(os.path.dirname(__file__), "web", "index.html")
-    return FileResponse(html_path)
+    return FileResponse(html_path, headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"})
 
 @app.get("/manifest.json")
 async def get_manifest():
