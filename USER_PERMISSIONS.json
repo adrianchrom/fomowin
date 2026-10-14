@@ -52,9 +52,9 @@
     "currency_calc": true
   },
   "Monika": {
-    "fomo": false,
+    "fomo": true,
     "wydatki": true,
-    "wyceny": false,
+    "wyceny": true,
     "stopki_email": false,
     "kalendarz": false,
     "is_admin": false,
@@ -63,18 +63,5 @@
     "tasks": false,
     "password_gen": false,
     "currency_calc": false
-  },
-  "TestUser": {
-    "fomo": false,
-    "wydatki": true,
-    "wyceny": true,
-    "stopki_email": true,
-    "kalendarz": true,
-    "ai_chat": true,
-    "crm": true,
-    "tasks": true,
-    "password_gen": true,
-    "currency_calc": true,
-    "is_admin": false
   }
 }

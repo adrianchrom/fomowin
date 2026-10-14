@@ -69,6 +69,8 @@ class AuthManager:
             with open(CREDENTIALS_FILE, "w", encoding="utf-8") as f:
                 for u, p in self.users.items():
                     f.write(f"{u}:{p}\n")
+                f.flush()
+                os.fsync(f.fileno())
         except Exception as e:
             logger.error(f"Error writing credentials file: {e}")
 
@@ -131,6 +133,8 @@ class AuthManager:
         try:
             with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
                 json.dump(self.active_sessions, f, indent=2)
+                f.flush()
+                os.fsync(f.fileno())
         except Exception as e:
             logger.error(f"Error saving sessions: {e}")
 

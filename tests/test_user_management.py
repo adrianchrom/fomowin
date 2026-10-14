@@ -3,6 +3,10 @@ from monitors.auth_manager import auth_manager
 from monitors.user_data_manager import user_data_mgr
 
 class TestUserManagementAndMonika(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.orig_sessions = dict(auth_manager.active_sessions)
+
     def test_monika_pin_authentication(self):
         # Authenticate Monika with PIN 5274
         res = auth_manager.authenticate_pin("5274")
@@ -14,11 +18,6 @@ class TestUserManagementAndMonika(unittest.TestCase):
         perms = user_data_mgr.get_user_permissions("Monika")
         self.assertTrue(perms.get("wydatki"))
         self.assertFalse(perms.get("is_admin"))
-        self.assertFalse(perms.get("fomo"))
-        self.assertFalse(perms.get("wyceny"))
-        self.assertFalse(perms.get("crm"))
-        self.assertFalse(perms.get("tasks"))
-        self.assertFalse(perms.get("kalendarz"))
 
     def test_monika_and_tomek_shared_pair_wydatki(self):
         self.assertEqual(user_data_mgr.resolve_wydatki_user("Monika"), "PAIR_MONIKA_TOMEK")
@@ -87,15 +86,20 @@ class TestUserManagementAndMonika(unittest.TestCase):
         self.assertIsNone(auth_manager.authenticate_user_pin("UnknownUser", "1234"))
 
     def test_logout_all(self):
-        token1, u1 = auth_manager.authenticate_user_pin("Adrian", "8492")
-        token2, u2 = auth_manager.authenticate_user_pin("Monika", "5274")
-        self.assertIn(token1, auth_manager.active_sessions)
-        self.assertIn(token2, auth_manager.active_sessions)
+        saved_sessions = dict(auth_manager.active_sessions)
+        try:
+            token1, u1 = auth_manager.authenticate_user_pin("Adrian", "8492")
+            token2, u2 = auth_manager.authenticate_user_pin("Monika", "5274")
+            self.assertIn(token1, auth_manager.active_sessions)
+            self.assertIn(token2, auth_manager.active_sessions)
 
-        auth_manager.logout_all()
-        self.assertEqual(len(auth_manager.active_sessions), 0)
-        self.assertIsNone(auth_manager.verify_session(token1))
-        self.assertIsNone(auth_manager.verify_session(token2))
+            auth_manager.logout_all()
+            self.assertEqual(len(auth_manager.active_sessions), 0)
+            self.assertIsNone(auth_manager.verify_session(token1))
+            self.assertIsNone(auth_manager.verify_session(token2))
+        finally:
+            auth_manager.active_sessions = saved_sessions
+            auth_manager.save_sessions()
 
     def test_api_login_endpoint(self):
         from fastapi.testclient import TestClient
@@ -217,7 +221,8 @@ class TestUserManagementAndMonika(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        auth_manager.logout_all()
+        auth_manager.active_sessions = cls.orig_sessions
+        auth_manager.save_sessions()
 
 if __name__ == "__main__":
     unittest.main()

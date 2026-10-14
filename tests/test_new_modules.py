@@ -83,7 +83,7 @@ class TestNewModules(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        auth_manager.logout_all()
+        auth_manager.logout("test_token_adrian")
 
 if __name__ == '__main__':
     unittest.main()

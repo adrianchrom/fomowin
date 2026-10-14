@@ -81,10 +81,14 @@ class TestNewFeatures(unittest.TestCase):
         self.assertFalse(maciek_perms["is_admin"])
         self.assertTrue(maciek_perms["fomo"])
 
-        # Update Maciek's permissions
-        updated = user_data_mgr.update_maciek_permissions({"wydatki": True, "wyceny": True})
-        self.assertTrue(updated["wydatki"])
-        self.assertTrue(updated["wyceny"])
+        # Update Maciek's permissions and verify, then restore
+        orig_maciek = dict(maciek_perms)
+        try:
+            updated = user_data_mgr.update_maciek_permissions({"wydatki": True, "wyceny": True})
+            self.assertTrue(updated["wydatki"])
+            self.assertTrue(updated["wyceny"])
+        finally:
+            user_data_mgr.update_maciek_permissions(orig_maciek)
 
     def test_data_privacy_isolation(self):
         from monitors.user_data_manager import user_data_mgr

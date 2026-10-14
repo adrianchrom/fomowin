@@ -144,6 +144,8 @@ class UserDataManager:
         try:
             with open(filepath, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
+                f.flush()
+                os.fsync(f.fileno())
         except Exception as e:
             logger.error(f"Error saving {filepath}: {e}")
 
@@ -254,8 +256,13 @@ class UserDataManager:
 
     def delete_user_permissions(self, username: str):
         target = self.resolve_canonical(username)
-        if target in self.permissions and target.lower() != "adrian":
-            del self.permissions[target]
+        found_key = None
+        for k in list(self.permissions.keys()):
+            if k.lower() == username.strip().lower() or k.lower() == target.lower():
+                found_key = k
+                break
+        if found_key and found_key.lower() != "adrian":
+            del self.permissions[found_key]
             self._save_json(PERMISSIONS_FILE, self.permissions)
         self.delete_user_profile(username)
 
