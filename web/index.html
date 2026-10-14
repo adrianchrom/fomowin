@@ -3526,7 +3526,7 @@
         await fetch('/api/logout', { method: 'POST' });
       } catch (e) {}
       safeRemoveStorage('fomo_username');
-      window.location.href = '/login';
+      window.location.href = '/login?t=' + Date.now();
     }
 
     // TOP EXECUTIVE APP SWITCHER

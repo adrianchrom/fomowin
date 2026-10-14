@@ -2,6 +2,7 @@ import asyncio
 import logging
 import json
 import os
+import time
 import subprocess
 from typing import List, Set, Dict, Any, Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Body, Request, Response, HTTPException, status
@@ -116,7 +117,7 @@ async def auth_middleware(request: Request, call_next):
 async def serve_login_page(request: Request):
     user = getattr(request.state, "user", None)
     if user:
-        return RedirectResponse(url="/", status_code=302)
+        return RedirectResponse(url=f"/?t={int(time.time())}", status_code=302)
     login_html = os.path.join(os.path.dirname(__file__), "web", "login.html")
     return FileResponse(login_html, headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"})
 
@@ -548,7 +549,9 @@ async def clear_llm_chat_route():
 async def serve_dashboard(request: Request):
     user = getattr(request.state, "user", None)
     if not user:
-        return RedirectResponse(url="/login", status_code=302)
+        q = request.url.query
+        redir = f"/login?{q}" if q else f"/login?t={int(time.time())}"
+        return RedirectResponse(url=redir, status_code=302)
     html_path = os.path.join(os.path.dirname(__file__), "web", "index.html")
     return FileResponse(html_path, headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"})
 
