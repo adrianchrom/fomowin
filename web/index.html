@@ -1021,7 +1021,7 @@
 
               <div>
                 <label class="block font-semibold text-slate-600 mb-1" for="expenseTitle">Na co poszły pieniądze? (Opis)</label>
-                <input type="text" id="expenseTitle" required placeholder="np. Kafle w łazience, Panele, Armatura..." class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
+                <input type="text" id="expenseTitle" required placeholder="np. Zakupy spożywcze, Paliwo, Obiad, Panele..." class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900">
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
@@ -1030,17 +1030,49 @@
                   <input type="text" inputmode="decimal" id="expenseAmount" required placeholder="np. 150,50 lub 150.50" class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-bold">
                 </div>
                 <div>
-                  <label class="block font-semibold text-slate-600 mb-1" for="expenseCategory">Kategoria</label>
-                  <select id="expenseCategory" required class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-medium">
-                    <option value="Kafle & Płytki">Kafle & Płytki</option>
-                    <option value="Materiały Budowlane">Materiały Budowlane</option>
-                    <option value="Robocizna & Fachowcy">Robocizna & Fachowcy</option>
-                    <option value="Sprzęt & Narzędzia">Sprzęt & Narzędzia</option>
-                    <option value="Meble & Wykończenie">Meble & Wykończenie</option>
-                    <option value="Instalacje & Elektryka">Instalacje & Elektryka</option>
-                    <option value="AGD / RTV">AGD / RTV</option>
-                    <option value="Inne Wydatki">Inne Wydatki</option>
-                  </select>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="block font-semibold text-slate-600" for="expenseCategory">Kategoria / Cel</label>
+                    <button type="button" onclick="toggleCustomCategoryInput()" id="toggleCategoryModeBtn" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1 cursor-pointer">
+                      <span id="toggleCategoryModeLabel" class="flex items-center gap-1"><i data-lucide="edit-3" class="w-3 h-3"></i> Wpisz własną</span>
+                    </button>
+                  </div>
+                  
+                  <div id="categorySelectWrapper">
+                    <select id="expenseCategory" onchange="handleCategorySelectChange()" class="w-full px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 font-medium text-xs">
+                      <option value="" disabled selected>-- Wybierz lub wpisz własną --</option>
+                      <optgroup label="Codzienne i Życie">
+                        <option value="Zakupy & Jedzenie">🛒 Zakupy & Jedzenie</option>
+                        <option value="Paliwo & Samochód">⛽ Paliwo & Samochód</option>
+                        <option value="Rachunki & Opłaty">📄 Rachunki & Opłaty</option>
+                        <option value="Restauracje & Kawiarnie">🍽️ Restauracje & Kawiarnie</option>
+                        <option value="Zdrowie & Apteka">💊 Zdrowie & Apteka</option>
+                        <option value="Ubrania & Obuwie">👕 Ubrania & Obuwie</option>
+                        <option value="Rozrywka & Hobby">🎮 Rozrywka & Hobby</option>
+                      </optgroup>
+                      <optgroup label="Dom & Remont">
+                        <option value="Materiały Budowlane">🧱 Materiały Budowlane</option>
+                        <option value="Robocizna & Fachowcy">🔨 Robocizna & Fachowcy</option>
+                        <option value="Meble & Wykończenie">🛋️ Meble & Wykończenie</option>
+                        <option value="Kafle & Płytki">🪟 Kafle & Płytki</option>
+                        <option value="Instalacje & Elektryka">⚡ Instalacje & Elektryka</option>
+                        <option value="Sprzęt & Narzędzia">🧰 Sprzęt & Narzędzia</option>
+                        <option value="AGD / RTV">📺 AGD / RTV</option>
+                      </optgroup>
+                      <optgroup label="Inne">
+                        <option value="Inne Wydatki">📦 Inne Wydatki</option>
+                        <option value="__custom__">✏️ Wpisz własną (samodzielnie)...</option>
+                      </optgroup>
+                    </select>
+                  </div>
+
+                  <div id="categoryCustomWrapper" class="hidden">
+                    <div class="relative flex items-center">
+                      <input type="text" id="expenseCategoryCustom" placeholder="Wpisz na co wydatek (np. Weterynarz, Wakacje, Paliwo)..." class="w-full px-3 py-2 sm:py-2.5 pr-8 rounded-xl border border-blue-400 bg-blue-50/40 focus:bg-white text-slate-900 font-medium text-xs">
+                      <button type="button" onclick="toggleCustomCategoryInput(false)" title="Wróć do listy wyboru" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 text-sm font-bold leading-none">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1072,14 +1104,6 @@
                   </select>
                   <select id="filterCategory" onchange="renderExpensesUI()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-medium w-full text-xs">
                     <option value="ALL">Wszystkie kategorie</option>
-                    <option value="Kafle & Płytki">Kafle & Płytki</option>
-                    <option value="Materiały Budowlane">Materiały Budowlane</option>
-                    <option value="Robocizna & Fachowcy">Robocizna & Fachowcy</option>
-                    <option value="Sprzęt & Narzędzia">Sprzęt & Narzędzia</option>
-                    <option value="Meble & Wykończenie">Meble & Wykończenie</option>
-                    <option value="Instalacje & Elektryka">Instalacje & Elektryka</option>
-                    <option value="AGD / RTV">AGD / RTV</option>
-                    <option value="Inne Wydatki">Inne Wydatki</option>
                   </select>
                 </div>
               </div>
@@ -4051,9 +4075,52 @@
     function refreshWydatkiUI() {
       updateWydatkiProfileDOM();
       renderWydatkiTopMetrics();
+      updateCategoryFilterOptions();
       renderExpensesUI();
       renderIncomeTablesUI();
       renderSummarySectionUI();
+    }
+
+    function updateCategoryFilterOptions() {
+      const filterEl = document.getElementById("filterCategory");
+      if (!filterEl) return;
+      const currentVal = filterEl.value || "ALL";
+
+      const defaultCategories = [
+        "Zakupy & Jedzenie",
+        "Paliwo & Samochód",
+        "Rachunki & Opłaty",
+        "Restauracje & Kawiarnie",
+        "Zdrowie & Apteka",
+        "Ubrania & Obuwie",
+        "Rozrywka & Hobby",
+        "Materiały Budowlane",
+        "Robocizna & Fachowcy",
+        "Meble & Wykończenie",
+        "Kafle & Płytki",
+        "Instalacje & Elektryka",
+        "Sprzęt & Narzędzia",
+        "AGD / RTV",
+        "Inne Wydatki"
+      ];
+
+      const allCategories = new Set(defaultCategories);
+      if (wydatkiFullData && wydatkiFullData.expenses) {
+        wydatkiFullData.expenses.forEach(e => {
+          if (e.category && e.category.trim() && e.category.trim() !== '__custom__') {
+            allCategories.add(e.category.trim());
+          }
+        });
+      }
+
+      const sortedCategories = Array.from(allCategories).sort((a, b) => a.localeCompare(b, 'pl'));
+
+      let html = `<option value="ALL">Wszystkie kategorie</option>`;
+      sortedCategories.forEach(cat => {
+        const isSelected = (cat === currentVal) ? "selected" : "";
+        html += `<option value="${cat}" ${isSelected}>${cat}</option>`;
+      });
+      filterEl.innerHTML = html;
     }
 
     function parseAmount(val) {
@@ -4123,6 +4190,45 @@
       }
     }
 
+    function toggleCustomCategoryInput(forceCustom) {
+      const selectWrapper = document.getElementById("categorySelectWrapper");
+      const customWrapper = document.getElementById("categoryCustomWrapper");
+      const toggleLabel = document.getElementById("toggleCategoryModeLabel");
+      const customInput = document.getElementById("expenseCategoryCustom");
+      const selectEl = document.getElementById("expenseCategory");
+
+      if (!selectWrapper || !customWrapper) return;
+
+      const isCurrentlyCustom = !customWrapper.classList.contains("hidden");
+      const showCustom = (typeof forceCustom === 'boolean') ? forceCustom : !isCurrentlyCustom;
+
+      if (showCustom) {
+        selectWrapper.classList.add("hidden");
+        customWrapper.classList.remove("hidden");
+        if (toggleLabel) {
+          toggleLabel.innerHTML = `<i data-lucide="list" class="w-3 h-3"></i> Wybierz z listy`;
+        }
+        if (customInput) customInput.focus();
+      } else {
+        customWrapper.classList.add("hidden");
+        selectWrapper.classList.remove("hidden");
+        if (toggleLabel) {
+          toggleLabel.innerHTML = `<i data-lucide="edit-3" class="w-3 h-3"></i> Wpisz własną`;
+        }
+        if (selectEl && selectEl.value === "__custom__") {
+          selectEl.value = "";
+        }
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function handleCategorySelectChange() {
+      const selectEl = document.getElementById("expenseCategory");
+      if (selectEl && selectEl.value === "__custom__") {
+        toggleCustomCategoryInput(true);
+      }
+    }
+
     async function handleAddExpense(e) {
       e.preventDefault();
       const profile = getWydatkiProfile();
@@ -4140,10 +4246,28 @@
 
       const title = document.getElementById("expenseTitle").value.trim();
       const amount = parseAmount(document.getElementById("expenseAmount").value);
-      const category = document.getElementById("expenseCategory").value;
       const date = document.getElementById("expenseDate").value;
 
       if (!title || isNaN(amount) || amount <= 0 || !date) return;
+
+      const customWrapper = document.getElementById("categoryCustomWrapper");
+      const isCustomMode = customWrapper && !customWrapper.classList.contains("hidden");
+      let category = "";
+
+      if (isCustomMode) {
+        category = (document.getElementById("expenseCategoryCustom").value || "").trim();
+      } else {
+        const selVal = (document.getElementById("expenseCategory").value || "").trim();
+        if (selVal === "__custom__") {
+          category = (document.getElementById("expenseCategoryCustom").value || "").trim();
+        } else {
+          category = selVal;
+        }
+      }
+
+      if (!category) {
+        category = "Inne Wydatki";
+      }
 
       const newExpense = {
         id: `wyd-${Date.now()}`,
@@ -4160,6 +4284,9 @@
       wydatkiFullData.expenses.unshift(newExpense);
       document.getElementById("expenseTitle").value = "";
       document.getElementById("expenseAmount").value = "";
+      if (document.getElementById("expenseCategoryCustom")) {
+        document.getElementById("expenseCategoryCustom").value = "";
+      }
 
       await saveWydatkiData();
     }
@@ -4532,13 +4659,22 @@
         const pieCtx = document.getElementById("expenseCategoryPieChart");
         if (pieCtx) {
           if (categoryPieChartInstance) categoryPieChartInstance.destroy();
+          const categoryPalette = [
+            '#3b82f6', '#ec4899', '#8b5cf6', '#10b981', '#f59e0b',
+            '#06b6d4', '#6366f1', '#f43f5e', '#14b8a6', '#84cc16',
+            '#eab308', '#a855f7', '#0ea5e9', '#d946ef', '#64748b',
+            '#f97316', '#22c55e', '#38bdf8', '#fb7185', '#818cf8'
+          ];
+          const catLabels = Object.keys(categoryTotals);
+          const catColors = catLabels.map((_, idx) => categoryPalette[idx % categoryPalette.length]);
+
           categoryPieChartInstance = new Chart(pieCtx, {
             type: 'doughnut',
             data: {
-              labels: Object.keys(categoryTotals),
+              labels: catLabels,
               datasets: [{
                 data: Object.values(categoryTotals),
-                backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6', '#10b981', '#f59e0b', '#06b6d4', '#6366f1', '#64748b']
+                backgroundColor: catColors
               }]
             },
             options: { responsive: true, maintainAspectRatio: false }
