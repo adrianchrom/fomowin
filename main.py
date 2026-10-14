@@ -552,6 +552,35 @@ async def serve_dashboard(request: Request):
     html_path = os.path.join(os.path.dirname(__file__), "web", "index.html")
     return FileResponse(html_path)
 
+@app.get("/manifest.json")
+async def get_manifest():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "manifest.json"), media_type="application/manifest+json")
+
+@app.get("/apple-touch-icon.png")
+@app.get("/apple-touch-icon-precomposed.png")
+async def get_apple_touch_icon():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "apple-touch-icon.png"), media_type="image/png")
+
+@app.get("/favicon.ico")
+async def get_favicon_ico():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "favicon.ico"), media_type="image/x-icon")
+
+@app.get("/favicon.png")
+async def get_favicon_png():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "favicon.png"), media_type="image/png")
+
+@app.get("/logo.svg")
+async def get_logo_svg():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "logo.svg"), media_type="image/svg+xml")
+
+@app.get("/icon-192.png")
+async def get_icon_192():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "icon-192.png"), media_type="image/png")
+
+@app.get("/icon-512.png")
+async def get_icon_512():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "web", "icon-512.png"), media_type="image/png")
+
 @app.get("/api/status")
 async def get_status():
     token_scanner.purge_old_tokens()
