@@ -12,6 +12,8 @@ import threading
 import time
 from typing import Any, Optional
 
+from monitors.supabase_storage import supabase_storage
+
 logger = logging.getLogger("Storage")
 
 _APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,6 +56,9 @@ def atomic_write_json(path: str, data: Any, indent: Optional[int] = 2) -> bool:
         payload = json.dumps(data, indent=indent, ensure_ascii=False)
         with LOCK:
             atomic_write_text(path, payload)
+        if supabase_storage.is_enabled():
+            key = os.path.splitext(os.path.basename(path))[0]
+            supabase_storage.async_save_key(key, data)
         return True
     except Exception as e:  # pragma: no cover - disk full / permissions
         logger.error(f"Error saving {path}: {e}")
@@ -63,11 +68,23 @@ def atomic_write_json(path: str, data: Any, indent: Optional[int] = 2) -> bool:
 def load_json_file(path: str, default: Any, validator=None) -> Any:
     """Load JSON from ``path``.
 
+    * If Supabase is enabled and has data, cloud takes precedence and updates local file.
     * Missing file  -> write ``default`` and return a deep copy of it.
     * Corrupted file -> the broken file is kept as ``<name>.corrupt-<timestamp>`` (never silently
       overwritten, so data can still be recovered) and ``default`` is used.
     """
     with LOCK:
+        if supabase_storage.is_enabled():
+            key = os.path.splitext(os.path.basename(path))[0]
+            cloud_data = supabase_storage.fetch_key(key)
+            if cloud_data is not None and (validator is None or validator(cloud_data)):
+                try:
+                    payload = json.dumps(cloud_data, indent=2, ensure_ascii=False)
+                    atomic_write_text(path, payload)
+                except Exception:
+                    pass
+                return cloud_data
+
         if os.path.exists(path):
             try:
                 with open(path, "r", encoding="utf-8") as f:

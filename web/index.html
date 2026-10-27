@@ -2661,7 +2661,27 @@
             <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600"></i>
             ⚙️ PANEL ADMINISTRATORA (SUPER ADMIN)
           </h2>
-          <p class="text-xs text-slate-600 mt-1">Zarządzanie uprawnieniami dostępu dla kont użytkowników</p>
+          <p class="text-xs text-slate-600 mt-1">Zarządzanie uprawnieniami dostępu dla kont użytkowników oraz chmurą bazy danych</p>
+        </div>
+      </div>
+
+      <!-- SUPABASE CLOUD DATABASE CARD -->
+      <div id="supabase-storage-card" class="clean-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-emerald-200 bg-emerald-50/20 space-y-3.5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-emerald-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">☁️</span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Trwała Baza Danych w Chmurze (Supabase PostgreSQL)</h3>
+              <p class="text-xs text-slate-500">Chroni dane przed jakimkolwiek zresetowaniem na darmowych serwerach Render</p>
+            </div>
+          </div>
+          <span id="supabase-status-badge" class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-slate-400"></span> Sprawdzanie...
+          </span>
+        </div>
+
+        <div id="supabase-status-content" class="text-xs text-slate-600 space-y-2">
+          <!-- Populated by JS -->
         </div>
       </div>
 
@@ -7441,6 +7461,81 @@
     async function loadAdminPermissions() {
       await loadAdminUsersList();
       await loadAdminPermissionsOnly();
+      checkSupabaseStorageStatusUI();
+    }
+
+    async function checkSupabaseStorageStatusUI() {
+      const badge = document.getElementById('supabase-status-badge');
+      const content = document.getElementById('supabase-status-content');
+      if (!badge || !content) return;
+
+      try {
+        const res = await fetch('/api/status/storage');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.supabase_configured) {
+            badge.className = "px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1.5";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Baza Aktywna w Chmurze`;
+
+            content.innerHTML = `
+              <div class="p-3 bg-emerald-100/60 rounded-xl border border-emerald-200 text-emerald-950 space-y-1.5">
+                <p class="font-bold">✅ Baza danych Supabase jest pomyślnie podłączona i zapisuje dane trwale w chmurze PostgreSQL.</p>
+                <p class="text-[11px] text-emerald-800 font-mono">Serwer: ${data.supabase_url || 'Supabase Cloud'} | Tabela: ${data.table || 'app_storage'}</p>
+                <p class="text-[11px]">Wszystkie Twoje kwoty, wydatki, zlecenia, zadania i klienci są natychmiast synchronizowane i nigdy nie znikną.</p>
+              </div>
+              <div class="flex items-center gap-2 pt-1">
+                <button type="button" onclick="adminSyncSupabaseUI()" class="btn-anim bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Wymuś Kopię Zapasową do Chmury Teraz
+                </button>
+              </div>
+            `;
+          } else {
+            badge.className = "px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1.5";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span> Niepołączono`;
+
+            content.innerHTML = `
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-950 space-y-2">
+                <p class="font-bold">Chcesz, aby dane były trwale zapisywane w darmowej chmurze Supabase?</p>
+                <ol class="list-decimal list-inside space-y-1 text-[11px] text-amber-900 leading-relaxed">
+                  <li>Załóż darmowy projekt na <a href="https://supabase.com" target="_blank" class="underline font-bold text-blue-600">supabase.com</a>.</li>
+                  <li>W zakładce <strong>SQL Editor</strong> wklej i uruchom kod SQL tabeli:</li>
+                  <li>W ustawieniach projektu (Project Settings -> API) skopiuj URL i anon key, a następnie wklej je w zmiennych środowiskowych Render (<strong>SUPABASE_URL</strong> oraz <strong>SUPABASE_KEY</strong>).</li>
+                </ol>
+                <div class="pt-1 flex gap-2">
+                  <button type="button" onclick="copySupabaseSqlToClipboard()" class="btn-anim bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> Kopiuj kod SQL do Supabase
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+          safeCreateIcons();
+        }
+      } catch (e) {}
+    }
+
+    function copySupabaseSqlToClipboard() {
+      const sql = 'create table if not exists app_storage (\\n  key text primary key,\\n  data jsonb not null,\\n  updated_at timestamptz default now()\\n);\\n\\nalter table app_storage enable row level security;\\ncreate policy \\"Allow all access with API key\\" on app_storage for all using (true) with check (true);';
+      navigator.clipboard.writeText(sql).then(() => {
+        showToast("Skopiowano kod SQL do schowka! Wklej go w Supabase SQL Editor.", "success");
+      }).catch(() => {
+        prompt("Skopiuj poniższy kod SQL:", sql);
+      });
+    }
+
+    async function adminSyncSupabaseUI() {
+      try {
+        const res = await fetch('/api/admin/sync-supabase', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Pomyślnie zsynchronizowano ${(data.synced_keys || []).length} zbiorów danych do bazy Supabase!`, "success");
+          checkSupabaseStorageStatusUI();
+        } else {
+          showToast(data.message || "Błąd podczas synchronizacji z Supabase", "error");
+        }
+      } catch (e) {
+        showToast("Błąd połączenia z serwerem", "error");
+      }
     }
 
     async function handleCreateNewUser(e) {

@@ -17,6 +17,7 @@ from monitors.risk_analysis_engine import risk_engine
 from monitors.auth_manager import auth_manager
 from monitors.alerts_manager import alerts_manager
 from monitors.user_data_manager import user_data_mgr
+from monitors.supabase_storage import supabase_storage
 from monitors.llm_engine import llm_engine
 from notifiers.telegram_notifier import telegram_notifier
 from notifiers.discord_notifier import discord_notifier
@@ -166,7 +167,7 @@ def _clear_login_failures(ip: str):
 
 
 # --- module permission enforcement (the UI hides modules, the API must refuse them too) --------
-PUBLIC_API_PATHS = {"/api/login", "/api/logout", "/api/status", "/api/user"}
+PUBLIC_API_PATHS = {"/api/login", "/api/logout", "/api/status", "/api/status/storage", "/api/user"}
 
 MODULE_BY_PREFIX = [
     ("/api/wydatki", "wydatki"),
@@ -809,6 +810,42 @@ async def get_status():
         "chains": list(config.CHAINS.keys()),
         "is_enabled": token_scanner.is_enabled
     }
+
+@app.get("/api/status/storage")
+async def get_storage_status():
+    return {
+        "supabase_configured": supabase_storage.is_enabled(),
+        "supabase_url": (supabase_storage.url[:25] + "...") if supabase_storage.url else None,
+        "table": supabase_storage.table,
+        "cloud_keys": supabase_storage.list_cloud_keys() if supabase_storage.is_enabled() else []
+    }
+
+@app.post("/api/admin/sync-supabase")
+async def admin_sync_supabase(request: Request):
+    denied = _require_admin(request)
+    if denied:
+        return denied
+    if not supabase_storage.is_enabled():
+        return JSONResponse(status_code=400, content={"success": False, "message": "Supabase nie jest skonfigurowane w zmiennych środowiskowych."})
+    
+    synced = []
+    from monitors.storage import data_path
+    keys = [
+        "DATA_WYDATKI", "DATA_TASKS", "DATA_CRM", "DATA_KALENDARZ",
+        "DATA_COMPANY", "DATA_WYCENY", "DATA_USER_SETTINGS",
+        "USER_PERMISSIONS", "USER_PROFILES"
+    ]
+    for k in keys:
+        p = data_path(f"{k}.json")
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    content = json.load(f)
+                if supabase_storage.save_key(k, content):
+                    synced.append(k)
+            except Exception:
+                pass
+    return {"success": True, "synced_keys": synced}
 
 @app.get("/api/fomo/status")
 async def get_fomo_status():
