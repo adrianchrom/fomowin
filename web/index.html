@@ -3865,16 +3865,16 @@
 
     function loadLocalUserSettings() {
       try {
-        const raw = localStorage.getItem(getUserSettingsStorageKey());
+        const raw = localStorage.getItem(getUserSettingsStorageKey()) || localStorage.getItem('ach_user_settings');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed === 'object') {
-            userSettings = parsed;
+            userSettings = { ...userSettings, ...parsed };
             return userSettings;
           }
         }
       } catch (e) {}
-      userSettings = {};
+      if (!userSettings || typeof userSettings !== 'object') userSettings = {};
       return userSettings;
     }
 
@@ -3883,6 +3883,7 @@
       userSettings = { ...userSettings, ...patch, updatedAt: new Date().toISOString() };
       try {
         localStorage.setItem(getUserSettingsStorageKey(), JSON.stringify(userSettings));
+        localStorage.setItem('ach_user_settings', JSON.stringify(userSettings));
       } catch (e) {}
       flashSaveIndicator('Zapisano');
 
@@ -3891,7 +3892,7 @@
           await fetch('/api/user-settings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(patch),
+            body: JSON.stringify(userSettings),
             keepalive: true
           });
         } catch (e) {}
@@ -4117,7 +4118,15 @@
               userSettings = { ...userSettings, ...data.settings };
               try {
                 localStorage.setItem(getUserSettingsStorageKey(), JSON.stringify(userSettings));
+                localStorage.setItem('ach_user_settings', JSON.stringify(userSettings));
               } catch (e) {}
+            } else if (userSettings && typeof userSettings === 'object' && Object.keys(userSettings).length > 0) {
+              fetch('/api/user-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userSettings),
+                keepalive: true
+              }).catch(() => {});
             }
             applyUserSettingsToDOM();
             setGreeting(currentUser);
@@ -4789,9 +4798,36 @@
       return `ach_wydatki_v3_${profile.pairId}`;
     }
 
+    function getDeletedWydatkiStorageKey() {
+      const profile = getWydatkiProfile();
+      return `ach_deleted_wydatki_${profile.pairId}`;
+    }
+
+    function getDeletedWydatkiIds() {
+      try {
+        const raw = localStorage.getItem(getDeletedWydatkiStorageKey());
+        const arr = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(arr) ? arr.map(String) : []);
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function markWydatkiDeleted(id) {
+      if (!id) return;
+      try {
+        const set = getDeletedWydatkiIds();
+        set.add(String(id));
+        localStorage.setItem(getDeletedWydatkiStorageKey(), JSON.stringify(Array.from(set)));
+      } catch (e) {}
+    }
+
     function saveLocalWydatki() {
       try {
-        localStorage.setItem(getWydatkiStorageKey(), JSON.stringify(wydatkiFullData));
+        const key = getWydatkiStorageKey();
+        const json = JSON.stringify(wydatkiFullData);
+        localStorage.setItem(key, json);
+        localStorage.setItem(`ach_wydatki_backup_${getWydatkiProfile().pairId}`, json);
       } catch (err) {
         console.warn("Błąd zapisu do localStorage:", err);
       }
@@ -4801,23 +4837,30 @@
       // Always start clean for the active household so previous user's memory never leaks
       wydatkiFullData = { baseIncomes: [], gigs: [], expenses: [] };
       try {
+        const profile = getWydatkiProfile();
         const key = getWydatkiStorageKey();
-        let stored = localStorage.getItem(key);
-        
-        // Auto-migration strictly from this household's own legacy keys (never global default)
-        if (!stored) {
-          const profile = getWydatkiProfile();
-          const legacyKeys = [
-            `ach_wydatki_v2_${profile.pairId}`,
-            `ach_wydatki_v2_${(currentUser || '').toLowerCase()}`
-          ];
-          for (const lk of legacyKeys) {
-            const leg = localStorage.getItem(lk);
-            if (leg) {
-              stored = leg;
-              try { localStorage.setItem(key, leg); } catch (e) {}
-              break;
-            }
+        const candidateKeys = [
+          key,
+          `ach_wydatki_backup_${profile.pairId}`,
+          `ach_wydatki_v2_${profile.pairId}`,
+          `ach_wydatki_v2_${(currentUser || '').toLowerCase()}`,
+          `ach_wydatki_${profile.pairId}`,
+          `ach_wydatki_${(currentUser || '').toLowerCase()}`,
+          'ach_wydatki_full_data',
+          'ach_wydatki'
+        ];
+        let stored = null;
+        for (const k of candidateKeys) {
+          const val = localStorage.getItem(k);
+          if (val) {
+            try {
+              const p = JSON.parse(val);
+              if (p && typeof p === 'object' && ((Array.isArray(p.expenses) && p.expenses.length > 0) || (Array.isArray(p.baseIncomes) && p.baseIncomes.length > 0) || (Array.isArray(p.gigs) && p.gigs.length > 0))) {
+                stored = val;
+                break;
+              }
+              if (!stored && k === key) stored = val;
+            } catch (e) {}
           }
         }
 
@@ -4829,6 +4872,7 @@
               gigs: Array.isArray(parsed.gigs) ? parsed.gigs : [],
               expenses: Array.isArray(parsed.expenses) ? parsed.expenses : []
             };
+            try { localStorage.setItem(key, JSON.stringify(wydatkiFullData)); } catch (e) {}
             return true;
           }
         }
@@ -4852,32 +4896,77 @@
 
           const serverData = await res.json();
           if (serverData && typeof serverData === 'object') {
-            const serverExpenses = (Array.isArray(serverData.expenses) ? serverData.expenses : []).map(e => ({ ...e, _synced: true }));
-            const serverBase = (Array.isArray(serverData.baseIncomes) ? serverData.baseIncomes : []).map(b => ({ ...b, _synced: true }));
-            const serverGigs = (Array.isArray(serverData.gigs) ? serverData.gigs : []).map(g => ({ ...g, _synced: true }));
+            const deletedWydIds = getDeletedWydatkiIds();
 
-            // Preserve ONLY items created offline (_synced === false) that haven't been pushed yet.
-            // Items that were already _synced: true and are absent on server were intentionally deleted!
-            const serverExpIds = new Set(serverExpenses.map(e => String(e.id)));
-            const unsyncedExpenses = (wydatkiFullData.expenses || []).filter(e => e && e._synced === false && !serverExpIds.has(String(e.id)));
+            // 1. Merge Expenses: Union Local + Server by ID, excluding explicitly deleted
+            const expenseMap = new Map();
+            (wydatkiFullData.expenses || []).forEach(e => {
+              if (e && e.id && !deletedWydIds.has(String(e.id))) {
+                expenseMap.set(String(e.id), e);
+              }
+            });
+            (Array.isArray(serverData.expenses) ? serverData.expenses : []).forEach(e => {
+              if (e && e.id && !deletedWydIds.has(String(e.id))) {
+                if (!expenseMap.has(String(e.id))) {
+                  expenseMap.set(String(e.id), { ...e, _synced: true });
+                }
+              }
+            });
 
-            const serverBaseMonths = new Set(serverBase.map(b => String(b.month)));
-            const unsyncedBase = (wydatkiFullData.baseIncomes || []).filter(b => b && b._synced === false && !serverBaseMonths.has(String(b.month)));
+            // 2. Merge Base Incomes: Union Local + Server by Month, excluding explicitly deleted
+            const baseMap = new Map();
+            (wydatkiFullData.baseIncomes || []).forEach(b => {
+              const bKey = String(b.id || b.month || '');
+              if (b && b.month && !deletedWydIds.has(bKey) && !deletedWydIds.has(String(b.month))) {
+                baseMap.set(String(b.month), b);
+              }
+            });
+            (Array.isArray(serverData.baseIncomes) ? serverData.baseIncomes : []).forEach(b => {
+              const bKey = String(b.id || b.month || '');
+              if (b && b.month && !deletedWydIds.has(bKey) && !deletedWydIds.has(String(b.month))) {
+                if (!baseMap.has(String(b.month))) {
+                  baseMap.set(String(b.month), { ...b, _synced: true });
+                } else {
+                  const loc = baseMap.get(String(b.month));
+                  baseMap.set(String(b.month), { ...loc, ...b });
+                }
+              }
+            });
 
-            const serverGigIds = new Set(serverGigs.map(g => String(g.id)));
-            const unsyncedGigs = (wydatkiFullData.gigs || []).filter(g => g && g._synced === false && !serverGigIds.has(String(g.id)));
+            // 3. Merge Gigs: Union Local + Server by ID, excluding explicitly deleted
+            const gigMap = new Map();
+            (wydatkiFullData.gigs || []).forEach(g => {
+              if (g && g.id && !deletedWydIds.has(String(g.id))) {
+                gigMap.set(String(g.id), g);
+              }
+            });
+            (Array.isArray(serverData.gigs) ? serverData.gigs : []).forEach(g => {
+              if (g && g.id && !deletedWydIds.has(String(g.id))) {
+                if (!gigMap.has(String(g.id))) {
+                  gigMap.set(String(g.id), { ...g, _synced: true });
+                }
+              }
+            });
+
+            const mergedExpenses = Array.from(expenseMap.values());
+            const mergedBase = Array.from(baseMap.values()).sort((a, b) => (a.month || '').localeCompare(b.month || ''));
+            const mergedGigs = Array.from(gigMap.values());
 
             wydatkiFullData = {
-              baseIncomes: [...serverBase, ...unsyncedBase],
-              gigs: [...unsyncedGigs, ...serverGigs],
-              expenses: [...unsyncedExpenses, ...serverExpenses]
+              baseIncomes: mergedBase,
+              gigs: mergedGigs,
+              expenses: mergedExpenses
             };
 
             saveLocalWydatki();
             refreshWydatkiUI();
 
-            // Push any offline-created items up to server
-            if (unsyncedExpenses.length > 0 || unsyncedBase.length > 0 || unsyncedGigs.length > 0) {
+            // Resilient push: if local device has items that server is missing (e.g. Render restart/empty disk),
+            // automatically sync back up so server data is restored and safe!
+            const srvExpCount = (Array.isArray(serverData.expenses) ? serverData.expenses : []).length;
+            const srvBaseCount = (Array.isArray(serverData.baseIncomes) ? serverData.baseIncomes : []).length;
+            const srvGigCount = (Array.isArray(serverData.gigs) ? serverData.gigs : []).length;
+            if (mergedExpenses.length > srvExpCount || mergedBase.length > srvBaseCount || mergedGigs.length > srvGigCount) {
               await saveWydatkiData();
             }
           }
@@ -5144,6 +5233,7 @@
     }
 
     async function handleDeleteWydatki(id) {
+      markWydatkiDeleted(id);
       wydatkiFullData.expenses = wydatkiFullData.expenses.filter(e => strId(e.id) !== strId(id));
       await saveWydatkiData();
       showToast("Usunięto wydatek", "info");
@@ -5274,6 +5364,9 @@
     }
 
     async function deleteBaseIncome(id) {
+      markWydatkiDeleted(id);
+      const target = (wydatkiFullData.baseIncomes || []).find(i => strId(i.id) === strId(id));
+      if (target && target.month) markWydatkiDeleted(target.month);
       wydatkiFullData.baseIncomes = wydatkiFullData.baseIncomes.filter(i => strId(i.id) !== strId(id));
       await saveWydatkiData();
       showToast("Usunięto wpis o dochodzie stałym", "info");
@@ -5314,6 +5407,7 @@
     }
 
     async function deleteGig(id) {
+      markWydatkiDeleted(id);
       wydatkiFullData.gigs = wydatkiFullData.gigs.filter(g => strId(g.id) !== strId(id));
       await saveWydatkiData();
       showToast("Usunięto dodatkowe zlecenie", "info");
@@ -5626,6 +5720,30 @@
       return `ach_wyceny_${u}`;
     }
 
+    function getDeletedWycenyStorageKey() {
+      const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
+      return `ach_deleted_wyceny_${u}`;
+    }
+
+    function getDeletedWycenyIds() {
+      try {
+        const raw = localStorage.getItem(getDeletedWycenyStorageKey());
+        const arr = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(arr) ? arr.map(String) : []);
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function markWycenyDeleted(id) {
+      if (!id) return;
+      try {
+        const set = getDeletedWycenyIds();
+        set.add(String(id));
+        localStorage.setItem(getDeletedWycenyStorageKey(), JSON.stringify(Array.from(set)));
+      } catch (e) {}
+    }
+
     function getCompanyStorageKey() {
       const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
       return `ach_company_data_${u}`;
@@ -5635,38 +5753,95 @@
       poiState.inventory = [];
       poiState.transactions = [];
       poiState.historyQuotes = [];
+      const deletedIds = getDeletedWycenyIds();
 
       // 1. Optimistic load from localStorage
       try {
-        const stored = localStorage.getItem(getWycenyStorageKey());
+        const stored = localStorage.getItem(getWycenyStorageKey()) || localStorage.getItem(`ach_wyceny_backup_${(currentUser || '').toLowerCase()}`);
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed && typeof parsed === 'object') {
             if (parsed.company) poiState.company = { ...poiState.company, ...parsed.company };
             if (parsed.quote) poiState.quote = { ...poiState.quote, ...parsed.quote };
-            if (Array.isArray(parsed.inventory)) poiState.inventory = parsed.inventory;
-            if (Array.isArray(parsed.transactions)) poiState.transactions = parsed.transactions;
-            if (Array.isArray(parsed.historyQuotes)) poiState.historyQuotes = parsed.historyQuotes;
+            if (Array.isArray(parsed.inventory)) poiState.inventory = parsed.inventory.filter(i => i && !deletedIds.has(String(i.id || '')));
+            if (Array.isArray(parsed.transactions)) poiState.transactions = parsed.transactions.filter(t => t && !deletedIds.has(String(t.id || '')));
+            if (Array.isArray(parsed.historyQuotes)) poiState.historyQuotes = parsed.historyQuotes.filter(q => q && !deletedIds.has(String(q.id || '')));
             renderAllPoiUI();
           }
         }
       } catch (e) {}
 
-      // 2. Fetch fresh from server (accept empty arrays so deleting the last item persists!)
+      // 2. Fetch fresh from server
       try {
         const res = await fetch('/api/wyceny');
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === 'object') {
-            if (data.company) poiState.company = { ...poiState.company, ...data.company };
-            if (data.quote) poiState.quote = { ...poiState.quote, ...data.quote };
-            if (Array.isArray(data.inventory)) poiState.inventory = data.inventory;
-            if (Array.isArray(data.transactions)) poiState.transactions = data.transactions;
-            if (Array.isArray(data.historyQuotes)) poiState.historyQuotes = data.historyQuotes;
+            if (data.company) {
+              const srvCompIsDefault = (!data.company.nip || data.company.nip === '0000000000') && (!data.company.name || data.company.name === 'Biuro Usługowe / Twoja Firma');
+              const localCompHasCustom = poiState.company && poiState.company.nip && poiState.company.nip !== '0000000000';
+              if (!localCompHasCustom || !srvCompIsDefault) {
+                poiState.company = { ...poiState.company, ...data.company };
+              }
+            }
+            if (data.quote && (!poiState.quote || !poiState.quote.number)) {
+              poiState.quote = { ...poiState.quote, ...data.quote };
+            }
+
+            // Inventory union merge
+            const invMap = new Map();
+            (poiState.inventory || []).forEach(item => {
+              const k = String(item.id || item.name || '');
+              if (item && k && !deletedIds.has(k)) invMap.set(k, item);
+            });
+            (Array.isArray(data.inventory) ? data.inventory : []).forEach(item => {
+              const k = String(item.id || item.name || '');
+              if (item && k && !deletedIds.has(k)) {
+                if (!invMap.has(k)) invMap.set(k, item);
+              }
+            });
+            poiState.inventory = Array.from(invMap.values());
+
+            // Transactions union merge
+            const txMap = new Map();
+            (poiState.transactions || []).forEach(t => {
+              const k = String(t.id || '');
+              if (t && k && !deletedIds.has(k)) txMap.set(k, t);
+            });
+            (Array.isArray(data.transactions) ? data.transactions : []).forEach(t => {
+              const k = String(t.id || '');
+              if (t && k && !deletedIds.has(k)) {
+                if (!txMap.has(k)) txMap.set(k, t);
+              }
+            });
+            poiState.transactions = Array.from(txMap.values());
+
+            // History Quotes union merge
+            const qMap = new Map();
+            (poiState.historyQuotes || []).forEach(q => {
+              const k = String(q.id || q.number || '');
+              if (q && k && !deletedIds.has(k)) qMap.set(k, q);
+            });
+            (Array.isArray(data.historyQuotes) ? data.historyQuotes : []).forEach(q => {
+              const k = String(q.id || q.number || '');
+              if (q && k && !deletedIds.has(k)) {
+                if (!qMap.has(k)) qMap.set(k, q);
+              }
+            });
+            poiState.historyQuotes = Array.from(qMap.values());
+
             try {
               localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
+              localStorage.setItem(`ach_wyceny_backup_${(currentUser || '').toLowerCase()}`, JSON.stringify(poiState));
               localStorage.setItem(getCompanyStorageKey(), JSON.stringify(poiState.company));
             } catch (err) {}
+
+            const srvInvLen = (Array.isArray(data.inventory) ? data.inventory : []).length;
+            const srvTxLen = (Array.isArray(data.transactions) ? data.transactions : []).length;
+            const srvQLen = (Array.isArray(data.historyQuotes) ? data.historyQuotes : []).length;
+            if (poiState.inventory.length > srvInvLen || poiState.transactions.length > srvTxLen || poiState.historyQuotes.length > srvQLen) {
+              await saveWycenyData();
+            }
           }
         }
       } catch (e) {
@@ -5803,6 +5978,7 @@
     }
 
     async function loadCompanyData() {
+      let localHasCustom = false;
       try {
         const cached = localStorage.getItem(getCompanyStorageKey()) || localStorage.getItem('ach_company_data');
         if (cached) {
@@ -5811,6 +5987,8 @@
             poiState.company = { ...poiState.company, ...parsed };
             companyData = { ...poiState.company };
             renderCompanyDataUI();
+            if (parsed.name && parsed.name !== "Biuro Usługowe / Twoja Firma") localHasCustom = true;
+            if (parsed.nip && parsed.nip !== "0000000000") localHasCustom = true;
           }
         }
       } catch (e) {}
@@ -5820,10 +5998,20 @@
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === 'object') {
-            poiState.company = { ...poiState.company, ...data };
-            companyData = { ...poiState.company };
-            try { localStorage.setItem(getCompanyStorageKey(), JSON.stringify(poiState.company)); } catch (e) {}
-            renderCompanyDataUI();
+            const srvIsDefault = (!data.nip || data.nip === '0000000000') && (!data.name || data.name === 'Biuro Usługowe / Twoja Firma');
+            if (localHasCustom && srvIsDefault) {
+              fetch('/api/company', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(poiState.company),
+                keepalive: true
+              }).catch(() => {});
+            } else {
+              poiState.company = { ...poiState.company, ...data };
+              companyData = { ...poiState.company };
+              try { localStorage.setItem(getCompanyStorageKey(), JSON.stringify(poiState.company)); } catch (e) {}
+              renderCompanyDataUI();
+            }
           }
         }
       } catch (e) {}
@@ -6345,6 +6533,7 @@
     }
 
     async function deleteInventoryItem(id) {
+      markWycenyDeleted(id);
       poiState.inventory = poiState.inventory.filter(i => String(i.id) !== String(id));
       await saveWycenyData();
       renderInventoryUI();
@@ -6431,6 +6620,7 @@
     }
 
     async function deleteTransaction(id) {
+      markWycenyDeleted(id);
       poiState.transactions = poiState.transactions.filter(t => String(t.id) !== String(id));
       await saveWycenyData();
       renderFinancesUI();
@@ -6612,6 +6802,7 @@
     }
 
     async function handleDeleteWycena(id) {
+      markWycenyDeleted(id);
       poiState.historyQuotes = (poiState.historyQuotes || []).filter(x => String(x.id) !== String(id));
       try {
         localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
@@ -7452,15 +7643,40 @@
       return `ach_kalendarz_${u}`;
     }
 
+    function getDeletedKalendarzStorageKey() {
+      const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
+      return `ach_deleted_kalendarz_${u}`;
+    }
+
+    function getDeletedKalendarzIds() {
+      try {
+        const raw = localStorage.getItem(getDeletedKalendarzStorageKey());
+        const arr = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(arr) ? arr.map(String) : []);
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function markKalendarzDeleted(id) {
+      if (!id) return;
+      try {
+        const set = getDeletedKalendarzIds();
+        set.add(String(id));
+        localStorage.setItem(getDeletedKalendarzStorageKey(), JSON.stringify(Array.from(set)));
+      } catch (e) {}
+    }
+
     async function loadKalendarzData() {
       kalendarzEvents = [];
+      const deletedIds = getDeletedKalendarzIds();
       // 1. Optimistic load from localStorage
       try {
         const stored = localStorage.getItem(getKalendarzStorageKey());
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed)) {
-            kalendarzEvents = parsed;
+            kalendarzEvents = parsed.filter(e => e && e.id && !deletedIds.has(String(e.id)));
             renderKalendarzUI();
           }
         }
@@ -7474,15 +7690,25 @@
           if (Array.isArray(data)) {
             const evMap = new Map();
             kalendarzEvents.forEach(e => {
-              if (e && e.id && e._synced === false) evMap.set(String(e.id), e);
+              if (e && e.id && !deletedIds.has(String(e.id))) {
+                evMap.set(String(e.id), e);
+              }
             });
             data.forEach(e => {
-              if (e && e.id) evMap.set(String(e.id), { ...e, _synced: true });
+              if (e && e.id && !deletedIds.has(String(e.id))) {
+                if (!evMap.has(String(e.id))) {
+                  evMap.set(String(e.id), { ...e, _synced: true });
+                }
+              }
             });
             kalendarzEvents = Array.from(evMap.values());
             try {
               localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
             } catch (err) {}
+
+            if (kalendarzEvents.length > data.length) {
+              await saveKalendarzData();
+            }
           }
         }
       } catch (e) {
@@ -7547,6 +7773,7 @@
     }
 
     async function deleteKalendarzEvent(id) {
+      markKalendarzDeleted(id);
       kalendarzEvents = kalendarzEvents.filter(x => String(x.id) !== String(id));
       try {
         localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
@@ -8080,19 +8307,33 @@
             const deletedIds = getDeletedCrmIds();
             const clientMap = new Map();
             crmClients.forEach(c => {
-              if (c && c.id && c._synced === false && !deletedIds.has(String(c.id))) {
+              if (c && c.id && !deletedIds.has(String(c.id))) {
                 clientMap.set(String(c.id), c);
               }
             });
             normalizeCrmList(data).forEach(c => {
               if (c && c.id && !deletedIds.has(String(c.id))) {
-                clientMap.set(String(c.id), { ...c, _synced: true });
+                if (!clientMap.has(String(c.id))) {
+                  clientMap.set(String(c.id), { ...c, _synced: true });
+                }
               }
             });
             crmClients = Array.from(clientMap.values());
             try {
               localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
             } catch (err) {}
+
+            const srvIds = new Set(data.map(d => String(d.id)));
+            crmClients.forEach(c => {
+              if (!srvIds.has(String(c.id))) {
+                fetch('/api/crm', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(c),
+                  keepalive: true
+                }).catch(() => {});
+              }
+            });
           }
         }
       } catch (e) {
@@ -8381,19 +8622,33 @@
 
             const taskMap = new Map();
             userTasks.forEach(t => {
-              if (t && t.id && t._synced === false && !deletedIds.has(String(t.id))) {
+              if (t && t.id && !deletedIds.has(String(t.id))) {
                 taskMap.set(String(t.id), t);
               }
             });
             normalizeTaskList(data).forEach(t => {
               if (t && t.id && !deletedIds.has(String(t.id))) {
-                taskMap.set(String(t.id), { ...t, _synced: true });
+                if (!taskMap.has(String(t.id))) {
+                  taskMap.set(String(t.id), { ...t, _synced: true });
+                }
               }
             });
             userTasks = Array.from(taskMap.values());
             try {
               localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
             } catch (err) {}
+
+            const srvIds = new Set(data.map(d => String(d.id)));
+            userTasks.forEach(t => {
+              if (!srvIds.has(String(t.id))) {
+                fetch('/api/tasks', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(t),
+                  keepalive: true
+                }).catch(() => {});
+              }
+            });
           }
         }
       } catch (e) {
