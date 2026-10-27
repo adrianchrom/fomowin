@@ -108,6 +108,30 @@
       opacity: 0.45;
       animation-duration: 20s;
     }
+    .orb-magenta {
+      bottom: 20%;
+      left: 15%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #f43f5e 0%, #fb923c 70%);
+      animation-delay: -11s;
+      opacity: 0.45;
+      animation-duration: 19s;
+    }
+
+    .liquid-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(37, 99, 235, 0.15) 60%, transparent 80%);
+      pointer-events: none;
+      transform: scale(0);
+      animation: rippleExpand 0.55s ease-out forwards;
+      z-index: 10;
+    }
+    @keyframes rippleExpand {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
 
     @keyframes liquidMorph {
       0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) scale(1) translate(0px, 0px); }
@@ -283,6 +307,7 @@
   <div class="liquid-orb orb-cyan"></div>
   <div class="liquid-orb orb-violet"></div>
   <div class="liquid-orb orb-emerald"></div>
+  <div class="liquid-orb orb-magenta"></div>
 
   <div class="w-full max-w-md relative z-10 flex flex-col items-center justify-center">
 
@@ -579,6 +604,20 @@
         }, 1050);
       }
     }
+
+    document.addEventListener('pointerdown', (e) => {
+      const target = e.target.closest?.('.numpad-btn, button');
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'liquid-ripple';
+      const size = Math.max(rect.width, rect.height) * 1.8;
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+      target.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    }, { passive: true });
 
     function safeCreateIcons() {
       try {
