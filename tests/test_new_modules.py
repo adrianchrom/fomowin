@@ -1,3 +1,4 @@
+import tests._bootstrap  # noqa: F401
 import unittest
 from fastapi.testclient import TestClient
 from main import app, auth_manager
@@ -72,6 +73,18 @@ class TestNewModules(unittest.TestCase):
         res = self.client.delete(f"/api/tasks/{created_task['id']}")
         self.assertEqual(res.status_code, 200)
         self.assertTrue(res.json().get("success"))
+
+        # 5. Auto-purge sample tasks ("Updated Task" / "Test Task") & clear all tasks
+        self.client.post('/api/tasks', json={"id": "sample-1", "title": "Updated Task", "status": "todo"})
+        self.client.post('/api/tasks', json={"id": "real-1", "title": "Prawdziwe Zadanie", "status": "todo"})
+        tasks_now = self.client.get('/api/tasks').json()
+        titles = [t.get("title") for t in tasks_now]
+        self.assertNotIn("Updated Task", titles)
+        self.assertIn("Prawdziwe Zadanie", titles)
+
+        res_clear = self.client.delete('/api/tasks')
+        self.assertEqual(res_clear.status_code, 200)
+        self.assertEqual(self.client.get('/api/tasks').json(), [])
 
     def test_currency_rates(self):
         res = self.client.get('/api/currency/rates')

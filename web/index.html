@@ -264,9 +264,39 @@
     body.dark .text-slate-700 { color: #e2e8f0 !important; }
     body.dark .text-slate-600 { color: #cbd5e1 !important; }
     body.dark .text-slate-500 { color: #94a3b8 !important; }
-    body.dark .bg-slate-50 { background-color: rgba(15, 23, 42, 0.35) !important; }
-    body.dark .bg-slate-100 { background-color: rgba(255, 255, 255, 0.05) !important; }
-    body.dark .border-slate-100, body.dark .border-slate-200 { border-color: rgba(255, 255, 255, 0.1) !important; }
+    body.dark .bg-white {
+      background-color: rgba(15, 23, 42, 0.75) !important;
+      color: #f8fafc !important;
+      border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    body.dark .bg-slate-50 { background-color: rgba(15, 23, 42, 0.45) !important; }
+    body.dark .bg-slate-100 { background-color: rgba(30, 41, 59, 0.5) !important; }
+    body.dark .bg-slate-200 { background-color: rgba(51, 65, 85, 0.6) !important; }
+    body.dark .border-slate-100, body.dark .border-slate-200, body.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.12) !important; }
+
+    /* Dark Mode Modals */
+    body.dark #tasks-modal > div,
+    body.dark #crm-modal > div,
+    body.dark #admin-edit-user-modal > div {
+      background-color: #0f172a !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #f8fafc !important;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Dark Mode Kanban Columns */
+    body.dark #tasks-col-wrapper-todo {
+      background-color: rgba(15, 23, 42, 0.6) !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    body.dark #tasks-col-wrapper-in_progress {
+      background-color: rgba(30, 58, 138, 0.2) !important;
+      border-color: rgba(59, 130, 246, 0.3) !important;
+    }
+    body.dark #tasks-col-wrapper-done {
+      background-color: rgba(6, 78, 59, 0.2) !important;
+      border-color: rgba(16, 185, 129, 0.3) !important;
+    }
 
     body.dark #theme-toggle-btn {
       background: rgba(255, 255, 255, 0.08);
@@ -283,14 +313,80 @@
 
     #burger-drawer nav button {
       color: #cbd5e1;
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     #burger-drawer nav button:hover {
       background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
+      transform: translateX(4px);
+    }
+    #burger-drawer nav button.active-drawer-item {
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.28), rgba(6, 182, 212, 0.14)) !important;
+      color: #38bdf8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.38) !important;
+      box-shadow: 0 8px 20px -6px rgba(14, 165, 233, 0.35);
     }
 
-    .btn-anim { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
-    .btn-anim:active { transform: scale(0.96); }
+    .btn-anim {
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, background-color 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-anim:hover {
+      transform: translateY(-1.5px);
+    }
+    .btn-anim:active {
+      transform: scale(0.95) translateY(0);
+    }
+
+    /* Interactive Tile Hover & Spotlight */
+    .clean-card-hover {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.34s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease !important;
+    }
+    .clean-card-hover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(320px circle at var(--spot-x, 50%) var(--spot-y, 20%), rgba(56, 189, 248, 0.11), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .clean-card-hover:hover::after {
+      opacity: 1;
+    }
+    .clean-card-hover:hover .w-12.h-12 {
+      transform: scale(1.1) rotate(-4deg);
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .clean-card-hover:hover [data-lucide="arrow-right"] {
+      transform: translateX(5px);
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Staggered Dashboard Tiles Entrance */
+    #app-container-dashboard .grid > .clean-card-hover {
+      opacity: 0;
+      animation: tileSpringIn 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(1) { animation-delay: 0.02s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(2) { animation-delay: 0.06s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(3) { animation-delay: 0.10s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(4) { animation-delay: 0.14s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(5) { animation-delay: 0.18s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(6) { animation-delay: 0.22s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(7) { animation-delay: 0.26s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(8) { animation-delay: 0.30s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(9) { animation-delay: 0.34s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(10) { animation-delay: 0.38s; }
+    #app-container-dashboard .grid > .clean-card-hover:nth-child(11) { animation-delay: 0.42s; }
+
+    @keyframes tileSpringIn {
+      0% { opacity: 0; transform: translateY(18px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
     /* Badges Styling */
     .badge-adrian { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
@@ -306,15 +402,74 @@
 
     /* Keyframe Entrance Animation */
     @keyframes animateEmerge {
-      0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+      0% { opacity: 0; transform: translateY(14px) scale(0.985); }
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .animate-emerge { animation: animateEmerge 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-emerge { animation: animateEmerge 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    @keyframes subtabFadeIn {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-subtab { animation: subtabFadeIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    /* Toast Notifications */
+    @keyframes toastSlideIn {
+      0% { opacity: 0; transform: translateX(32px) scale(0.92); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes toastSlideOut {
+      0% { opacity: 1; transform: translateX(0) scale(1); }
+      100% { opacity: 0; transform: translateX(28px) scale(0.94); }
+    }
+    .toast-enter { animation: toastSlideIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .toast-exit { animation: toastSlideOut 0.25s ease-in forwards; }
+
+    /* Mobile Bottom Navigation Bar */
+    #mobile-bottom-nav {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-top: 1px solid #e2e8f0;
+      padding-bottom: max(0.35rem, env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 25px rgba(15, 23, 42, 0.08);
+    }
+    body.dark #mobile-bottom-nav {
+      background: rgba(15, 23, 42, 0.92);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.55);
+    }
+    .mobile-nav-btn {
+      position: relative;
+      color: #64748b;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    body.dark .mobile-nav-btn {
+      color: #94a3b8;
+    }
+    .mobile-nav-btn.active {
+      color: #2563eb;
+      transform: translateY(-2px);
+    }
+    body.dark .mobile-nav-btn.active {
+      color: #38bdf8;
+    }
+    .mobile-nav-btn.active::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+    }
 
     /* PDF A4 Paper & Modal Styles */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85);
-      backdrop-filter: blur(12px); z-index: 50; display: flex; items: center; justify-content: center; padding: 1rem;
+      backdrop-filter: blur(12px); z-index: 50; display: flex; items-center; justify-content: center; padding: 1rem;
     }
     .pdf-modal-container {
       background: #ffffff; border-radius: 1.75rem; width: 100%; max-width: 900px; max-height: 92vh;
@@ -351,28 +506,37 @@
   <div class="liquid-orb orb-violet"></div>
   <div class="liquid-orb orb-emerald"></div>
 
+  <!-- FLOATING TOAST NOTIFICATIONS CONTAINER -->
+  <div id="toast-container" class="fixed top-16 right-3 sm:top-20 sm:right-6 z-[70] flex flex-col gap-2 max-w-sm w-[calc(100vw-24px)] pointer-events-none"></div>
+
   <!-- TOP EXECUTIVE HEADER BAR -->
   <header class="sticky top-0 z-40 shadow-sm border-b transition-colors duration-200">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2">
       
-      <!-- Left: Tylko proste, idealnie wyśrodkowane logo Ach! (Kliknięcie powraca do Dashboardu) -->
-      <a href="javascript:void(0)" onclick="switchApp('dashboard')" title="Ach! - Strona główna" class="flex items-center gap-2 group shrink-0 select-none">
-        <img src="/apple-touch-icon.png?v=5" alt="Ach!" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-md object-cover transition-transform group-hover:scale-105">
+      <!-- Left: Logo Ach! (Click returns to Dashboard) -->
+      <a href="javascript:void(0)" onclick="switchApp('dashboard')" title="Ach! - Pulpit główny" class="flex items-center gap-2 group shrink-0 select-none">
+        <img src="/logo.svg?v=8" alt="Ach!" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-md transition-transform duration-300 group-hover:scale-105">
         <span class="font-black text-base sm:text-lg tracking-tight flex items-center">
           Ach<span class="text-blue-500">!</span>
         </span>
       </a>
 
-      <!-- Right: Przełącznik kolorów, Hej [User], Wyloguj -->
+      <!-- Right: Live Save, Theme Toggle, Hej [User], Wyloguj -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 text-xs shrink-0">
         
+        <!-- Live Save Indicator -->
+        <div id="global-save-indicator" class="hidden items-center gap-1 px-2 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px] sm:text-[11px] font-bold transition-all duration-300">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+          <span id="global-save-text" class="hidden md:inline">Zapisano</span>
+        </div>
+
         <!-- Theme Toggle Button -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" title="Zmień motyw jasny/ciemny" class="btn-anim p-2 sm:p-2.5 rounded-xl flex items-center justify-center shrink-0">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" title="Zmień motyw jasny/ciemny" class="btn-anim p-2 rounded-xl flex items-center justify-center shrink-0">
           <i id="theme-icon" data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
         </button>
 
         <!-- User Greeting Chip -->
-        <div class="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl font-bold text-xs shrink-0 max-w-[120px] sm:max-w-[180px] bg-blue-50/80 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/40 text-blue-700 dark:text-blue-300">
+        <div class="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl font-bold text-xs shrink-0 max-w-[125px] sm:max-w-[200px] bg-blue-50/80 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/40 text-blue-700 dark:text-blue-300">
           <i data-lucide="user" class="w-3.5 h-3.5 text-blue-500 shrink-0"></i>
           <span id="header-greeting" class="truncate">HEJ...</span>
         </div>
@@ -380,7 +544,7 @@
         <!-- Logout Button -->
         <button onclick="handleLogout()" title="Wyloguj" class="btn-anim bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl font-bold text-xs flex items-center gap-1 shrink-0 whitespace-nowrap">
           <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-          <span>Wyloguj</span>
+          <span class="hidden sm:inline">Wyloguj</span>
         </button>
 
       </div>
@@ -389,22 +553,22 @@
   </header>
 
   <!-- BURGER MENU SIDE DRAWER OVERLAY -->
-  <div id="burger-drawer-backdrop" onclick="toggleBurgerDrawer()" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity duration-300"></div>
+  <div id="burger-drawer-backdrop" onclick="toggleBurgerDrawer()" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 transition-opacity duration-300"></div>
 
   <div id="burger-drawer" class="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl border-r border-slate-200 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col">
     
     <!-- Drawer Header -->
-    <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+    <div class="p-5 border-b border-slate-100/20 flex items-center justify-between bg-slate-900/40">
       <div class="flex items-center gap-2.5">
         <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
           <i data-lucide="layout-grid" class="w-5 h-5"></i>
         </div>
         <div>
-          <h3 class="font-bold text-sm text-slate-900">Panel Aplikacji</h3>
-          <p id="user-badge" class="text-[11px] text-slate-500 font-medium">Użytkownik: ...</p>
+          <h3 class="font-bold text-sm text-white">Nawigacja Aplikacji</h3>
+          <p id="user-badge" class="text-[11px] text-slate-400 font-medium">Użytkownik: ...</p>
         </div>
       </div>
-      <button onclick="toggleBurgerDrawer()" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500">
+      <button onclick="toggleBurgerDrawer()" class="p-1.5 rounded-lg hover:bg-white/10 text-slate-300">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
     </div>
@@ -412,124 +576,151 @@
     <!-- Drawer Navigation Links -->
     <nav class="p-4 space-y-1.5 flex-1 overflow-y-auto text-xs font-semibold">
       
-      <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pt-2 pb-1 tracking-wider">Nawigacja Główna</p>
+      <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pt-1 pb-1 tracking-wider">Nawigacja Główna</p>
 
-      <button onclick="switchApp('dashboard')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 font-bold">
+      <button data-drawer-app="dashboard" onclick="switchApp('dashboard')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 font-bold">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="home" class="w-4 h-4 text-blue-600"></i>
+          <i data-lucide="home" class="w-4 h-4 text-blue-400"></i>
           <span>🏠 Strona Główna (Kafelki)</span>
         </div>
+        <span class="text-[10px] font-mono opacity-60">Esc</span>
       </button>
 
       <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pt-4 pb-1 tracking-wider">Dostępne Moduły</p>
 
-      <button onclick="switchApp('fomo')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="fomo" onclick="switchApp('fomo')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+          <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
           <span>⚡ FOMO Engine</span>
         </div>
-        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-mono">ODBLOKOWANE</span>
+        <span id="lock-badge-fomo" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('wydatki')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="wydatki" onclick="switchApp('wydatki')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i>
+          <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
           <span>💰 WYDATKI & ZAROBKI</span>
         </div>
         <span id="lock-badge-wydatki" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('wyceny')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="wyceny" onclick="switchApp('wyceny')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="file-text" class="w-4 h-4 text-purple-600"></i>
-          <span>🏷️ WYCENY</span>
+          <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
+          <span>🏷️ WYCENY & KOSZTORYSY</span>
         </div>
         <span id="lock-badge-wyceny" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('stopki_email')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="stopki_email" onclick="switchApp('stopki_email')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="mail" class="w-4 h-4 text-cyan-600"></i>
+          <i data-lucide="mail" class="w-4 h-4 text-cyan-400"></i>
           <span>✉️ STOPKI E-MAIL</span>
         </div>
         <span id="lock-badge-stopki_email" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('kalendarz')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="kalendarz" onclick="switchApp('kalendarz')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+          <i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i>
           <span>📅 KALENDARZ & PRZYPOMNIENIA</span>
         </div>
         <span id="lock-badge-kalendarz" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('ai_chat')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="ai_chat" onclick="switchApp('ai_chat')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="bot" class="w-4 h-4 text-rose-600"></i>
+          <i data-lucide="bot" class="w-4 h-4 text-rose-400"></i>
           <span>🤖 ASYSTENT AI (LLM)</span>
         </div>
         <span id="lock-badge-ai_chat" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('crm')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="crm" onclick="switchApp('crm')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="users" class="w-4 h-4 text-teal-600"></i>
+          <i data-lucide="users" class="w-4 h-4 text-teal-400"></i>
           <span>👥 MODUŁ CRM</span>
         </div>
         <span id="lock-badge-crm" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('tasks')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="tasks" onclick="switchApp('tasks')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="check-square" class="w-4 h-4 text-amber-600"></i>
+          <i data-lucide="check-square" class="w-4 h-4 text-amber-400"></i>
           <span>📋 LISTA ZADAŃ (KANBAN)</span>
         </div>
         <span id="lock-badge-tasks" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('password_gen')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="password_gen" onclick="switchApp('password_gen')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="key-round" class="w-4 h-4 text-cyan-600"></i>
+          <i data-lucide="key-round" class="w-4 h-4 text-cyan-400"></i>
           <span>🔐 GENERATOR HASŁA</span>
         </div>
         <span id="lock-badge-password_gen" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
-      <button onclick="switchApp('currency_calc')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+      <button data-drawer-app="currency_calc" onclick="switchApp('currency_calc')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
         <div class="flex items-center gap-2.5">
-          <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i>
+          <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
           <span>💱 PRZELICZNIK WALUT</span>
         </div>
         <span id="lock-badge-currency_calc" class="hidden text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-mono">🔒 ZABLOKOWANE</span>
       </button>
 
       <!-- Admin Panel Section (Only for Adrian) -->
-      <div id="admin-panel-nav-box" class="pt-4 border-t border-slate-100 mt-2">
+      <div id="admin-panel-nav-box" class="pt-4 border-t border-white/10 mt-2">
         <p class="text-[10px] uppercase font-bold text-slate-400 px-3 pb-1 tracking-wider">Administracja</p>
-        <button onclick="switchApp('admin')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200">
+        <button data-drawer-app="admin" onclick="switchApp('admin')" class="w-full btn-anim flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-400/30">
           <div class="flex items-center gap-2.5">
-            <i data-lucide="shield" class="w-4 h-4 text-purple-600"></i>
+            <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
             <span>⚙️ PANEL ADMINA</span>
           </div>
-          <span class="text-[10px] bg-purple-200 text-purple-800 px-1.5 py-0.5 rounded font-bold">SUPER ADMIN</span>
+          <span class="text-[10px] bg-purple-500/30 text-purple-200 px-1.5 py-0.5 rounded font-bold">ADMIN</span>
         </button>
       </div>
 
     </nav>
 
     <!-- Drawer Footer -->
-    <div class="p-4 border-t border-slate-100 bg-slate-50/80 space-y-2">
-      <button onclick="forceReloadApp()" class="w-full btn-anim flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm">
-        <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i>
-        <span>🔄 Odśwież aplikację (Nowa wersja)</span>
+    <div class="p-4 border-t border-white/10 bg-slate-900/50 space-y-2">
+      <button onclick="forceReloadApp()" class="w-full btn-anim flex items-center justify-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-400/30 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm">
+        <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-400"></i>
+        <span>🔄 Odśwież aplikację</span>
       </button>
-      <button onclick="handleLogout()" class="w-full btn-anim flex items-center justify-center gap-2 bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 hover:border-rose-200 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm">
+      <button onclick="handleLogout()" class="w-full btn-anim flex items-center justify-center gap-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-400/30 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm">
         <i data-lucide="log-out" class="w-4 h-4"></i>
         <span>Wyloguj z konta</span>
       </button>
     </div>
 
   </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION BAR (Thumb-friendly navigation on phones) -->
+  <nav id="mobile-bottom-nav" class="sm:hidden fixed bottom-0 inset-x-0 z-40 px-2 pt-1.5">
+    <div class="grid grid-cols-5 gap-1 max-w-md mx-auto">
+      <button type="button" data-mobile-nav="dashboard" onclick="switchApp('dashboard')" class="mobile-nav-btn active flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold gap-0.5">
+        <i data-lucide="home" class="w-4 h-4"></i>
+        <span>Pulpit</span>
+      </button>
+      <button type="button" data-mobile-nav="wydatki" onclick="switchApp('wydatki')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold gap-0.5">
+        <i data-lucide="wallet" class="w-4 h-4"></i>
+        <span>Budżet</span>
+      </button>
+      <button type="button" data-mobile-nav="wyceny" onclick="switchApp('wyceny')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold gap-0.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        <span>Wyceny</span>
+      </button>
+      <button type="button" data-mobile-nav="tasks" onclick="switchApp('tasks')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold gap-0.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i>
+        <span>Zadania</span>
+      </button>
+      <button type="button" onclick="toggleBurgerDrawer()" class="mobile-nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold gap-0.5">
+        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        <span>Moduły</span>
+      </button>
+    </div>
+  </nav>
 
 
   <!-- MAIN WORKSPACE CONTAINER -->
@@ -1500,30 +1691,30 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Numer Wyceny:</label>
-                <input type="text" id="wyc-number" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-purple-700 font-bold font-mono">
+                <input type="text" id="wyc-number" oninput="scheduleDraftQuoteSave()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-purple-700 font-bold font-mono">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Data wystawienia:</label>
-                <input type="date" id="wyc-issue-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+                <input type="date" id="wyc-issue-date" onchange="scheduleDraftQuoteSave()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Termin ważności:</label>
-                <input type="date" id="wyc-valid-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
+                <input type="date" id="wyc-valid-date" onchange="scheduleDraftQuoteSave()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium">
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Zamawiający / Klient:</label>
-                <input type="text" id="wyc-client" placeholder="np. Jan Kowalski" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <input type="text" id="wyc-client" oninput="scheduleDraftQuoteSave()" placeholder="np. Jan Kowalski" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Telefon Klienta:</label>
-                <input type="text" id="wyc-client-phone" placeholder="np. 500 600 700" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="text" id="wyc-client-phone" oninput="scheduleDraftQuoteSave()" placeholder="np. 500 600 700" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
               <div>
                 <label class="block font-semibold mb-1 text-slate-700">Adres wykonania usługi / klienta:</label>
-                <input type="text" id="wyc-client-address" placeholder="np. ul. Leśna 10, Poznań" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
+                <input type="text" id="wyc-client-address" oninput="scheduleDraftQuoteSave()" placeholder="np. ul. Leśna 10, Poznań" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900">
               </div>
             </div>
 
@@ -1550,7 +1741,7 @@
 
             <div>
               <label class="block font-semibold mb-1 text-slate-700">Uwagi i Warunki Wyceny / Płatności:</label>
-              <textarea id="wyc-notes" rows="2" placeholder="Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"></textarea>
+              <textarea id="wyc-notes" oninput="scheduleDraftQuoteSave()" rows="2" placeholder="Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"></textarea>
             </div>
 
             <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-slate-100">
@@ -2374,6 +2565,14 @@
                 <input type="checkbox" id="new-user-perm-currency_calc" class="rounded text-purple-600">
                 <span class="font-medium text-slate-800">💱 Waluty</span>
               </label>
+              <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer">
+                <input type="checkbox" id="new-user-perm-stopki_email" class="rounded text-purple-600">
+                <span class="font-medium text-slate-800">✉️ Stopki E-mail</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer">
+                <input type="checkbox" id="new-user-perm-password_gen" class="rounded text-purple-600">
+                <span class="font-medium text-slate-800">🔐 Generator Hasła</span>
+              </label>
             </div>
           </div>
 
@@ -2664,9 +2863,25 @@
           </h2>
           <p class="text-xs text-slate-600 mt-1">Organizacja pracy, statusy zadań i śledzenie terminów wykonania</p>
         </div>
-        <button onclick="openTaskModal()" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md shrink-0">
-          <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Zadanie
-        </button>
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <button type="button" onclick="clearDoneTasksUI()" class="btn-anim bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="check-square" class="w-4 h-4"></i> Usuń ukończone
+          </button>
+          <button type="button" onclick="clearAllTasksUI()" class="btn-anim bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-bold px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> Wyczyść wszystkie
+          </button>
+          <button type="button" onclick="openTaskModal()" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md">
+            <i data-lucide="plus" class="w-4 h-4"></i> Dodaj Zadanie
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Quick Filter Tabs for Kanban -->
+      <div class="md:hidden grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-2xl text-[11px] font-bold">
+        <button type="button" id="tasks-tab-btn-all" onclick="switchTasksMobileCol('all')" class="btn-anim py-2 px-1 rounded-xl bg-white text-teal-800 shadow-sm truncate">Wszystkie</button>
+        <button type="button" id="tasks-tab-btn-todo" onclick="switchTasksMobileCol('todo')" class="btn-anim py-2 px-1 rounded-xl text-slate-600 truncate">📌 (<span id="tasks-count-todo-mobile">0</span>)</button>
+        <button type="button" id="tasks-tab-btn-in_progress" onclick="switchTasksMobileCol('in_progress')" class="btn-anim py-2 px-1 rounded-xl text-slate-600 truncate">⚡ (<span id="tasks-count-in_progress-mobile">0</span>)</button>
+        <button type="button" id="tasks-tab-btn-done" onclick="switchTasksMobileCol('done')" class="btn-anim py-2 px-1 rounded-xl text-slate-600 truncate">✅ (<span id="tasks-count-done-mobile">0</span>)</button>
       </div>
 
       <!-- Kanban Board Columns Grid (Wspólna i spójna dla Komputera i Telefonu) -->
@@ -3064,11 +3279,16 @@
           </div>
         </div>
 
-        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" onclick="closeTaskModal()" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Anuluj</button>
-          <button type="submit" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md">
-            <i data-lucide="save" class="w-4 h-4"></i> Zapisz Zadanie
+        <div class="pt-3 flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="task-modal-delete-btn" onclick="handleDeleteCurrentTaskFromModal()" class="hidden btn-anim bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> Usuń Zadanie
           </button>
+          <div class="flex items-center gap-2 ml-auto">
+            <button type="button" onclick="closeTaskModal()" class="btn-anim bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold px-4 py-2 rounded-xl text-xs">Anuluj</button>
+            <button type="submit" class="btn-anim bg-teal-600 hover:bg-teal-700 text-white font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md">
+              <i data-lucide="save" class="w-4 h-4"></i> Zapisz Zadanie
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -3134,10 +3354,10 @@
 
 
   <!-- ==================== FLOATING AI CHAT BUBBLE WIDGET ==================== -->
-  <div id="ai-floating-widget" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3">
+  <div id="ai-floating-widget" class="fixed bottom-20 right-3.5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-3">
     
     <!-- Floating Mini Chat Window (Hidden by default) -->
-    <div id="ai-mini-chat-card" class="hidden fixed inset-x-3 bottom-16 sm:static sm:inset-auto sm:bottom-auto sm:right-auto w-[calc(100vw-24px)] max-w-[400px] sm:w-[400px] h-[75vh] sm:h-[500px] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden animate-emerge">
+    <div id="ai-mini-chat-card" class="hidden fixed inset-x-3 bottom-20 sm:static sm:inset-auto sm:bottom-auto sm:right-auto w-[calc(100vw-24px)] max-w-[400px] sm:w-[400px] h-[70vh] sm:h-[500px] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden animate-emerge z-50">
       
       <!-- Mini Chat Header -->
       <div class="bg-gradient-to-r from-slate-900 to-rose-950 p-3 sm:p-4 text-white flex items-center justify-between border-b border-rose-900/40">
@@ -3223,6 +3443,16 @@
         .replace(/'/g, '&#039;');
     }
 
+    function escapeAttr(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
     function safeCreateIcons() {
       try {
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -3306,6 +3536,81 @@
       try { localStorage.removeItem(key); } catch (e) {}
     }
 
+    // ==================== ANIMATED TOAST & SAVE INDICATOR SYSTEM ====================
+    let _saveIndicatorTimer = null;
+    function flashSaveIndicator(label = 'Zapisano') {
+      const box = document.getElementById('global-save-indicator');
+      const txt = document.getElementById('global-save-text');
+      if (!box) return;
+      if (txt) txt.innerText = label;
+      box.classList.remove('hidden');
+      box.classList.add('flex');
+      if (_saveIndicatorTimer) clearTimeout(_saveIndicatorTimer);
+      _saveIndicatorTimer = setTimeout(() => {
+        box.classList.add('hidden');
+        box.classList.remove('flex');
+      }, 2200);
+    }
+
+    function showToast(message, type = 'info', duration = 3200) {
+      if (!message) return;
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-16 right-3 sm:top-20 sm:right-6 z-[70] flex flex-col gap-2 max-w-sm w-[calc(100vw-24px)] pointer-events-none';
+        document.body.appendChild(container);
+      }
+
+      const styleMap = {
+        success: {
+          bg: 'bg-slate-900/95 border-emerald-500/50 text-white',
+          badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40',
+          icon: '✓'
+        },
+        error: {
+          bg: 'bg-slate-900/95 border-rose-500/50 text-white',
+          badge: 'bg-rose-500/20 text-rose-400 border border-rose-500/40',
+          icon: '✕'
+        },
+        warning: {
+          bg: 'bg-slate-900/95 border-amber-500/50 text-white',
+          badge: 'bg-amber-500/20 text-amber-400 border border-amber-500/40',
+          icon: '!'
+        },
+        info: {
+          bg: 'bg-slate-900/95 border-cyan-500/50 text-white',
+          badge: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40',
+          icon: 'i'
+        }
+      };
+
+      const st = styleMap[type] || styleMap.info;
+      const toastEl = document.createElement('div');
+      toastEl.className = `pointer-events-auto toast-enter backdrop-blur-xl border ${st.bg} px-3.5 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold`;
+      toastEl.innerHTML = `
+        <span class="w-6 h-6 rounded-xl ${st.badge} flex items-center justify-center font-black text-xs shrink-0">${st.icon}</span>
+        <span class="flex-1 leading-snug">${escapeHtml(message)}</span>
+        <button type="button" class="text-slate-400 hover:text-white px-1 font-bold text-xs">✕</button>
+      `;
+
+      const closeBtn = toastEl.querySelector('button');
+      const dismiss = () => {
+        if (toastEl.dataset.closing) return;
+        toastEl.dataset.closing = '1';
+        toastEl.classList.remove('toast-enter');
+        toastEl.classList.add('toast-exit');
+        setTimeout(() => toastEl.remove(), 250);
+      };
+      if (closeBtn) closeBtn.onclick = dismiss;
+
+      container.appendChild(toastEl);
+      if (container.children.length > 4) {
+        container.firstElementChild?.remove();
+      }
+      setTimeout(dismiss, duration);
+    }
+
     let soundEnabled = true;
     let currentTab = 'live';
     let currentApp = 'dashboard';
@@ -3333,14 +3638,66 @@
       if (perms) userPermissions = { ...userPermissions, ...JSON.parse(perms) };
     } catch (e) {}
 
+    // Per-User Settings State (persisted to localStorage & /api/user-settings)
+    let userSettings = {};
+    let _settingsSaveTimer = null;
+
+    function getUserSettingsStorageKey(usernameOverride = null) {
+      const u = (usernameOverride || currentUser || safeGetStorage('fomo_username') || 'default').toLowerCase();
+      return `ach_settings_${u}`;
+    }
+
+    function loadLocalUserSettings() {
+      try {
+        const raw = localStorage.getItem(getUserSettingsStorageKey());
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            userSettings = parsed;
+            return userSettings;
+          }
+        }
+      } catch (e) {}
+      userSettings = {};
+      return userSettings;
+    }
+
+    function saveUserSettingsPatch(patch, immediateServer = false) {
+      if (!patch || typeof patch !== 'object') return;
+      userSettings = { ...userSettings, ...patch, updatedAt: new Date().toISOString() };
+      try {
+        localStorage.setItem(getUserSettingsStorageKey(), JSON.stringify(userSettings));
+      } catch (e) {}
+      flashSaveIndicator('Zapisano');
+
+      const sendToServer = async () => {
+        try {
+          await fetch('/api/user-settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(patch),
+            keepalive: true
+          });
+        } catch (e) {}
+      };
+
+      if (immediateServer) {
+        if (_settingsSaveTimer) clearTimeout(_settingsSaveTimer);
+        sendToServer();
+      } else {
+        if (_settingsSaveTimer) clearTimeout(_settingsSaveTimer);
+        _settingsSaveTimer = setTimeout(sendToServer, 350);
+      }
+    }
+
     // User Company Data State
     let companyData = {
-      name: 'Van Stev Sp. z o.o. Sp. k.',
-      address: 'ul. Prosta 20, 00-001 Warszawa',
-      nip: '8992782026',
-      phone: '+48 605 595 049',
-      email: 'adrian.chrom@gmail.com',
-      bank: '00 1234 5678 9012 3456 7890 1234',
+      name: 'Biuro Usługowe / Twoja Firma',
+      address: 'ul. Przykładowa 12/3, 00-001 Warszawa',
+      nip: '0000000000',
+      phone: '+48 000 000 000',
+      email: 'biuro@firma.pl',
+      bank: '00 0000 0000 0000 0000 0000 0000',
       logo_base64: ''
     };
 
@@ -3350,10 +3707,46 @@
       gigs: [],
       expenses: []
     };
+    let wydatkiServerRev = 0;
 
     let earningsChartInstance = null;
     let categoryPieChartInstance = null;
     let payerBarChartInstance = null;
+
+    function resetInMemoryUserData() {
+      wydatkiFullData = { baseIncomes: [], gigs: [], expenses: [] };
+      wydatkiServerRev = 0;
+      if (typeof poiState !== 'undefined') {
+        poiState = {
+          company: {
+            name: "Biuro Usługowe / Twoja Firma",
+            address: "ul. Przykładowa 12/3, 00-001 Warszawa",
+            nip: "0000000000",
+            phone: "+48 000 000 000",
+            email: "biuro@firma.pl",
+            bank: "00 0000 0000 0000 0000 0000 0000",
+            logoBase64: ""
+          },
+          quote: {
+            number: "",
+            issueDate: "",
+            validDate: "",
+            clientName: "",
+            clientAddress: "",
+            clientPhone: "",
+            notes: "Wycena ważna przez 14 dni od daty wystawienia.\nPłatność po wykonaniu usługi lub ustaleniu etapowym.",
+            items: []
+          },
+          inventory: [],
+          transactions: [],
+          historyQuotes: []
+        };
+      }
+      if (typeof kalendarzEvents !== 'undefined') kalendarzEvents = [];
+      if (typeof crmClients !== 'undefined') crmClients = [];
+      if (typeof userTasks !== 'undefined') userTasks = [];
+      userSettings = {};
+    }
 
     // SEED SAMPLE TOKENS
     const seedTokens = [
@@ -3393,16 +3786,25 @@
     seedTokens.forEach(t => tokensMap.set(t.chain + ':' + t.token_address.toLowerCase(), t));
 
     // THEME TOGGLE (JASNY / CIEMNY)
+    function getThemeStorageKey() {
+      const u = (currentUser || safeGetStorage('fomo_username') || 'default').toLowerCase();
+      return `fomo_theme_${u}`;
+    }
+
     function initTheme() {
-      const savedTheme = localStorage.getItem('fomo_theme') || 'dark';
+      const savedTheme = userSettings.theme || localStorage.getItem(getThemeStorageKey()) || localStorage.getItem('fomo_theme') || 'dark';
       applyTheme(savedTheme);
     }
 
     function toggleTheme() {
       const isDark = document.body.classList.contains('dark');
       const newTheme = isDark ? 'light' : 'dark';
-      localStorage.setItem('fomo_theme', newTheme);
+      try {
+        localStorage.setItem(getThemeStorageKey(), newTheme);
+        localStorage.setItem('fomo_theme', newTheme);
+      } catch (e) {}
       applyTheme(newTheme);
+      saveUserSettingsPatch({ theme: newTheme });
     }
 
     function applyTheme(theme) {
@@ -3432,13 +3834,18 @@
 
     function toggleSound() {
       soundEnabled = !soundEnabled;
-      document.getElementById('sound-status').innerText = soundEnabled ? 'Audio: ON' : 'Audio: OFF';
+      const el = document.getElementById('sound-status');
+      if (el) el.innerText = soundEnabled ? 'Audio: ON' : 'Audio: OFF';
+      saveUserSettingsPatch({ soundEnabled });
     }
 
-    function toggleBurgerDrawer() {
+    function toggleBurgerDrawer(forceOpen) {
       const drawer = document.getElementById('burger-drawer');
       const backdrop = document.getElementById('burger-drawer-backdrop');
-      if (drawer.classList.contains('-translate-x-full')) {
+      if (!drawer || !backdrop) return;
+      const isClosed = drawer.classList.contains('-translate-x-full');
+      const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : isClosed;
+      if (shouldOpen) {
         drawer.classList.remove('-translate-x-full');
         backdrop.classList.remove('hidden');
       } else {
@@ -3450,7 +3857,11 @@
     async function fetchUser() {
       const storedUser = safeGetStorage('fomo_username');
       if (storedUser) {
-        currentUser = storedUser.charAt(0).toUpperCase() + storedUser.slice(1);
+        const normalizedStored = storedUser.charAt(0).toUpperCase() + storedUser.slice(1);
+        if (currentUser.toLowerCase() !== normalizedStored.toLowerCase()) {
+          resetInMemoryUserData();
+        }
+        currentUser = normalizedStored;
         safeSetStorage('fomo_username', currentUser);
         try {
           const prof = safeGetStorage('fomo_user_profile');
@@ -3458,6 +3869,8 @@
           const perms = safeGetStorage('fomo_user_perms');
           if (perms) userPermissions = { ...userPermissions, ...JSON.parse(perms) };
         } catch (e) {}
+        loadLocalUserSettings();
+        applyUserSettingsToDOM();
         setGreeting(currentUser);
         updatePermissionsUI();
         updateWydatkiProfileDOM();
@@ -3468,16 +3881,36 @@
         if (res.ok) {
           const data = await res.json();
           if (data.authenticated && data.username) {
-            currentUser = data.username.charAt(0).toUpperCase() + data.username.slice(1);
+            const newUsername = data.username.charAt(0).toUpperCase() + data.username.slice(1);
+            if (currentUser.toLowerCase() !== newUsername.toLowerCase()) {
+              resetInMemoryUserData();
+            }
+            currentUser = newUsername;
             userPermissions = data.permissions || userPermissions;
             currentUserProfile = data.profile || currentUserProfile;
             safeSetStorage('fomo_username', currentUser);
             safeSetStorage('fomo_user_profile', JSON.stringify(currentUserProfile));
             safeSetStorage('fomo_user_perms', JSON.stringify(userPermissions));
+
+            loadLocalUserSettings();
+            if (data.settings && typeof data.settings === 'object' && Object.keys(data.settings).length > 0) {
+              userSettings = { ...userSettings, ...data.settings };
+              try {
+                localStorage.setItem(getUserSettingsStorageKey(), JSON.stringify(userSettings));
+              } catch (e) {}
+            }
+            applyUserSettingsToDOM();
             setGreeting(currentUser);
             updatePermissionsUI();
             updateWydatkiProfileDOM();
             loadCompanyData();
+
+            // Restore hash module or last visited module if valid
+            const hashApp = (window.location.hash || '').replace(/^#/, '').trim();
+            const validApps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'admin', 'crm', 'tasks', 'password_gen', 'currency_calc'];
+            if (hashApp && validApps.includes(hashApp) && hashApp !== currentApp) {
+              switchApp(hashApp, { skipHistory: true });
+            }
             return;
           }
         }
@@ -3533,10 +3966,7 @@
     }
 
     function showLockedApp() {
-      const drawer = document.getElementById('burger-drawer');
-      if (drawer && !drawer.classList.contains('-translate-x-full')) {
-        toggleBurgerDrawer();
-      }
+      toggleBurgerDrawer(false);
       const apps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'admin', 'crm', 'tasks', 'password_gen', 'currency_calc'];
       apps.forEach(a => {
         const container = document.getElementById(`app-container-${a}`);
@@ -3551,7 +3981,7 @@
         lockedContainer.style.display = 'block';
       }
       currentApp = 'locked';
-      updateAppTitle('🔒 Moduł Zablokowany');
+      updateNavigationActiveState('locked', '🔒 Moduł Zablokowany');
       safeCreateIcons();
     }
 
@@ -3572,14 +4002,51 @@
       try {
         await fetch('/api/logout', { method: 'POST' });
       } catch (e) {}
+      resetInMemoryUserData();
       safeRemoveStorage('fomo_username');
       safeRemoveStorage('fomo_user_profile');
       safeRemoveStorage('fomo_user_perms');
       window.location.href = '/login.html?t=' + Date.now();
     }
 
+    function updateNavigationActiveState(appName, titleText) {
+      const badge = document.getElementById('current-app-badge');
+      if (badge) badge.innerText = titleText;
+
+      const backBtn = document.getElementById('header-back-btn');
+      if (backBtn) {
+        if (appName && appName !== 'dashboard') {
+          backBtn.classList.remove('hidden');
+          backBtn.classList.add('inline-flex');
+        } else {
+          backBtn.classList.add('hidden');
+          backBtn.classList.remove('inline-flex');
+        }
+      }
+
+      // Highlight active item in Burger Drawer
+      document.querySelectorAll('#burger-drawer [data-drawer-app]').forEach(btn => {
+        const target = btn.getAttribute('data-drawer-app');
+        if (target === appName) {
+          btn.classList.add('active-drawer-item');
+        } else {
+          btn.classList.remove('active-drawer-item');
+        }
+      });
+
+      // Highlight active item in Mobile Bottom Nav Bar
+      document.querySelectorAll('#mobile-bottom-nav [data-mobile-nav]').forEach(btn => {
+        const target = btn.getAttribute('data-mobile-nav');
+        if (target === appName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
     // TOP EXECUTIVE APP SWITCHER
-    function switchApp(appName) {
+    function switchApp(appName, opts = {}) {
       const isAdrian = (currentUser || '').toLowerCase() === 'adrian' || (userPermissions && userPermissions.is_admin);
 
       if (appName !== 'dashboard') {
@@ -3593,10 +4060,7 @@
         }
       }
 
-      const drawer = document.getElementById('burger-drawer');
-      if (drawer && !drawer.classList.contains('-translate-x-full')) {
-        toggleBurgerDrawer();
-      }
+      toggleBurgerDrawer(false);
 
       const apps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'admin', 'crm', 'tasks', 'password_gen', 'currency_calc'];
       
@@ -3616,43 +4080,61 @@
 
       const targetContainer = document.getElementById(`app-container-${appName}`);
       if (targetContainer) {
-        targetContainer.classList.remove('hidden');
+        targetContainer.classList.remove('hidden', 'animate-emerge');
         targetContainer.style.display = 'block';
+        void targetContainer.offsetWidth; // trigger reflow for smooth spring entrance
+        targetContainer.classList.add('animate-emerge');
       }
 
       currentApp = appName;
 
       const titlesMap = {
-        'dashboard': '🏠 Dashboard',
+        'dashboard': '🏠 Pulpit',
         'fomo': '⚡ FOMO Engine',
-        'wydatki': '💰 WYDATKI & ZAROBKI',
-        'wyceny': '🏷️ WYCENY',
-        'stopki_email': '✉️ STOPKI E-MAIL',
-        'kalendarz': '📅 KALENDARZ',
-        'ai_chat': '🤖 ASYSTENT AI',
-        'admin': '⚙️ PANEL ADMINA',
-        'crm': '👥 MODUŁ CRM',
-        'tasks': '📋 LISTA ZADAŃ (KANBAN)',
-        'password_gen': '🔐 GENERATOR HASŁA',
-        'currency_calc': '💱 PRZELICZNIK WALUT'
+        'wydatki': '💰 Wydatki & Zarobki',
+        'wyceny': '🏷️ Wyceny & Kosztorysy',
+        'stopki_email': '✉️ Stopki E-mail',
+        'kalendarz': '📅 Kalendarz',
+        'ai_chat': '🤖 Asystent AI',
+        'admin': '⚙️ Panel Admina',
+        'crm': '👥 Moduł CRM',
+        'tasks': '📋 Lista Zadań (Kanban)',
+        'password_gen': '🔐 Generator Hasła',
+        'currency_calc': '💱 Przelicznik Walut'
       };
-      updateAppTitle(titlesMap[appName] || 'Aplikacja');
+      updateNavigationActiveState(appName, titlesMap[appName] || 'Aplikacja');
+
+      if (!opts.skipHistory) {
+        try {
+          const newHash = appName === 'dashboard' ? '' : `#${appName}`;
+          if (window.location.hash !== newHash) {
+            history.pushState({ app: appName }, '', newHash || window.location.pathname);
+          }
+        } catch (e) {}
+        saveUserSettingsPatch({ lastApp: appName });
+      }
+
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
 
       try { if (appName === 'fomo') loadLiveTokens(); } catch (e) {}
       try { if (appName === 'wydatki') { updateWydatkiProfileDOM(); loadWydatkiData(); } } catch (e) {}
       try {
         if (appName === 'wyceny') {
           loadCompanyData();
-          generateNewQuoteNumberUI();
-          loadWycenyData();
+          loadWycenyData().then(() => {
+            const numInput = document.getElementById('wyc-number');
+            if (!poiState.quote?.number && (!numInput || !numInput.value)) {
+              generateNewQuoteNumberUI();
+            }
+          });
         }
       } catch (e) {}
-      try { if (appName === 'stopki_email') updateEmailSignaturePreview(); } catch (e) {}
+      try { if (appName === 'stopki_email') updateEmailSignaturePreview(false); } catch (e) {}
       try { if (appName === 'kalendarz') loadKalendarzData(); } catch (e) {}
       try { if (appName === 'admin') loadAdminPermissions(); } catch (e) {}
       try { if (appName === 'crm') loadCrmData(); } catch (e) {}
       try { if (appName === 'tasks') loadTasksData(); } catch (e) {}
-      try { if (appName === 'password_gen') generatePasswordUI(); } catch (e) {}
+      try { if (appName === 'password_gen') generatePasswordUI(false); } catch (e) {}
       try { if (appName === 'currency_calc') fetchCurrencyRatesUI(); } catch (e) {}
 
       const floatWidget = document.getElementById('ai-floating-widget');
@@ -3665,8 +4147,7 @@
     }
 
     function updateAppTitle(title) {
-      const badge = document.getElementById('current-app-badge');
-      if (badge) badge.innerText = title;
+      updateNavigationActiveState(currentApp, title);
     }
 
     function switchTab(tab) {
@@ -3676,13 +4157,18 @@
         const btn = document.getElementById(`tab-${t}-btn`);
         const content = document.getElementById(`tab-${t}-content`);
         if (t === tab) {
-          content.classList.remove('hidden');
-          btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm";
+          if (content) {
+            content.classList.remove('hidden', 'animate-subtab');
+            void content.offsetWidth;
+            content.classList.add('animate-subtab');
+          }
+          if (btn) btn.className = "btn-anim shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm whitespace-nowrap";
         } else {
-          content.classList.add('hidden');
-          btn.className = "btn-anim flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100";
+          if (content) content.classList.add('hidden');
+          if (btn) btn.className = "btn-anim shrink-0 flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 whitespace-nowrap";
         }
       });
+      saveUserSettingsPatch({ fomoTab: tab });
       if (tab === 'insiders') {
         loadInsiderSignalsFeed();
         loadTrackedInsidersList();
@@ -3852,7 +4338,6 @@
 
 
     // ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ====================
-    // ==================== MODULE 2: 💰 WYDATKI & ZAROBKI (EXACT 1:1 STANDALONE APP) ====================
     function switchWydatkiTab(subtab) {
       ['wydatki', 'zarobki', 'wykresy', 'podsumowanie'].forEach(st => {
         const btn = document.getElementById(`wydatki-subtab-${st}`);
@@ -3865,11 +4350,17 @@
           }
         }
         if (content) {
-          if (st === subtab) content.classList.remove('hidden');
-          else content.classList.add('hidden');
+          if (st === subtab) {
+            content.classList.remove('hidden', 'animate-subtab');
+            void content.offsetWidth;
+            content.classList.add('animate-subtab');
+          } else {
+            content.classList.add('hidden');
+          }
         }
       });
 
+      saveUserSettingsPatch({ wydatkiSubtab: subtab });
       updateWydatkiProfileDOM();
       if (subtab === 'wykresy' || subtab === 'podsumowanie') {
         setTimeout(renderWydatkiChartsUI, 50);
@@ -3912,10 +4403,14 @@
           p1 = 'Maciek';
           p2 = 'Karolina';
           pair = 'maciek_karolina';
-        } else {
+        } else if (user === 'adrian' || user === 'patrycja') {
           p1 = 'Adrian';
           p2 = 'Patrycja';
           pair = 'adrian_patrycja';
+        } else if (user) {
+          p1 = user.charAt(0).toUpperCase() + user.slice(1);
+          p2 = 'Partner';
+          pair = user;
         }
       }
 
@@ -4083,19 +4578,18 @@
     }
 
     function loadLocalWydatki() {
+      // Always start clean for the active household so previous user's memory never leaks
+      wydatkiFullData = { baseIncomes: [], gigs: [], expenses: [] };
       try {
         const key = getWydatkiStorageKey();
         let stored = localStorage.getItem(key);
         
-        // Auto-migration from legacy keys if v3 not present
+        // Auto-migration strictly from this household's own legacy keys (never global default)
         if (!stored) {
           const profile = getWydatkiProfile();
           const legacyKeys = [
             `ach_wydatki_v2_${profile.pairId}`,
-            `ach_wydatki_v2_${profile.p1.toLowerCase()}`,
-            `ach_wydatki_v2_${profile.p2.toLowerCase()}`,
-            `ach_wydatki_v2_${(currentUser || '').toLowerCase()}`,
-            'ach_wydatki_v2_default'
+            `ach_wydatki_v2_${(currentUser || '').toLowerCase()}`
           ];
           for (const lk of legacyKeys) {
             const leg = localStorage.getItem(lk);
@@ -4133,47 +4627,38 @@
       try {
         const res = await fetch('/api/wydatki');
         if (res.ok) {
+          const revHeader = res.headers.get('X-Doc-Rev');
+          if (revHeader) wydatkiServerRev = parseInt(revHeader, 10) || 0;
+
           const serverData = await res.json();
           if (serverData && typeof serverData === 'object') {
-            const serverExpenses = Array.isArray(serverData.expenses) ? serverData.expenses : [];
-            const serverBase = Array.isArray(serverData.baseIncomes) ? serverData.baseIncomes : [];
-            const serverGigs = Array.isArray(serverData.gigs) ? serverData.gigs : [];
+            const serverExpenses = (Array.isArray(serverData.expenses) ? serverData.expenses : []).map(e => ({ ...e, _synced: true }));
+            const serverBase = (Array.isArray(serverData.baseIncomes) ? serverData.baseIncomes : []).map(b => ({ ...b, _synced: true }));
+            const serverGigs = (Array.isArray(serverData.gigs) ? serverData.gigs : []).map(g => ({ ...g, _synced: true }));
 
-            // CRITICAL MERGE: NEVER WIPE LOCAL EXPENSES!
-            const expenseMap = new Map();
-            (wydatkiFullData.expenses || []).forEach(e => {
-              if (e && e.id) expenseMap.set(String(e.id), e);
-            });
-            serverExpenses.forEach(e => {
-              if (e && e.id) {
-                const existing = expenseMap.get(String(e.id));
-                expenseMap.set(String(e.id), { ...existing, ...e, _synced: true });
-              }
-            });
+            // Preserve ONLY items created offline (_synced === false) that haven't been pushed yet.
+            // Items that were already _synced: true and are absent on server were intentionally deleted!
+            const serverExpIds = new Set(serverExpenses.map(e => String(e.id)));
+            const unsyncedExpenses = (wydatkiFullData.expenses || []).filter(e => e && e._synced === false && !serverExpIds.has(String(e.id)));
 
-            const mergedExpenses = Array.from(expenseMap.values());
-            const mergedBase = (serverBase.length > 0) ? serverBase : (wydatkiFullData.baseIncomes || []);
-            const mergedGigs = (serverGigs.length > 0) ? serverGigs : (wydatkiFullData.gigs || []);
+            const serverBaseMonths = new Set(serverBase.map(b => String(b.month)));
+            const unsyncedBase = (wydatkiFullData.baseIncomes || []).filter(b => b && b._synced === false && !serverBaseMonths.has(String(b.month)));
+
+            const serverGigIds = new Set(serverGigs.map(g => String(g.id)));
+            const unsyncedGigs = (wydatkiFullData.gigs || []).filter(g => g && g._synced === false && !serverGigIds.has(String(g.id)));
 
             wydatkiFullData = {
-              baseIncomes: mergedBase,
-              gigs: mergedGigs,
-              expenses: mergedExpenses
+              baseIncomes: [...serverBase, ...unsyncedBase],
+              gigs: [...unsyncedGigs, ...serverGigs],
+              expenses: [...unsyncedExpenses, ...serverExpenses]
             };
 
             saveLocalWydatki();
             refreshWydatkiUI();
 
-            // If offline items were found, push merged state up to server
-            const unsynced = mergedExpenses.filter(e => !e._synced);
-            if (unsynced.length > 0) {
-              try {
-                await fetch('/api/wydatki', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(wydatkiFullData)
-                });
-              } catch (pushErr) {}
+            // Push any offline-created items up to server
+            if (unsyncedExpenses.length > 0 || unsyncedBase.length > 0 || unsyncedGigs.length > 0) {
+              await saveWydatkiData();
             }
           }
         } else if (res.status === 401) {
@@ -4189,18 +4674,23 @@
       // 1. Immediately persist locally (instant write, no data loss)
       saveLocalWydatki();
       refreshWydatkiUI();
+      flashSaveIndicator('Zapisano budżet');
 
       // 2. Synchronize to server
       try {
         const res = await fetch('/api/wydatki', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(wydatkiFullData)
+          body: JSON.stringify(wydatkiFullData),
+          keepalive: true
         });
         if (res.ok) {
-          // Mark all current expenses as synced
-          if (wydatkiFullData && Array.isArray(wydatkiFullData.expenses)) {
-            wydatkiFullData.expenses.forEach(e => { e._synced = true; });
+          const revHeader = res.headers.get('X-Doc-Rev');
+          if (revHeader) wydatkiServerRev = parseInt(revHeader, 10) || wydatkiServerRev;
+          if (wydatkiFullData) {
+            if (Array.isArray(wydatkiFullData.expenses)) wydatkiFullData.expenses.forEach(e => { e._synced = true; });
+            if (Array.isArray(wydatkiFullData.baseIncomes)) wydatkiFullData.baseIncomes.forEach(b => { b._synced = true; });
+            if (Array.isArray(wydatkiFullData.gigs)) wydatkiFullData.gigs.forEach(g => { g._synced = true; });
             saveLocalWydatki();
           }
         } else if (res.status === 401) {
@@ -4434,10 +4924,9 @@
     }
 
     async function handleDeleteWydatki(id) {
-      if (confirm("Czy na pewno chcesz usunąć ten wydatek?")) {
-        wydatkiFullData.expenses = wydatkiFullData.expenses.filter(e => strId(e.id) !== strId(id));
-        await saveWydatkiData();
-      }
+      wydatkiFullData.expenses = wydatkiFullData.expenses.filter(e => strId(e.id) !== strId(id));
+      await saveWydatkiData();
+      showToast("Usunięto wydatek", "info");
     }
 
     function strId(val) { return String(val); }
@@ -4529,6 +5018,7 @@
         wydatkiFullData.baseIncomes[idx].p2 = p2Sal;
         wydatkiFullData.baseIncomes[idx][p1Key] = p1Sal;
         wydatkiFullData.baseIncomes[idx][p2Key] = p2Sal;
+        wydatkiFullData.baseIncomes[idx]._synced = false;
         if (profile.isMonika) {
           wydatkiFullData.baseIncomes[idx].monika = p1Sal;
           wydatkiFullData.baseIncomes[idx].tomek = p2Sal;
@@ -4540,7 +5030,7 @@
           wydatkiFullData.baseIncomes[idx].patrycja = p2Sal;
         }
       } else {
-        const newInc = { id: Date.now(), month: month, p1: p1Sal, p2: p2Sal };
+        const newInc = { id: `inc-${Date.now()}`, month: month, p1: p1Sal, p2: p2Sal, _synced: false };
         newInc[p1Key] = p1Sal;
         newInc[p2Key] = p2Sal;
         if (profile.isMonika) {
@@ -4560,13 +5050,13 @@
       document.getElementById("adrianBaseSalary").value = "";
       document.getElementById("patrycjaBaseSalary").value = "";
       await saveWydatkiData();
+      showToast("Zapisano dochód stały", "success");
     }
 
     async function deleteBaseIncome(id) {
-      if (confirm("Usunąć wpis o dochodzie stałym dla tego miesiąca?")) {
-        wydatkiFullData.baseIncomes = wydatkiFullData.baseIncomes.filter(i => strId(i.id) !== strId(id));
-        await saveWydatkiData();
-      }
+      wydatkiFullData.baseIncomes = wydatkiFullData.baseIncomes.filter(i => strId(i.id) !== strId(id));
+      await saveWydatkiData();
+      showToast("Usunięto wpis o dochodzie stałym", "info");
     }
 
     async function handleAddGigIncome(e) {
@@ -4587,25 +5077,26 @@
       if (!title || isNaN(amount) || amount <= 0 || !month) return;
 
       const newGig = {
-        id: Date.now(),
+        id: `gig-${Date.now()}`,
         person: person,
         title: title,
         amount: amount,
         month: month,
-        date: `${month}-15`
+        date: `${month}-15`,
+        _synced: false
       };
 
       wydatkiFullData.gigs.unshift(newGig);
       document.getElementById("gigTitle").value = "";
       document.getElementById("gigAmount").value = "";
       await saveWydatkiData();
+      showToast("Dodano dodatkowe zlecenie", "success");
     }
 
     async function deleteGig(id) {
-      if (confirm("Usunąć ten wpis o dodatkowym zleceniu?")) {
-        wydatkiFullData.gigs = wydatkiFullData.gigs.filter(g => strId(g.id) !== strId(id));
-        await saveWydatkiData();
-      }
+      wydatkiFullData.gigs = wydatkiFullData.gigs.filter(g => strId(g.id) !== strId(id));
+      await saveWydatkiData();
+      showToast("Usunięto dodatkowe zlecenie", "info");
     }
 
     function renderIncomeTablesUI() {
@@ -4875,7 +5366,7 @@
       historyQuotes: []
     };
 
-    function switchWycenySubtab(subtab) {
+    function switchWycenySubtab(subtab, shouldSave = true) {
       const subtabs = ['wyceny', 'magazyn', 'finanse', 'ustawienia'];
       subtabs.forEach(st => {
         const btn = document.getElementById(`wyceny-subtab-${st}`);
@@ -4888,10 +5379,19 @@
           }
         }
         if (content) {
-          if (st === subtab) content.classList.remove('hidden');
-          else content.classList.add('hidden');
+          if (st === subtab) {
+            content.classList.remove('hidden', 'animate-subtab');
+            void content.offsetWidth;
+            content.classList.add('animate-subtab');
+          } else {
+            content.classList.add('hidden');
+          }
         }
       });
+
+      if (shouldSave !== false) {
+        saveUserSettingsPatch({ wycenySubtab: subtab });
+      }
 
       if (subtab === 'magazyn') renderInventoryUI();
       if (subtab === 'finanse') {
@@ -4906,7 +5406,16 @@
       return `ach_wyceny_${u}`;
     }
 
+    function getCompanyStorageKey() {
+      const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
+      return `ach_company_data_${u}`;
+    }
+
     async function loadWycenyData() {
+      poiState.inventory = [];
+      poiState.transactions = [];
+      poiState.historyQuotes = [];
+
       // 1. Optimistic load from localStorage
       try {
         const stored = localStorage.getItem(getWycenyStorageKey());
@@ -4923,7 +5432,7 @@
         }
       } catch (e) {}
 
-      // 2. Fetch fresh from server
+      // 2. Fetch fresh from server (accept empty arrays so deleting the last item persists!)
       try {
         const res = await fetch('/api/wyceny');
         if (res.ok) {
@@ -4931,11 +5440,12 @@
           if (data && typeof data === 'object') {
             if (data.company) poiState.company = { ...poiState.company, ...data.company };
             if (data.quote) poiState.quote = { ...poiState.quote, ...data.quote };
-            if (Array.isArray(data.inventory) && data.inventory.length > 0) poiState.inventory = data.inventory;
-            if (Array.isArray(data.transactions) && data.transactions.length > 0) poiState.transactions = data.transactions;
-            if (Array.isArray(data.historyQuotes) && data.historyQuotes.length > 0) poiState.historyQuotes = data.historyQuotes;
+            if (Array.isArray(data.inventory)) poiState.inventory = data.inventory;
+            if (Array.isArray(data.transactions)) poiState.transactions = data.transactions;
+            if (Array.isArray(data.historyQuotes)) poiState.historyQuotes = data.historyQuotes;
             try {
               localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
+              localStorage.setItem(getCompanyStorageKey(), JSON.stringify(poiState.company));
             } catch (err) {}
           }
         }
@@ -4949,12 +5459,14 @@
       try {
         localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
       } catch (e) {}
+      flashSaveIndicator('Zapisano wycenę');
 
       try {
         await fetch('/api/wyceny', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(poiState)
+          body: JSON.stringify(poiState),
+          keepalive: true
         });
       } catch (e) {}
     }
@@ -5030,7 +5542,9 @@
       }
     }
 
+    let _companySaveTimer = null;
     async function saveCompanyDataFromForm() {
+      const logoVal = poiState.company?.logoBase64 || poiState.company?.logo_base64 || '';
       poiState.company = {
         name: document.getElementById('company-name')?.value || '',
         nip: document.getElementById('company-nip')?.value || '',
@@ -5038,28 +5552,44 @@
         email: document.getElementById('company-email')?.value || '',
         address: document.getElementById('company-address')?.value || '',
         bank: document.getElementById('company-bank')?.value || '',
-        logoBase64: poiState.company?.logoBase64 || poiState.company?.logo_base64 || ''
+        logoBase64: logoVal,
+        logo_base64: logoVal
       };
-      await saveWycenyData();
+      companyData = { ...poiState.company };
+
       try {
-        localStorage.setItem('ach_company_data', JSON.stringify(poiState.company));
+        localStorage.setItem(getCompanyStorageKey(), JSON.stringify(poiState.company));
+        localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
       } catch (e) {}
-      try {
-        await fetch('/api/company', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(poiState.company)
-        });
-      } catch (e) {}
+
+      const statusEl = document.getElementById('company-save-status');
+      if (statusEl) {
+        statusEl.innerText = '✓ Zapisano automatycznie';
+        statusEl.className = 'text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 transition';
+      }
+      flashSaveIndicator('Dane firmy zapisane');
+
+      if (_companySaveTimer) clearTimeout(_companySaveTimer);
+      _companySaveTimer = setTimeout(async () => {
+        try {
+          await fetch('/api/company', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(poiState.company),
+            keepalive: true
+          });
+        } catch (e) {}
+      }, 350);
     }
 
     async function loadCompanyData() {
       try {
-        const cached = localStorage.getItem('ach_company_data');
+        const cached = localStorage.getItem(getCompanyStorageKey()) || localStorage.getItem('ach_company_data');
         if (cached) {
           const parsed = JSON.parse(cached);
           if (parsed && typeof parsed === 'object') {
             poiState.company = { ...poiState.company, ...parsed };
+            companyData = { ...poiState.company };
             renderCompanyDataUI();
           }
         }
@@ -5071,7 +5601,8 @@
           const data = await res.json();
           if (data && typeof data === 'object') {
             poiState.company = { ...poiState.company, ...data };
-            try { localStorage.setItem('ach_company_data', JSON.stringify(poiState.company)); } catch (e) {}
+            companyData = { ...poiState.company };
+            try { localStorage.setItem(getCompanyStorageKey(), JSON.stringify(poiState.company)); } catch (e) {}
             renderCompanyDataUI();
           }
         }
@@ -5110,6 +5641,40 @@
       saveCompanyDataFromForm();
     }
 
+    let _draftQuoteSaveTimer = null;
+    function scheduleDraftQuoteSave() {
+      const rows = document.querySelectorAll('.wycena-item-row');
+      const items = [];
+      rows.forEach((r, idx) => {
+        const desc = r.querySelector('.wyc-item-desc')?.value ?? '';
+        const qty = parseFloat(r.querySelector('.wyc-item-qty')?.value || 1);
+        const unit = r.querySelector('.wyc-item-unit')?.value || 'szt.';
+        const price = parseFloat(r.querySelector('.wyc-item-price')?.value || 0);
+        items.push({ id: idx + 1, description: desc, quantity: isNaN(qty) ? 1 : qty, unit, unitPrice: isNaN(price) ? 0 : price });
+      });
+
+      poiState.quote = {
+        ...poiState.quote,
+        number: document.getElementById('wyc-number')?.value || poiState.quote?.number || '',
+        issueDate: document.getElementById('wyc-issue-date')?.value || poiState.quote?.issueDate || '',
+        validDate: document.getElementById('wyc-valid-date')?.value || poiState.quote?.validDate || '',
+        clientName: document.getElementById('wyc-client')?.value ?? '',
+        clientPhone: document.getElementById('wyc-client-phone')?.value ?? '',
+        clientAddress: document.getElementById('wyc-client-address')?.value ?? '',
+        notes: document.getElementById('wyc-notes')?.value ?? '',
+        items: items.length > 0 ? items : (poiState.quote?.items || [])
+      };
+
+      try {
+        localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
+      } catch (e) {}
+
+      if (_draftQuoteSaveTimer) clearTimeout(_draftQuoteSaveTimer);
+      _draftQuoteSaveTimer = setTimeout(() => {
+        saveWycenyData();
+      }, 450);
+    }
+
     function generateNewQuoteNumberUI() {
       const today = new Date();
       const year = today.getFullYear();
@@ -5127,9 +5692,9 @@
       if (q.number && document.getElementById('wyc-number')) document.getElementById('wyc-number').value = q.number;
       if (q.issueDate && document.getElementById('wyc-issue-date')) document.getElementById('wyc-issue-date').value = q.issueDate;
       if (q.validDate && document.getElementById('wyc-valid-date')) document.getElementById('wyc-valid-date').value = q.validDate;
-      if (q.clientName && document.getElementById('wyc-client')) document.getElementById('wyc-client').value = q.clientName;
-      if (q.clientPhone && document.getElementById('wyc-client-phone')) document.getElementById('wyc-client-phone').value = q.clientPhone;
-      if (q.clientAddress && document.getElementById('wyc-client-address')) document.getElementById('wyc-client-address').value = q.clientAddress;
+      if (q.clientName !== undefined && document.getElementById('wyc-client')) document.getElementById('wyc-client').value = q.clientName;
+      if (q.clientPhone !== undefined && document.getElementById('wyc-client-phone')) document.getElementById('wyc-client-phone').value = q.clientPhone;
+      if (q.clientAddress !== undefined && document.getElementById('wyc-client-address')) document.getElementById('wyc-client-address').value = q.clientAddress;
       if (q.notes && document.getElementById('wyc-notes')) document.getElementById('wyc-notes').value = q.notes;
 
       const container = document.getElementById('wycena-items-container');
@@ -5144,9 +5709,9 @@
         const div = document.createElement('div');
         div.className = 'grid grid-cols-1 sm:grid-cols-7 gap-2 wycena-item-row bg-slate-50 p-2.5 rounded-2xl border border-slate-200 items-center animate-emerge';
         div.innerHTML = `
-          <input type="text" value="${item.description || ''}" placeholder="Opis pozycji..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc" oninput="updateQuoteLiveTotal()">
+          <input type="text" value="${escapeHtml(item.description || '')}" placeholder="Opis pozycji..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc" oninput="updateQuoteLiveTotal()">
           <input type="number" value="${item.quantity || item.qty || 1}" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty" oninput="updateQuoteLiveTotal()">
-          <select class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
+          <select onchange="updateQuoteLiveTotal()" class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
             <option value="szt." ${item.unit === 'szt.' ? 'selected' : ''}>szt.</option>
             <option value="kpl." ${item.unit === 'kpl.' ? 'selected' : ''}>kpl.</option>
             <option value="m" ${item.unit === 'm' ? 'selected' : ''}>m</option>
@@ -5161,7 +5726,7 @@
         container.appendChild(div);
       });
 
-      updateQuoteLiveTotal();
+      updateQuoteLiveTotal(false);
     }
 
     function addWycenaItemRow() {
@@ -5172,7 +5737,7 @@
       div.innerHTML = `
         <input type="text" placeholder="Opis pozycji / usługi / materiału..." required class="sm:col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-desc" oninput="updateQuoteLiveTotal()">
         <input type="number" value="1" step="any" placeholder="Ilość" required class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 wyc-item-qty" oninput="updateQuoteLiveTotal()">
-        <select class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
+        <select onchange="updateQuoteLiveTotal()" class="bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 wyc-item-unit font-semibold">
           <option value="szt.">szt.</option>
           <option value="kpl.">kpl.</option>
           <option value="m">m</option>
@@ -5188,7 +5753,7 @@
       updateQuoteLiveTotal();
     }
 
-    function updateQuoteLiveTotal() {
+    function updateQuoteLiveTotal(saveDraft = true) {
       const rows = document.querySelectorAll('.wycena-item-row');
       let total = 0;
       rows.forEach(r => {
@@ -5198,6 +5763,9 @@
       });
       const el = document.getElementById('wyc-live-total');
       if (el) el.innerText = `${total.toFixed(2)} PLN`;
+      if (saveDraft !== false) {
+        scheduleDraftQuoteSave();
+      }
     }
 
     function openCurrentQuotePdfModal() {
@@ -5733,6 +6301,7 @@
       await saveWycenyData();
       renderSavedQuotesGrid();
       generateNewQuoteNumberUI();
+      showToast("Wycena została zapisana!", "success");
 
       openCurrentQuotePdfModal();
     }
@@ -5748,16 +6317,16 @@
       }
 
       grid.innerHTML = quotes.map(q => {
-        const itemsList = (q.items || []).map(i => `<li class="flex justify-between text-xs py-0.5"><span>• ${i.description} (x${i.quantity || i.qty || 1} ${i.unit || 'szt.'})</span> <b class="font-mono text-slate-800">${((i.unitPrice || i.unit_price || 0) * (i.quantity || i.qty || 1)).toFixed(2)} PLN</b></li>`).join('');
+        const itemsList = (q.items || []).map(i => `<li class="flex justify-between text-xs py-0.5"><span>• ${escapeHtml(i.description)} (x${i.quantity || i.qty || 1} ${i.unit || 'szt.'})</span> <b class="font-mono text-slate-800">${((i.unitPrice || i.unit_price || 0) * (i.quantity || i.qty || 1)).toFixed(2)} PLN</b></li>`).join('');
 
         return `
           <div class="clean-card p-6 rounded-3xl space-y-4">
             <div class="flex justify-between items-start border-b border-slate-100 pb-3">
               <div>
-                <h4 class="text-base font-bold text-slate-900">Wycena dla: ${q.clientName || 'Klient'}</h4>
-                <p class="text-xs text-purple-700 font-semibold">Wystawiono: ${q.issueDate || '-'}</p>
+                <h4 class="text-base font-bold text-slate-900">Wycena dla: ${escapeHtml(q.clientName || 'Klient')}</h4>
+                <p class="text-xs text-purple-700 font-semibold">Wystawiono: ${escapeHtml(q.issueDate || '-')}</p>
               </div>
-              <span class="bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded font-bold text-[10px]">${q.number || 'WYC'}</span>
+              <span class="bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded font-bold text-[10px]">${escapeHtml(q.number || 'WYC')}</span>
             </div>
 
             <ul class="space-y-1 bg-slate-50 p-3 rounded-2xl border border-slate-200 text-slate-600">
@@ -5769,11 +6338,14 @@
                 <span class="text-slate-400">Suma:</span>
                 <span class="font-bold text-slate-900 ml-1 font-mono">${((q.items || []).reduce((sum, item) => sum + ((item.unitPrice || item.unit_price || 0) * (item.quantity || item.qty || 1)), 0)).toFixed(2)} PLN</span>
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5">
+                <button onclick="loadSavedWycenaToForm('${q.id}')" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-xl font-bold border border-slate-200">
+                  ✏️ Wczytaj
+                </button>
                 <button onclick="previewSavedWycenaPdf('${q.id}')" class="btn-anim bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded-xl font-bold border border-purple-200">
                   📄 PDF
                 </button>
-                <button onclick="handleDeleteWycena('${q.id}')" class="btn-anim text-rose-500 hover:text-rose-700 p-1.5">
+                <button onclick="handleDeleteWycena('${q.id}')" class="btn-anim text-rose-500 hover:text-rose-700 p-1.5" title="Usuń wycenę">
                   <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -5784,26 +6356,54 @@
       safeCreateIcons();
     }
 
-    async function previewSavedWycenaPdf(id) {
+    function loadSavedWycenaToForm(id) {
+      const target = (poiState.historyQuotes || []).find(x => String(x.id) === String(id));
+      if (!target) return;
+      poiState.quote = JSON.parse(JSON.stringify(target));
+      renderQuoteItemsUI();
+      scheduleDraftQuoteSave();
+      showToast(`Wczytano wycenę ${target.number || ''} do edytora`, "info");
       try {
-        const res = await fetch('/api/wyceny');
-        const list = await res.json();
-        const target = list.find(x => x.id === id);
-        if (target) {
-          const paper = document.getElementById('pdf-paper-content');
-          const modal = document.getElementById('pdf-preview-modal');
-          paper.innerHTML = generatePdfA4HTML(target, companyData);
-          modal.classList.remove('hidden');
-          safeCreateIcons();
-        }
+        document.getElementById('wyc-number')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch (e) {}
     }
 
+    async function previewSavedWycenaPdf(id) {
+      let target = (poiState.historyQuotes || []).find(x => String(x.id) === String(id));
+      if (!target) {
+        try {
+          const res = await fetch('/api/wyceny');
+          if (res.ok) {
+            const data = await res.json();
+            const list = Array.isArray(data) ? data : (Array.isArray(data?.historyQuotes) ? data.historyQuotes : []);
+            target = list.find(x => String(x.id) === String(id));
+          }
+        } catch (e) {}
+      }
+      if (target) {
+        const paper = document.getElementById('pdf-paper-content');
+        const modal = document.getElementById('pdf-preview-modal');
+        if (paper && modal) {
+          paper.innerHTML = generatePdfA4HTML(target, poiState.company || companyData);
+          modal.classList.remove('hidden');
+          safeCreateIcons();
+        }
+      } else {
+        showToast("Nie znaleziono wybranej wyceny", "error");
+      }
+    }
+
     async function handleDeleteWycena(id) {
+      poiState.historyQuotes = (poiState.historyQuotes || []).filter(x => String(x.id) !== String(id));
       try {
-        await fetch(`/api/wyceny/${id}`, { method: 'DELETE' });
-        loadWycenyData();
+        localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
       } catch (e) {}
+      renderSavedQuotesGrid();
+      showToast("Wycena została usunięta", "info");
+      try {
+        await fetch(`/api/wyceny/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      } catch (e) {}
+      await saveWycenyData();
     }
 
 
@@ -5827,7 +6427,7 @@
       }
     }
 
-    function updateEmailSignaturePreview() {
+    function updateEmailSignaturePreview(shouldSave = true) {
       const templateStyleEl = document.querySelector('input[name="sigTemplateStyle"]:checked');
       const templateStyle = templateStyleEl ? templateStyleEl.value : 'top-line';
 
@@ -5848,6 +6448,16 @@
       const langPL = document.getElementById('sig-lang-pl').checked;
       const langEN = document.getElementById('sig-lang-en').checked;
       const langDE = document.getElementById('sig-lang-de').checked;
+
+      if (shouldSave !== false) {
+        saveUserSettingsPatch({
+          emailSignature: {
+            templateStyle, greeting, name, role, phone, email, website,
+            lineColor, accentColor, iconColor, lineWidth, iconStyle,
+            enableClause, langPL, langEN, langDE
+          }
+        });
+      }
 
       let contactRowsHtml = '';
 
@@ -5955,7 +6565,7 @@
       window.getSelection().addRange(range);
       document.execCommand('copy');
       window.getSelection().removeAllRanges();
-      alert('✓ Skopiowano sformatowaną stopkę! Wklej (Ctrl+V / Cmd+V) bezpośrednio w ustawieniach podpisu Gmail / Outlook.');
+      showToast('Skopiowano sformatowaną stopkę! Wklej (Ctrl+V / Cmd+V) w podpisie Gmail / Outlook.', 'success');
     }
 
     function downloadEmailSignatureHtml() {
@@ -5968,6 +6578,7 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      showToast('Pobrano plik stopka_email.html', 'success');
     }
 
 
@@ -6458,8 +7069,8 @@
         kalendarz: document.getElementById('new-user-perm-kalendarz')?.checked ?? false,
         ai_chat: document.getElementById('new-user-perm-ai_chat')?.checked ?? false,
         currency_calc: document.getElementById('new-user-perm-currency_calc')?.checked ?? false,
-        stopki_email: false,
-        password_gen: false
+        stopki_email: document.getElementById('new-user-perm-stopki_email')?.checked ?? false,
+        password_gen: document.getElementById('new-user-perm-password_gen')?.checked ?? false
       };
 
       const newUserObj = {
@@ -6625,6 +7236,7 @@
     }
 
     async function loadKalendarzData() {
+      kalendarzEvents = [];
       // 1. Optimistic load from localStorage
       try {
         const stored = localStorage.getItem(getKalendarzStorageKey());
@@ -6637,17 +7249,23 @@
         }
       } catch (e) {}
 
-      // 2. Fetch fresh from server
+      // 2. Fetch fresh from server (accept empty array so deleting the last event persists!)
       try {
         const res = await fetch('/api/kalendarz');
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             const evMap = new Map();
-            kalendarzEvents.forEach(e => { if (e && e.id) evMap.set(String(e.id), e); });
-            data.forEach(e => { if (e && e.id) evMap.set(String(e.id), e); });
+            kalendarzEvents.forEach(e => {
+              if (e && e.id && e._synced === false) evMap.set(String(e.id), e);
+            });
+            data.forEach(e => {
+              if (e && e.id) evMap.set(String(e.id), { ...e, _synced: true });
+            });
             kalendarzEvents = Array.from(evMap.values());
-            localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
+            try {
+              localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
+            } catch (err) {}
           }
         }
       } catch (e) {
@@ -6660,13 +7278,21 @@
       try {
         localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
       } catch (e) {}
+      flashSaveIndicator('Zapisano kalendarz');
 
       try {
-        await fetch('/api/kalendarz', {
+        const res = await fetch('/api/kalendarz', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(kalendarzEvents)
+          body: JSON.stringify(kalendarzEvents),
+          keepalive: true
         });
+        if (res.ok) {
+          kalendarzEvents.forEach(ev => { if (ev) ev._synced = true; });
+          try {
+            localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
+          } catch (err) {}
+        }
       } catch (e) {}
     }
 
@@ -6689,7 +7315,8 @@
         priority,
         reminder,
         notes,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        _synced: false
       };
 
       kalendarzEvents.push(newEv);
@@ -6699,14 +7326,19 @@
       document.getElementById('cal-event-notes').value = '';
 
       renderKalendarzUI();
+      showToast('Dodano wydarzenie do kalendarza', 'success');
     }
 
     async function deleteKalendarzEvent(id) {
       kalendarzEvents = kalendarzEvents.filter(x => String(x.id) !== String(id));
       try {
-        await fetch(`/api/kalendarz/${id}`, { method: 'DELETE' });
+        localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
       } catch (e) {}
       renderKalendarzUI();
+      showToast('Wydarzenie zostało usunięte', 'info');
+      try {
+        await fetch(`/api/kalendarz/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      } catch (e) {}
     }
 
     function changeCalMonth(delta) {
@@ -7105,6 +7737,10 @@
               container.scrollTop = container.scrollHeight;
             }
           });
+          const mainChatBox = document.getElementById('ai-chat-messages');
+          if (mainChatBox) {
+            saveUserSettingsPatch({ aiChatHtml: mainChatBox.innerHTML });
+          }
         } else {
           showToast("Błąd odpowiedzi z serwera AI", "error");
         }
@@ -7149,46 +7785,103 @@
       const c2 = document.getElementById('ai-mini-chat-messages');
       if (c1) c1.innerHTML = initialHtml;
       if (c2) c2.innerHTML = initialHtml;
+      saveUserSettingsPatch({ aiChatHtml: '' });
+      showToast("Wyczyszczono historię czatu AI", "info");
     }
 
     // ==================== MODULE 7: 👥 CRM LOGIC ====================
     let crmClients = [];
+    const SAMPLE_CRM_NAMES = new Set(['updated client', 'test client', 'przykładowy klient']);
 
     function getCrmStorageKey() {
       const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
       return `ach_crm_${u}`;
     }
 
+    function getDeletedCrmStorageKey() {
+      const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
+      return `ach_deleted_crm_${u}`;
+    }
+
+    function getDeletedCrmIds() {
+      try {
+        const raw = localStorage.getItem(getDeletedCrmStorageKey());
+        const arr = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(arr) ? arr.map(String) : []);
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function markCrmDeleted(id) {
+      if (!id) return;
+      try {
+        const set = getDeletedCrmIds();
+        set.add(String(id));
+        localStorage.setItem(getDeletedCrmStorageKey(), JSON.stringify(Array.from(set)));
+      } catch (e) {}
+    }
+
+    function normalizeCrmList(list) {
+      if (!Array.isArray(list)) return [];
+      const deletedIds = getDeletedCrmIds();
+      return list
+        .filter(c => c && typeof c === 'object')
+        .map((c, idx) => ({
+          ...c,
+          id: c.id ? String(c.id) : `crm-auto-${idx}-${Date.now()}`
+        }))
+        .filter(c => {
+          const nameNorm = String(c.name || '').trim().toLowerCase();
+          if (SAMPLE_CRM_NAMES.has(nameNorm)) return false;
+          if (deletedIds.has(String(c.id))) return false;
+          return true;
+        });
+    }
+
     async function loadCrmData() {
+      crmClients = [];
       // 1. Optimistic load from localStorage
       try {
         const stored = localStorage.getItem(getCrmStorageKey());
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed)) {
-            crmClients = parsed;
+            crmClients = normalizeCrmList(parsed);
+            localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
             renderCrmListUI();
           }
         }
       } catch (e) {}
 
-      // 2. Fetch fresh from server
+      // 2. Fetch fresh from server (accept empty array so deleting the last client persists!)
       try {
         const res = await fetch('/api/crm');
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
+            const deletedIds = getDeletedCrmIds();
             const clientMap = new Map();
-            crmClients.forEach(c => { if (c && c.id) clientMap.set(String(c.id), c); });
-            data.forEach(c => { if (c && c.id) clientMap.set(String(c.id), c); });
+            crmClients.forEach(c => {
+              if (c && c.id && c._synced === false && !deletedIds.has(String(c.id))) {
+                clientMap.set(String(c.id), c);
+              }
+            });
+            normalizeCrmList(data).forEach(c => {
+              if (c && c.id && !deletedIds.has(String(c.id))) {
+                clientMap.set(String(c.id), { ...c, _synced: true });
+              }
+            });
             crmClients = Array.from(clientMap.values());
-            localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
+            try {
+              localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
+            } catch (err) {}
           }
-          renderCrmListUI();
         }
       } catch (e) {
         console.warn("CRM: używam bazy lokalnej:", e);
       }
+      renderCrmListUI();
     }
 
     function renderCrmListUI() {
@@ -7241,6 +7934,7 @@
         else if (c.status === 'Niezainteresowany') badgeColor = 'bg-rose-100 text-rose-800 border-rose-200';
 
         const valFormatted = (parseFloat(c.value) || 0).toLocaleString('pl-PL') + ' zł';
+        const safeId = escapeAttr(String(c.id || ''));
 
         return `
           <div class="clean-card p-5 rounded-2xl space-y-3 flex flex-col justify-between border border-slate-200 hover:border-indigo-300 transition shadow-sm">
@@ -7263,10 +7957,10 @@
             </div>
 
             <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
-              <button onclick="openCrmModal('${c.id}')" title="Edytuj" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-xs">
+              <button type="button" onclick="openCrmModal('${safeId}')" title="Edytuj" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-xs">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
               </button>
-              <button onclick="deleteCrmClientUI('${c.id}')" title="Usuń" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl text-xs">
+              <button type="button" onclick="deleteCrmClientUI('${safeId}')" title="Usuń" class="btn-anim bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl text-xs">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>
@@ -7283,7 +7977,7 @@
 
       document.getElementById('crm-client-id').value = clientId || '';
       if (clientId) {
-        const client = crmClients.find(c => c.id === clientId);
+        const client = crmClients.find(c => String(c.id) === String(clientId));
         if (client) {
           document.getElementById('crm-modal-title').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-indigo-400"></i> Edytuj Klienta CRM`;
           document.getElementById('crm-input-name').value = client.name || '';
@@ -7327,91 +8021,169 @@
 
       if (!name) return;
 
-      const payload = { name, company, email, phone, status, value, notes };
+      const localId = id || `crm-${Date.now()}`;
+      const payload = { id: localId, name, company, email, phone, status, value, notes };
 
-      try {
-        let res;
-        if (id) {
-          res = await fetch(`/api/crm/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-        } else {
-          res = await fetch('/api/crm', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-        }
-
-        if (res.ok) {
-          closeCrmModal();
-          await loadCrmData();
-          showToast(id ? "Zaktualizowano dane klienta" : "Dodano nowego klienta", "success");
-        } else {
-          showToast("Błąd podczas zapisywania klienta", "error");
-        }
-      } catch (err) {
-        showToast("Błąd połączenia podczas zapisywania klienta", "error");
+      // 1. Optimistically update local state & localStorage
+      const existingIdx = crmClients.findIndex(c => String(c.id) === String(localId));
+      if (existingIdx >= 0) {
+        crmClients[existingIdx] = { ...crmClients[existingIdx], ...payload, _synced: false };
+      } else {
+        crmClients.unshift({ ...payload, _synced: false });
       }
+      try {
+        localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
+      } catch (err) {}
+      closeCrmModal();
+      renderCrmListUI();
+      flashSaveIndicator('Zapisano CRM');
+      showToast(id ? "Zaktualizowano dane klienta" : "Dodano nowego klienta", "success");
+
+      // 2. Sync to server
+      try {
+        const res = await fetch(id ? `/api/crm/${encodeURIComponent(id)}` : '/api/crm', {
+          method: id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+        if (res.ok) {
+          await loadCrmData();
+        }
+      } catch (err) {}
     }
 
     async function deleteCrmClientUI(id) {
-      if (!confirm("Czy na pewno chcesz usunąć tego klienta z CRM?")) return;
+      markCrmDeleted(id);
+      crmClients = crmClients.filter(c => String(c.id) !== String(id) && String(c.name || '').trim() !== String(id).trim());
       try {
-        const res = await fetch(`/api/crm/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-          await loadCrmData();
-          showToast("Klient został usunięty", "info");
-        }
-      } catch (e) {
-        showToast("Błąd podczas usuwania klienta", "error");
-      }
+        localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
+      } catch (err) {}
+      renderCrmListUI();
+      flashSaveIndicator('Usunięto klienta');
+      showToast("Klient został usunięty", "info");
+      try {
+        await fetch(`/api/crm/${encodeURIComponent(id)}`, { method: 'DELETE', keepalive: true });
+      } catch (e) {}
     }
 
 
     // ==================== MODULE 8: 📋 KANBAN TASKS LOGIC ====================
     let userTasks = [];
+    const SAMPLE_TASK_TITLES = new Set([
+      'updated task',
+      'test task',
+      'przykładowe zadanie',
+      'zadanie przykładowe',
+      'sample task'
+    ]);
 
     function getTasksStorageKey() {
       const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
       return `ach_tasks_${u}`;
     }
 
+    function getDeletedTasksStorageKey() {
+      const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
+      return `ach_deleted_tasks_${u}`;
+    }
+
+    function getDeletedTaskIds() {
+      try {
+        const raw = localStorage.getItem(getDeletedTasksStorageKey());
+        const arr = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(arr) ? arr.map(String) : []);
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function markTaskDeleted(id) {
+      if (!id) return;
+      try {
+        const set = getDeletedTaskIds();
+        set.add(String(id));
+        localStorage.setItem(getDeletedTasksStorageKey(), JSON.stringify(Array.from(set)));
+      } catch (e) {}
+    }
+
+    function normalizeTaskList(list) {
+      if (!Array.isArray(list)) return [];
+      const deletedIds = getDeletedTaskIds();
+      return list
+        .filter(t => t && typeof t === 'object')
+        .map((t, idx) => ({
+          ...t,
+          id: t.id ? String(t.id) : `task-auto-${idx}-${ (t.title || 'item').replace(/\s+/g, '-') }`,
+          status: ['todo', 'in_progress', 'done'].includes(t.status) ? t.status : 'todo'
+        }))
+        .filter(t => {
+          const titleNorm = String(t.title || '').trim().toLowerCase();
+          if (SAMPLE_TASK_TITLES.has(titleNorm)) return false;
+          if (deletedIds.has(String(t.id))) return false;
+          return true;
+        });
+    }
+
     async function loadTasksData() {
-      // 1. Optimistic load from localStorage
+      userTasks = [];
+      // 1. Optimistic load from localStorage (automatically purges sample/deleted tasks)
       try {
         const stored = localStorage.getItem(getTasksStorageKey());
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed)) {
-            userTasks = parsed;
+            userTasks = normalizeTaskList(parsed);
+            localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
             renderTasksUI();
           }
         }
       } catch (e) {}
 
-      // 2. Fetch fresh from server
+      // 2. Fetch fresh from server (accept empty array so deleting the last task persists!)
       try {
         const res = await fetch('/api/tasks');
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
+            const deletedIds = getDeletedTaskIds();
+            // Purge any server-side tasks that were already deleted locally or are sample fixtures
+            for (const srvTask of data) {
+              if (!srvTask) continue;
+              const srvId = String(srvTask.id || '');
+              const srvTitleNorm = String(srvTask.title || '').trim().toLowerCase();
+              if (deletedIds.has(srvId) || SAMPLE_TASK_TITLES.has(srvTitleNorm)) {
+                if (srvId) {
+                  fetch(`/api/tasks/${encodeURIComponent(srvId)}`, { method: 'DELETE', keepalive: true }).catch(() => {});
+                }
+              }
+            }
+
             const taskMap = new Map();
-            userTasks.forEach(t => { if (t && t.id) taskMap.set(String(t.id), t); });
-            data.forEach(t => { if (t && t.id) taskMap.set(String(t.id), t); });
+            userTasks.forEach(t => {
+              if (t && t.id && t._synced === false && !deletedIds.has(String(t.id))) {
+                taskMap.set(String(t.id), t);
+              }
+            });
+            normalizeTaskList(data).forEach(t => {
+              if (t && t.id && !deletedIds.has(String(t.id))) {
+                taskMap.set(String(t.id), { ...t, _synced: true });
+              }
+            });
             userTasks = Array.from(taskMap.values());
-            localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+            try {
+              localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+            } catch (err) {}
           }
-          renderTasksUI();
         }
       } catch (e) {
         console.warn("Tasks: używam bazy lokalnej:", e);
       }
+      renderTasksUI();
     }
 
     function renderTasksUI() {
+      userTasks = normalizeTaskList(userTasks);
       const todoCol = document.getElementById('tasks-col-todo');
       const inProgCol = document.getElementById('tasks-col-in_progress');
       const doneCol = document.getElementById('tasks-col-done');
@@ -7429,42 +8201,44 @@
 
       const renderCard = (t) => {
         let prioBadge = 'bg-slate-100 text-slate-700';
-        if (t.priority === 'Niski') prioBadge = 'bg-slate-100 text-slate-700';
-        else if (t.priority === 'Średni') prioBadge = 'bg-amber-100 text-amber-800';
-        else if (t.priority === 'Wysoki') prioBadge = 'bg-orange-100 text-orange-800';
-        else if (t.priority === 'Pilny') prioBadge = 'bg-rose-100 text-rose-800 font-bold';
+        if (t.priority === 'Niski') prioBadge = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+        else if (t.priority === 'Średni') prioBadge = 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
+        else if (t.priority === 'Wysoki') prioBadge = 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300';
+        else if (t.priority === 'Pilny') prioBadge = 'bg-rose-100 text-rose-800 font-bold dark:bg-rose-950/60 dark:text-rose-300';
+
+        const safeId = escapeAttr(String(t.id || ''));
 
         return `
-          <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm space-y-3 hover:shadow-md transition">
+          <div id="task-card-${safeId}" class="task-card-item bg-white border border-slate-200 p-4 rounded-2xl shadow-sm space-y-3 hover:shadow-md transition animate-emerge">
             <div class="flex items-start justify-between gap-2">
-              <h4 class="font-bold text-xs text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
+              <h4 onclick="openTaskModal('${safeId}')" class="font-bold text-xs text-slate-900 leading-snug cursor-pointer hover:text-teal-600 transition flex-1">${escapeHtml(t.title)}</h4>
               <span class="text-[10px] px-2 py-0.5 rounded-full shrink-0 ${prioBadge}">${escapeHtml(t.priority || 'Średni')}</span>
             </div>
 
-            ${t.description ? `<p class="text-[11px] text-slate-600 leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
+            ${t.description ? `<p onclick="openTaskModal('${safeId}')" class="text-[11px] text-slate-600 leading-relaxed cursor-pointer">${escapeHtml(t.description)}</p>` : ''}
 
             ${t.due_date ? `<div class="text-[10px] text-slate-500 font-medium flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> Termin: ${escapeHtml(t.due_date)}</div>` : ''}
 
-            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div class="flex items-center gap-1">
                 ${t.status !== 'todo' ? `
-                  <button onclick="moveTaskStatus('${t.id}', '${t.status === 'done' ? 'in_progress' : 'todo'}')" title="Przesuń w lewo" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-1.5 rounded-lg text-xs">
+                  <button type="button" onclick="moveTaskStatus('${safeId}', '${t.status === 'done' ? 'in_progress' : 'todo'}')" title="Przesuń w lewo" class="btn-anim bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 p-1.5 rounded-lg text-xs">
                     <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
                   </button>
                 ` : ''}
                 ${t.status !== 'done' ? `
-                  <button onclick="moveTaskStatus('${t.id}', '${t.status === 'todo' ? 'in_progress' : 'done'}')" title="Przesuń w prawo" class="btn-anim bg-slate-100 hover:bg-slate-200 text-slate-700 p-1.5 rounded-lg text-xs">
+                  <button type="button" onclick="moveTaskStatus('${safeId}', '${t.status === 'todo' ? 'in_progress' : 'done'}')" title="Przesuń w prawo" class="btn-anim bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 p-1.5 rounded-lg text-xs">
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                   </button>
                 ` : ''}
               </div>
 
-              <div class="flex items-center gap-1">
-                <button onclick="openTaskModal('${t.id}')" title="Edytuj" class="btn-anim text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="openTaskModal('${safeId}')" title="Edytuj zadanie" class="btn-anim bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 p-1.5 rounded-lg">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="deleteTaskUI('${t.id}')" title="Usuń" class="btn-anim text-rose-400 hover:text-rose-600 p-1.5 rounded-lg">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <button type="button" onclick="deleteTaskUI('${safeId}')" title="Usuń zadanie" class="btn-anim bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 px-2 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Usuń
                 </button>
               </div>
             </div>
@@ -7486,18 +8260,8 @@
     }
 
     function switchTasksMobileCol(status) {
-      ['todo', 'in_progress', 'done'].forEach(s => {
-        const wrap = document.getElementById(`tasks-col-wrapper-${s}`);
+      ['all', 'todo', 'in_progress', 'done'].forEach(s => {
         const btn = document.getElementById(`tasks-tab-btn-${s}`);
-        if (wrap) {
-          if (s === status) {
-            wrap.classList.remove('hidden');
-            wrap.classList.add('block');
-          } else {
-            wrap.classList.remove('block');
-            wrap.classList.add('hidden');
-          }
-        }
         if (btn) {
           if (s === status) {
             btn.classList.add('bg-white', 'text-teal-800', 'shadow-sm');
@@ -7508,6 +8272,19 @@
           }
         }
       });
+
+      ['todo', 'in_progress', 'done'].forEach(s => {
+        const wrap = document.getElementById(`tasks-col-wrapper-${s}`);
+        if (wrap) {
+          if (status === 'all' || s === status) {
+            wrap.classList.remove('hidden');
+            wrap.classList.add('block');
+          } else {
+            wrap.classList.remove('block');
+            wrap.classList.add('hidden');
+          }
+        }
+      });
     }
 
     function openTaskModal(taskId = null, defaultStatus = 'todo') {
@@ -7515,8 +8292,11 @@
       if (!modal) return;
 
       document.getElementById('task-input-id').value = taskId || '';
+      const delBtn = document.getElementById('task-modal-delete-btn');
+
       if (taskId) {
-        const task = userTasks.find(t => t.id === taskId);
+        if (delBtn) delBtn.classList.remove('hidden');
+        const task = userTasks.find(t => String(t.id) === String(taskId));
         if (task) {
           document.getElementById('tasks-modal-title').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-teal-400"></i> Edytuj Zadanie`;
           document.getElementById('task-input-title').value = task.title || '';
@@ -7526,6 +8306,7 @@
           document.getElementById('task-input-due_date').value = task.due_date || '';
         }
       } else {
+        if (delBtn) delBtn.classList.add('hidden');
         document.getElementById('tasks-modal-title').innerHTML = `<i data-lucide="plus-circle" class="w-5 h-5 text-teal-400"></i> Dodaj Zadanie`;
         document.getElementById('task-input-title').value = '';
         document.getElementById('task-input-description').value = '';
@@ -7543,6 +8324,13 @@
       if (modal) modal.classList.add('hidden');
     }
 
+    function handleDeleteCurrentTaskFromModal() {
+      const id = document.getElementById('task-input-id')?.value;
+      if (!id) return;
+      closeTaskModal();
+      deleteTaskUI(id);
+    }
+
     async function handleSaveTask(e) {
       e.preventDefault();
       const id = document.getElementById('task-input-id').value;
@@ -7554,44 +8342,55 @@
 
       if (!title) return;
 
-      const payload = { title, description, status, priority, due_date };
+      const localId = id || `task-${Date.now()}`;
+      const payload = { id: localId, title, description, status, priority, due_date };
+
+      const existingIdx = userTasks.findIndex(t => String(t.id) === String(localId));
+      if (existingIdx >= 0) {
+        userTasks[existingIdx] = { ...userTasks[existingIdx], ...payload, _synced: false };
+      } else {
+        userTasks.unshift({ ...payload, _synced: false });
+      }
+      try {
+        localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+      } catch (err) {}
+      closeTaskModal();
+      renderTasksUI();
+      flashSaveIndicator('Zapisano zadanie');
+      showToast(id ? "Zaktualizowano zadanie" : "Dodano nowe zadanie", "success");
 
       try {
-        let res;
-        if (id) {
-          res = await fetch(`/api/tasks/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-        } else {
-          res = await fetch('/api/tasks', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-        }
-
+        const res = await fetch(id ? `/api/tasks/${encodeURIComponent(id)}` : '/api/tasks', {
+          method: id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
         if (res.ok) {
-          closeTaskModal();
           await loadTasksData();
-          showToast(id ? "Zaktualizowano zadanie" : "Dodano nowe zadanie", "success");
         }
-      } catch (err) {
-        showToast("Błąd podczas zapisywania zadania", "error");
-      }
+      } catch (err) {}
     }
 
     async function moveTaskStatus(id, newStatus) {
-      const task = userTasks.find(t => t.id === id);
+      const task = userTasks.find(t => String(t.id) === String(id));
       if (!task) return;
+
+      task.status = newStatus;
+      task._synced = false;
+      try {
+        localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+      } catch (err) {}
+      renderTasksUI();
+      flashSaveIndicator('Przeniesiono zadanie');
 
       const payload = { ...task, status: newStatus };
       try {
-        const res = await fetch(`/api/tasks/${id}`, {
+        const res = await fetch(`/api/tasks/${encodeURIComponent(id)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          keepalive: true
         });
         if (res.ok) {
           await loadTasksData();
@@ -7600,16 +8399,84 @@
     }
 
     async function deleteTaskUI(id) {
-      if (!confirm("Czy na pewno chcesz usunąć to zadanie?")) return;
-      try {
-        const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-          await loadTasksData();
-          showToast("Zadanie zostało usunięte", "info");
-        }
-      } catch (e) {
-        showToast("Błąd podczas usuwania zadania", "error");
+      if (!id) return;
+      const cardEl = document.getElementById(`task-card-${id}`);
+      if (cardEl) {
+        cardEl.style.transition = 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)';
+        cardEl.style.opacity = '0';
+        cardEl.style.transform = 'scale(0.85) translateY(-8px)';
+        await new Promise(r => setTimeout(r, 160));
       }
+      markTaskDeleted(id);
+      userTasks = userTasks.filter(t => String(t.id) !== String(id) && String(t.title || '').trim() !== String(id).trim());
+      try {
+        localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+      } catch (err) {}
+      renderTasksUI();
+      flashSaveIndicator('Usunięto zadanie');
+      showToast("Zadanie zostało usunięte", "info");
+      try {
+        await fetch(`/api/tasks/${encodeURIComponent(id)}`, { method: 'DELETE', keepalive: true });
+        await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userTasks),
+          keepalive: true
+        });
+      } catch (e) {}
+    }
+
+    async function clearDoneTasksUI() {
+      const doneList = userTasks.filter(t => t.status === 'done');
+      if (doneList.length === 0) {
+        showToast("Brak ukończonych zadań do usunięcia", "info");
+        return;
+      }
+      doneList.forEach(t => {
+        if (t && t.id) markTaskDeleted(t.id);
+      });
+      userTasks = userTasks.filter(t => t.status !== 'done');
+      try {
+        localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+      } catch (err) {}
+      renderTasksUI();
+      flashSaveIndicator('Usunięto ukończone zadania');
+      showToast(`Usunięto ${doneList.length} ukończonych zadań`, "success");
+      try {
+        await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userTasks),
+          keepalive: true
+        });
+      } catch (e) {}
+    }
+
+    async function clearAllTasksUI() {
+      if (userTasks.length === 0) {
+        showToast("Tablica zadań jest już pusta", "info");
+        return;
+      }
+      if (!confirm("Czy na pewno chcesz usunąć wszystkie zadania z tablicy?")) return;
+      userTasks.forEach(t => {
+        if (t && t.id) markTaskDeleted(t.id);
+      });
+      userTasks = [];
+      try {
+        localStorage.setItem(getTasksStorageKey(), JSON.stringify([]));
+      } catch (err) {}
+      renderTasksUI();
+      flashSaveIndicator('Wyczyszczono zadania');
+      showToast("Wszystkie zadania zostały usunięte", "info");
+      try {
+        await fetch('/api/tasks', { method: 'DELETE', keepalive: true });
+        await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify([]),
+          keepalive: true
+        });
+      } catch (e) {}
     }
 
 
@@ -7622,12 +8489,24 @@
       }
     }
 
-    function generatePasswordUI() {
+    function generatePasswordUI(shouldSave = true) {
       const length = parseInt(document.getElementById('gen-length-slider')?.value || 16);
       const incUpper = document.getElementById('gen-opt-uppercase')?.checked ?? true;
       const incLower = document.getElementById('gen-opt-lowercase')?.checked ?? true;
       const incDigits = document.getElementById('gen-opt-digits')?.checked ?? true;
       const incSymbols = document.getElementById('gen-opt-symbols')?.checked ?? true;
+
+      if (shouldSave !== false) {
+        saveUserSettingsPatch({
+          passwordGen: {
+            length,
+            uppercase: incUpper,
+            lowercase: incLower,
+            digits: incDigits,
+            symbols: incSymbols
+          }
+        });
+      }
 
       const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
@@ -7709,7 +8588,7 @@
         if (res.ok) {
           currencyRatesData = await res.json();
           renderCurrencyRatesTable();
-          calculateCurrencyUI();
+          calculateCurrencyUI(false);
         }
       } catch (e) {
         showToast("Błąd podczas pobierania kursów NBP", "error");
@@ -7744,15 +8623,23 @@
       tbody.innerHTML = rows;
     }
 
-    function calculateCurrencyUI() {
-      if (!currencyRatesData || !currencyRatesData.rates) return;
-
+    function calculateCurrencyUI(shouldSave = true) {
       const amount = parseFloat(document.getElementById('curr-amount-input')?.value || 0);
       const fromCurr = document.getElementById('curr-from-select')?.value || 'PLN';
       const toCurr = document.getElementById('curr-to-select')?.value || 'EUR';
       const display = document.getElementById('curr-result-display');
 
-      if (!display) return;
+      if (shouldSave !== false) {
+        saveUserSettingsPatch({
+          currencyCalc: {
+            amount: isNaN(amount) ? 100 : amount,
+            from: fromCurr,
+            to: toCurr
+          }
+        });
+      }
+
+      if (!display || !currencyRatesData || !currencyRatesData.rates) return;
 
       if (amount <= 0 || isNaN(amount)) {
         display.innerText = `0.00 ${toCurr}`;
@@ -7787,19 +8674,200 @@
         const temp = fromSelect.value;
         fromSelect.value = toSelect.value;
         toSelect.value = temp;
-        calculateCurrencyUI();
+        calculateCurrencyUI(true);
       }
+    }
+
+    // RESTORE PER-USER SETTINGS TO DOM
+    function applyUserSettingsToDOM() {
+      if (!userSettings || typeof userSettings !== 'object') return;
+
+      // 1. Theme
+      if (userSettings.theme) {
+        applyTheme(userSettings.theme);
+      } else {
+        initTheme();
+      }
+
+      // 2. Sound
+      if (typeof userSettings.soundEnabled === 'boolean') {
+        soundEnabled = userSettings.soundEnabled;
+        const soundEl = document.getElementById('sound-status');
+        if (soundEl) soundEl.innerText = soundEnabled ? 'Audio: ON' : 'Audio: OFF';
+      }
+
+      // 3. Email Signature
+      if (userSettings.emailSignature && typeof userSettings.emailSignature === 'object') {
+        const sig = userSettings.emailSignature;
+        if (sig.templateStyle) {
+          const radio = document.querySelector(`input[name="sigTemplateStyle"][value="${sig.templateStyle}"]`);
+          if (radio) radio.checked = true;
+        }
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val !== undefined) el.value = val;
+        };
+        setVal('sig-greeting', sig.greeting);
+        setVal('sig-name', sig.name);
+        setVal('sig-role', sig.role);
+        setVal('sig-phone', sig.phone);
+        setVal('sig-email', sig.email);
+        setVal('sig-website', sig.website);
+        setVal('sig-line-color', sig.lineColor);
+        setVal('sig-accent-color', sig.accentColor);
+        setVal('sig-icon-color', sig.iconColor);
+        setVal('sig-line-width', sig.lineWidth);
+        setVal('sig-icon-style', sig.iconStyle);
+        const setChk = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && typeof val === 'boolean') el.checked = val;
+        };
+        setChk('sig-enable-clause', sig.enableClause);
+        setChk('sig-lang-pl', sig.langPL);
+        setChk('sig-lang-en', sig.langEN);
+        setChk('sig-lang-de', sig.langDE);
+        try { updateEmailSignaturePreview(false); } catch (e) {}
+      }
+
+      // 4. Password Generator
+      if (userSettings.passwordGen && typeof userSettings.passwordGen === 'object') {
+        const pg = userSettings.passwordGen;
+        const slider = document.getElementById('gen-length-slider');
+        if (slider && pg.length) slider.value = pg.length;
+        updatePasswordLengthLabel();
+        const setChk = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && typeof val === 'boolean') el.checked = val;
+        };
+        setChk('gen-opt-uppercase', pg.uppercase);
+        setChk('gen-opt-lowercase', pg.lowercase);
+        setChk('gen-opt-digits', pg.digits);
+        setChk('gen-opt-symbols', pg.symbols);
+      }
+
+      // 5. Currency Calculator
+      if (userSettings.currencyCalc && typeof userSettings.currencyCalc === 'object') {
+        const cc = userSettings.currencyCalc;
+        const amtEl = document.getElementById('curr-amount-input');
+        const fromEl = document.getElementById('curr-from-select');
+        const toEl = document.getElementById('curr-to-select');
+        if (amtEl && cc.amount !== undefined) amtEl.value = cc.amount;
+        if (fromEl && cc.from) fromEl.value = cc.from;
+        if (toEl && cc.to) toEl.value = cc.to;
+      }
+
+      // 6. AI Chat HTML History
+      if (typeof userSettings.aiChatHtml === 'string' && userSettings.aiChatHtml.trim()) {
+        const c1 = document.getElementById('ai-chat-messages');
+        const c2 = document.getElementById('ai-mini-chat-messages');
+        if (c1) c1.innerHTML = userSettings.aiChatHtml;
+        if (c2) c2.innerHTML = userSettings.aiChatHtml;
+      }
+
+      // 7. Subtabs
+      if (userSettings.wycenySubtab && ['wyceny', 'magazyn', 'finanse', 'ustawienia'].includes(userSettings.wycenySubtab)) {
+        try { switchWycenySubtab(userSettings.wycenySubtab, false); } catch (e) {}
+      }
+      if (userSettings.wydatkiSubtab && ['main', 'summary', 'charts'].includes(userSettings.wydatkiSubtab)) {
+        try {
+          ['main', 'summary', 'charts'].forEach(t => {
+            const btn = document.getElementById(`wydatki-subtab-${t}`);
+            const content = document.getElementById(`wydatki-content-${t}`);
+            if (btn) {
+              btn.className = (t === userSettings.wydatkiSubtab)
+                ? "px-4 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm"
+                : "px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100";
+            }
+            if (content) {
+              if (t === userSettings.wydatkiSubtab) content.classList.remove('hidden');
+              else content.classList.add('hidden');
+            }
+          });
+        } catch (e) {}
+      }
+    }
+
+    // GLOBAL NAVIGATION & INTERACTION ENHANCEMENTS (LAPTOP & MOBILE)
+    function setupGlobalNavigationEnhancements() {
+      // 1. Browser Back/Forward support via hash
+      window.addEventListener('popstate', () => {
+        const hashApp = (window.location.hash || '').replace(/^#/, '').trim() || 'dashboard';
+        const validApps = ['dashboard', 'fomo', 'wydatki', 'wyceny', 'stopki_email', 'kalendarz', 'ai_chat', 'admin', 'crm', 'tasks', 'password_gen', 'currency_calc'];
+        if (validApps.includes(hashApp) && hashApp !== currentApp) {
+          switchApp(hashApp, { skipHistory: true });
+        }
+      });
+
+      // 2. Intuitive Keyboard Shortcuts on Laptop
+      document.addEventListener('keydown', (e) => {
+        const activeTag = (document.activeElement?.tagName || '').toUpperCase();
+        const isTyping = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT' || document.activeElement?.isContentEditable;
+
+        if (e.key === 'Escape') {
+          // Close open modals first
+          const modalIds = ['pdf-preview-modal', 'inventory-picker-modal', 'admin-edit-user-modal', 'crm-modal', 'tasks-modal'];
+          for (const mId of modalIds) {
+            const mEl = document.getElementById(mId);
+            if (mEl && !mEl.classList.contains('hidden')) {
+              mEl.classList.add('hidden');
+              return;
+            }
+          }
+          // Close mini AI chat if open
+          const miniAi = document.getElementById('ai-mini-chat-card');
+          if (miniAi && !miniAi.classList.contains('hidden')) {
+            toggleMiniAiChat(false);
+            return;
+          }
+          // Close burger drawer if open
+          const drawer = document.getElementById('burger-drawer');
+          if (drawer && !drawer.classList.contains('-translate-x-full')) {
+            toggleBurgerDrawer(false);
+            return;
+          }
+          // If not typing and inside a sub-app, return to Dashboard
+          if (!isTyping && currentApp !== 'dashboard') {
+            switchApp('dashboard');
+          }
+          return;
+        }
+
+        // Alt+H -> Return to Dashboard
+        if (e.altKey && (e.key === 'h' || e.key === 'H')) {
+          e.preventDefault();
+          switchApp('dashboard');
+          return;
+        }
+
+        // 'm' or 'M' when not typing -> Toggle Burger Menu
+        if (!isTyping && !e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'm' || e.key === 'M')) {
+          e.preventDefault();
+          toggleBurgerDrawer();
+        }
+      });
+
+      // 3. Interactive Spotlight Glow on Dashboard Tiles
+      document.addEventListener('pointermove', (e) => {
+        const card = e.target.closest?.('.clean-card-hover');
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+      }, { passive: true });
     }
 
     // INITIALIZATION ON LOAD
     function initAppMain() {
+      try { loadLocalUserSettings(); } catch (e) {}
       try { initTheme(); } catch (e) {}
+      try { setupGlobalNavigationEnhancements(); } catch (e) {}
       try { fetchUser(); } catch (e) {}
       try { checkFomoEngineStatus(); } catch (e) {}
       try { connectWebSocket(); } catch (e) {}
-      try { updateEmailSignaturePreview(); } catch (e) {}
+      try { updateEmailSignaturePreview(false); } catch (e) {}
       try { syncMiniAiChatMessages(); } catch (e) {}
       try { updateWydatkiProfileDOM(); } catch (e) {}
+      try { updateNavigationActiveState(currentApp, '🏠 Pulpit'); } catch (e) {}
       safeCreateIcons();
       setTimeout(safeCreateIcons, 200);
       setTimeout(safeCreateIcons, 800);

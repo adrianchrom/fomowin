@@ -9,6 +9,13 @@ from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger("LLMEngine")
 
+MAX_HISTORY_ENTRIES = 200
+
+
+def _tls_context() -> ssl.SSLContext:
+    """Verified TLS context: API tokens must never be sent over an unverified connection."""
+    return ssl.create_default_context()
+
 class LLMEngine:
     """
     Open-Source Polish Text LLM Engine.
@@ -20,7 +27,7 @@ class LLMEngine:
         self.model_name = "Qwen2.5-7B-Instruct / Llama-3.2 (GitHub Open-Source Text LLM)"
         self.repo_id = "Qwen/Qwen2.5-7B-Instruct"
         self.github_repo = "https://github.com/QwenLM/Qwen2.5"
-        self.chat_history: List[Dict[str, str]] = []
+        self.histories: Dict[str, List[Dict[str, str]]] = {}
 
     def _try_github_models_api(self, prompt: str) -> Optional[str]:
         """Attempt calling GitHub Models API if token available."""
@@ -29,9 +36,7 @@ class LLMEngine:
             return None
 
         try:
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
+            ctx = _tls_context()
 
             url = "https://models.inference.ai.azure.com/chat/completions"
             payload = {
@@ -66,9 +71,7 @@ class LLMEngine:
         if not hf_token:
             return None
 
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
+        ctx = _tls_context()
 
         try:
             url = "https://router.huggingface.co/hf-inference/v1/chat/completions"
@@ -291,22 +294,28 @@ class LLMEngine:
             f"Napisz szczegóły, a natychmiast przygotuję pełną odpowiedź!"
         )
 
-    def process_chat(self, user_message: str) -> Dict[str, Any]:
-        """Process chat message, store in history and return response."""
+    def process_chat(self, user_message: str, user: str = "") -> Dict[str, Any]:
+        """Process chat message, store it in the (per-user) history and return the response."""
         reply = self.generate_response(user_message)
-        self.chat_history.append({"role": "user", "content": user_message, "timestamp": time.time()})
-        self.chat_history.append({"role": "assistant", "content": reply, "timestamp": time.time()})
+        history = self.histories.setdefault(user or "", [])
+        history.append({"role": "user", "content": user_message, "timestamp": time.time()})
+        history.append({"role": "assistant", "content": reply, "timestamp": time.time()})
+        del history[:-MAX_HISTORY_ENTRIES]  # never grow without bounds
         return {
             "success": True,
             "model": self.model_name,
             "repo": self.repo_id,
             "reply": reply,
-            "history_length": len(self.chat_history)
+            "history_length": len(history)
         }
 
-    def clear_history(self):
-        """Clear conversation history."""
-        self.chat_history = []
+    def clear_history(self, user: str = ""):
+        """Clear conversation history of one user."""
+        self.histories[user or ""] = []
         return True
+
+    @property
+    def chat_history(self) -> List[Dict[str, str]]:
+        return self.histories.setdefault("", [])
 
 llm_engine = LLMEngine()

@@ -1,3 +1,4 @@
+import tests._bootstrap  # noqa: F401
 import unittest
 from config import config
 from monitors.fomo_api_client import fomo_client

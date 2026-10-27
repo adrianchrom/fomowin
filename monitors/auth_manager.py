@@ -4,11 +4,15 @@ import json
 import logging
 from typing import Dict, Optional
 
+from monitors.storage import LOCK, data_path, atomic_write_text, atomic_write_json
+
 logger = logging.getLogger("AuthManager")
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CREDENTIALS_FILE = os.path.join(BASE_DIR, "CREDENTIALS.txt")
-SESSIONS_FILE = os.path.join(BASE_DIR, "SESSIONS.json")
+CREDENTIALS_FILE = data_path("CREDENTIALS.txt")
+SESSIONS_FILE = data_path("SESSIONS.json")
+
+# Hard cap of simultaneously valid sessions per account (oldest are dropped first).
+MAX_SESSIONS_PER_USER = 25
 
 DEFAULT_USERS = {
     "Adrian": "8492",
@@ -39,7 +43,10 @@ class AuthManager:
 
     def init_credentials(self):
         """Load or create default PINs for all users."""
-        if os.path.exists(CREDENTIALS_FILE):
+        credentials_existed = os.path.exists(CREDENTIALS_FILE)
+        if credentials_existed:
+            # Start from the stored accounts only (not from the built-in defaults).
+            self.users = {}
             try:
                 with open(CREDENTIALS_FILE, "r", encoding="utf-8") as f:
                     for line in f:
@@ -55,10 +62,22 @@ class AuthManager:
             except Exception as e:
                 logger.error(f"Error reading credentials file: {e}")
 
-        # Ensure default PINs exist
-        for u, p in DEFAULT_USERS.items():
-            if u not in self.users or not self.users[u] or not str(self.users[u]).isdigit():
-                self.users[u] = p
+        if not credentials_existed:
+            # First start only: seed the built-in accounts. Afterwards the credentials file is the
+            # single source of truth, so accounts deleted by the admin never come back after a restart.
+            for u, p in DEFAULT_USERS.items():
+                self.users.setdefault(u, p)
+        else:
+            # The super admin account must always exist and keep a valid PIN.
+            if "Adrian" not in self.users or not str(self.users["Adrian"]).isdigit():
+                self.users["Adrian"] = DEFAULT_USERS["Adrian"]
+            # Repair broken PINs of existing accounts instead of resurrecting deleted ones.
+            for u in list(self.users.keys()):
+                if not str(self.users[u]).isdigit():
+                    if u in DEFAULT_USERS:
+                        self.users[u] = DEFAULT_USERS[u]
+                    else:
+                        del self.users[u]
 
         self.sync_mappings()
         self.save_credentials()
@@ -66,11 +85,8 @@ class AuthManager:
     def save_credentials(self):
         """Write current users and PINs to CREDENTIALS.txt."""
         try:
-            with open(CREDENTIALS_FILE, "w", encoding="utf-8") as f:
-                for u, p in self.users.items():
-                    f.write(f"{u}:{p}\n")
-                f.flush()
-                os.fsync(f.fileno())
+            with LOCK:
+                atomic_write_text(CREDENTIALS_FILE, "".join(f"{u}:{p}\n" for u, p in self.users.items()))
         except Exception as e:
             logger.error(f"Error writing credentials file: {e}")
 
@@ -115,8 +131,23 @@ class AuthManager:
             del self.users[target_key]
             self.sync_mappings()
             self.save_credentials()
+            # A deleted account must lose access immediately, also on devices that are still logged in.
+            self.revoke_user_sessions(target_key)
             return True
         return False
+
+    def revoke_user_sessions(self, username: str, keep_token: Optional[str] = None) -> int:
+        """Invalidate every session of ``username`` (optionally keeping one token alive)."""
+        target = (username or "").strip().lower()
+        removed = 0
+        with LOCK:
+            for token, owner in list(self.active_sessions.items()):
+                if (owner or "").lower() == target and token != keep_token:
+                    del self.active_sessions[token]
+                    removed += 1
+            if removed:
+                self.save_sessions()
+        return removed
 
     def load_sessions(self):
         """Load persistent sessions from SESSIONS.json."""
@@ -130,13 +161,7 @@ class AuthManager:
 
     def save_sessions(self):
         """Save active sessions to SESSIONS.json."""
-        try:
-            with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
-                json.dump(self.active_sessions, f, indent=2)
-                f.flush()
-                os.fsync(f.fileno())
-        except Exception as e:
-            logger.error(f"Error saving sessions: {e}")
+        atomic_write_json(SESSIONS_FILE, self.active_sessions)
 
     def get_canonical_user(self, username: str) -> str:
         u_clean = (username or "").strip()
@@ -156,8 +181,13 @@ class AuthManager:
         if not canonical_user:
             return ""
         session_token = secrets.token_hex(24)
-        self.active_sessions[session_token] = canonical_user
-        self.save_sessions()
+        with LOCK:
+            self.active_sessions[session_token] = canonical_user
+            # Keep the sessions file small: drop the oldest tokens of this user above the cap.
+            own = [t for t, u in self.active_sessions.items() if u == canonical_user]
+            for old in own[:-MAX_SESSIONS_PER_USER]:
+                del self.active_sessions[old]
+            self.save_sessions()
         return session_token
 
     def authenticate_user_pin(self, username: str, pin: str) -> Optional[tuple]:
@@ -237,7 +267,13 @@ class AuthManager:
         """Verify session token and return username if valid."""
         if not session_token:
             return None
-        return self.active_sessions.get(session_token)
+        username = self.active_sessions.get(session_token)
+        if not username:
+            return None
+        # Sessions of accounts that no longer exist are worthless.
+        if not any(u.lower() == username.lower() for u in self.users):
+            return None
+        return username
 
     def logout(self, session_token: Optional[str]):
         """Revoke a session token."""

@@ -4,10 +4,11 @@ import json
 import re
 from typing import Dict, Any, List, Optional, Set
 
+from monitors.storage import data_path, atomic_write_json
+
 logger = logging.getLogger("RiskAnalysisEngine")
 
-CREDENTIALS_DIR = os.path.dirname(os.path.dirname(__file__))
-INSIDERS_FILE = os.path.join(CREDENTIALS_DIR, "TRACKED_INSIDERS.json")
+INSIDERS_FILE = data_path("TRACKED_INSIDERS.json")
 
 KNOWN_TOKEN_MAP = {
     "PNUT": {"ca": "2qEHjavLflMtzofPtZGfwo26yHUBjM24Wxd8bLp1pump", "chain": "solana", "name": "Peanut the Squirrel"},
@@ -56,11 +57,7 @@ class RiskAnalysisEngine:
     def save_tracked_insiders(self, data: Optional[List[Dict[str, str]]] = None):
         """Save tracked insiders to persistent JSON file so they are permanently preserved."""
         insiders_to_save = data if data is not None else self.tracked_insiders
-        try:
-            with open(self.insiders_file, "w", encoding="utf-8") as f:
-                json.dump(insiders_to_save, f, indent=2, ensure_ascii=False)
-        except Exception as e:
-            logger.error(f"Error saving {self.insiders_file}: {e}")
+        atomic_write_json(self.insiders_file, insiders_to_save)
 
     def parse_insider_input(self, input_text: str) -> Optional[Dict[str, str]]:
         """Parse X profile link, fomo.family profile link, or raw handle into handle dict."""

@@ -1,3 +1,4 @@
+import tests._bootstrap  # noqa: F401
 import unittest
 from monitors.llm_engine import llm_engine
 

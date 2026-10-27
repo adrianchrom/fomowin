@@ -1,3 +1,4 @@
+import tests._bootstrap  # noqa: F401
 import unittest
 from monitors.risk_analysis_engine import risk_engine
 from monitors.alerts_manager import alerts_manager

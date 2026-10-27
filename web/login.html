@@ -2,7 +2,7 @@
 <html lang="pl" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Ach! | Logowanie</title>
   <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=3">
   <link rel="icon" type="image/svg+xml" href="/logo.svg?v=3">
@@ -28,6 +28,8 @@
   <style>
     :root {
       --font-main: 'Inter', 'Poppins', -apple-system, sans-serif;
+      --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --spring-smooth: cubic-bezier(0.22, 1, 0.36, 1);
     }
     html {
       overflow-x: hidden !important;
@@ -49,19 +51,19 @@
 
     @media (max-width: 640px) {
       .liquid-glass-card {
-        padding: 1.25rem 1rem !important;
-        border-radius: 1.75rem !important;
+        padding: 1.35rem 1.1rem !important;
+        border-radius: 1.85rem !important;
       }
       .otp-square {
-        width: 3.25rem !important;
+        width: 3.35rem !important;
         height: 4.25rem !important;
         font-size: 1.75rem !important;
         border-radius: 1rem !important;
       }
       .numpad-btn {
-        padding-top: 0.65rem !important;
-        padding-bottom: 0.65rem !important;
-        border-radius: 1rem !important;
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+        border-radius: 1.1rem !important;
       }
       .liquid-orb {
         filter: blur(60px) !important;
@@ -71,12 +73,13 @@
 
     /* Ambient Morphing Liquid Glass Orbs */
     .liquid-orb {
-      position: absolute;
+      position: fixed;
       border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
       filter: blur(110px);
       opacity: 0.65;
       animation: liquidMorph 18s infinite ease-in-out alternate;
       pointer-events: none;
+      will-change: transform, border-radius;
     }
     .orb-cyan {
       top: -10%;
@@ -113,45 +116,81 @@
       100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg) scale(1) translate(0px, 0px); }
     }
 
-    /* GLASS CARD MAIN STYLING */
+    /* Card Entrance & Spotlight */
+    @keyframes cardEntrance {
+      0% { opacity: 0; transform: translateY(28px) scale(0.94); filter: blur(10px); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+    }
+
     .liquid-glass-card {
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(40px) saturate(180%);
-      -webkit-backdrop-filter: blur(40px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      position: relative;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.48);
+      backdrop-filter: blur(42px) saturate(190%);
+      -webkit-backdrop-filter: blur(42px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: 
-        0 30px 80px -15px rgba(0, 0, 0, 0.7),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 30px 80px -15px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
         inset 0 -1px 0 rgba(0, 0, 0, 0.4);
       border-radius: 2.25rem;
+      animation: cardEntrance 0.65s var(--spring-smooth) forwards;
+      transition: transform 0.35s var(--spring-smooth), opacity 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .liquid-glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(380px circle at var(--mouse-x, 50%) var(--mouse-y, 20%), rgba(0, 242, 254, 0.12), transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .liquid-glass-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Logo Pulse Halo */
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-4px) scale(1.03); }
+    }
+    .logo-badge {
+      animation: logoFloat 4.5s ease-in-out infinite;
     }
 
     /* NUMPAD BUTTON STYLING */
     .numpad-btn {
-      background: rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.045);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.09);
       color: #f8fafc;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.22s var(--spring-bounce), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       user-select: none;
+      touch-action: manipulation;
     }
     .numpad-btn:hover {
       background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(0, 242, 254, 0.4);
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.25);
+      border-color: rgba(0, 242, 254, 0.45);
+      transform: translateY(-2px) scale(1.035);
+      box-shadow: 0 12px 26px -6px rgba(0, 242, 254, 0.28);
     }
-    .numpad-btn:active {
-      transform: scale(0.92);
-      background: rgba(0, 242, 254, 0.3);
-      border-color: rgba(0, 242, 254, 0.7);
+    .numpad-btn:active, .numpad-btn.key-pressed {
+      transform: scale(0.91) !important;
+      background: rgba(0, 242, 254, 0.28) !important;
+      border-color: rgba(0, 242, 254, 0.8) !important;
+      box-shadow: 0 0 22px rgba(0, 242, 254, 0.45) !important;
     }
 
     /* OTP BOXES STYLING */
     .otp-square {
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      background: rgba(0, 0, 0, 0.4);
+      transition: all 0.36s var(--spring-bounce);
+      background: rgba(0, 0, 0, 0.42);
       border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
     }
@@ -159,14 +198,29 @@
       border-color: #00f2fe !important;
       background: rgba(0, 242, 254, 0.12) !important;
       box-shadow: 
-        0 0 25px rgba(0, 242, 254, 0.65), 
-        inset 0 0 10px rgba(0, 242, 254, 0.3) !important;
+        0 0 25px rgba(0, 242, 254, 0.6), 
+        inset 0 0 10px rgba(0, 242, 254, 0.28) !important;
       transform: scale(1.08) translateY(-2px);
+    }
+    .otp-square.filled {
+      border-color: rgba(56, 189, 248, 0.55);
+      background: rgba(14, 165, 233, 0.15);
+      box-shadow: 0 6px 18px -4px rgba(14, 165, 233, 0.35);
+    }
+
+    @keyframes digitPop {
+      0% { transform: scale(0.4) translateY(8px); opacity: 0; }
+      70% { transform: scale(1.18) translateY(-2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .digit-pop {
+      display: inline-block;
+      animation: digitPop 0.28s var(--spring-bounce) forwards;
     }
 
     /* MERGE ANIMATION: 4 BOXES -> 1 BOX */
     .otp-wrapper {
-      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.5s var(--spring-bounce);
     }
     .otp-wrapper.merged {
       gap: 0 !important;
@@ -191,19 +245,19 @@
       background: rgba(16, 185, 129, 0.25) !important;
       border: 2px solid #10b981 !important;
       box-shadow: 0 0 60px rgba(16, 185, 129, 0.9), inset 0 0 25px rgba(16, 185, 129, 0.5) !important;
-      animation: successPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: successPop 0.6s var(--spring-bounce) forwards;
     }
 
     .otp-wrapper.merged-error .otp-square:first-child {
       background: rgba(244, 63, 94, 0.25) !important;
       border: 2px solid #f43f5e !important;
       box-shadow: 0 0 60px rgba(244, 63, 94, 0.9), inset 0 0 25px rgba(244, 63, 94, 0.5) !important;
-      animation: shake 0.4s ease-in-out;
+      animation: shake 0.42s ease-in-out;
     }
 
     @keyframes successPop {
       0% { transform: scale(0.9); }
-      50% { transform: scale(1.2); }
+      50% { transform: scale(1.22); }
       100% { transform: scale(1.05); }
     }
 
@@ -216,10 +270,10 @@
     }
 
     .text-dissolve {
-      transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1) !important;
-      filter: blur(24px) brightness(1.4);
+      transition: all 0.85s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      filter: blur(22px) brightness(1.4);
       opacity: 0 !important;
-      transform: scale(1.3) translateY(-15px) !important;
+      transform: scale(1.28) translateY(-15px) !important;
     }
   </style>
 </head>
@@ -233,23 +287,26 @@
   <div class="w-full max-w-md relative z-10 flex flex-col items-center justify-center">
 
     <!-- MEGA MINIMALIST LIQUID GLASS OTP CARD -->
-    <div id="login-card" class="w-full liquid-glass-card p-7 sm:p-8 rounded-[2.25rem] space-y-5 transition-all duration-500 text-white">
+    <div id="login-card" class="w-full liquid-glass-card p-7 sm:p-8 rounded-[2.25rem] space-y-5 text-white">
       
       <!-- Top Drag Bar / Glass Accent Handle -->
       <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-1"></div>
 
-      <!-- Ach! Brand Logo (Straight, centered, high-res) -->
+      <!-- Ach! Brand Logo (Straight, centered, vector SVG) -->
       <div class="flex items-center justify-center pt-1 pb-1">
-        <img src="/apple-touch-icon.png?v=5" alt="Ach!" class="w-16 h-16 rounded-2xl shadow-xl shadow-blue-500/30 border border-white/20 object-cover">
+        <div class="logo-badge relative">
+          <div class="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-cyan-400/30 to-blue-600/30 blur-md"></div>
+          <img src="/logo.svg?v=8" alt="Ach!" class="relative w-16 h-16 rounded-2xl shadow-xl shadow-blue-500/30 border border-white/25 object-cover">
+        </div>
       </div>
 
       <!-- Header Title & Subtitle -->
       <div class="text-center space-y-1">
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-200 bg-clip-text text-transparent">
           Podaj kod PIN
         </h1>
         <p class="text-xs text-slate-400 font-medium leading-relaxed max-w-xs mx-auto">
-          Wpisz swój unikalny 4-cyfrowy kod dostępu.
+          Wpisz swój unikalny 4-cyfrowy kod dostępu na klawiaturze lub ekranie.
         </p>
       </div>
 
@@ -280,25 +337,26 @@
 
       <!-- Glass Numpad -->
       <div class="grid grid-cols-3 gap-2.5 pt-1">
-        <button type="button" onclick="appendPin('1')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">1</button>
-        <button type="button" onclick="appendPin('2')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">2</button>
-        <button type="button" onclick="appendPin('3')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">3</button>
-        <button type="button" onclick="appendPin('4')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">4</button>
-        <button type="button" onclick="appendPin('5')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">5</button>
-        <button type="button" onclick="appendPin('6')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">6</button>
-        <button type="button" onclick="appendPin('7')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">7</button>
-        <button type="button" onclick="appendPin('8')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">8</button>
-        <button type="button" onclick="appendPin('9')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">9</button>
-        <button type="button" onclick="clearPin()" class="numpad-btn rounded-2xl py-3 text-xs font-extrabold uppercase tracking-wider text-rose-400">C</button>
-        <button type="button" onclick="appendPin('0')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">0</button>
-        <button type="button" onclick="backspacePin()" class="numpad-btn rounded-2xl py-3 text-sm font-bold flex items-center justify-center text-slate-300">
+        <button type="button" data-key="1" onclick="appendPin('1')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">1</button>
+        <button type="button" data-key="2" onclick="appendPin('2')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">2</button>
+        <button type="button" data-key="3" onclick="appendPin('3')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">3</button>
+        <button type="button" data-key="4" onclick="appendPin('4')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">4</button>
+        <button type="button" data-key="5" onclick="appendPin('5')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">5</button>
+        <button type="button" data-key="6" onclick="appendPin('6')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">6</button>
+        <button type="button" data-key="7" onclick="appendPin('7')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">7</button>
+        <button type="button" data-key="8" onclick="appendPin('8')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">8</button>
+        <button type="button" data-key="9" onclick="appendPin('9')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">9</button>
+        <button type="button" data-key="clear" onclick="clearPin()" class="numpad-btn rounded-2xl py-3 text-xs font-extrabold uppercase tracking-wider text-rose-400">C</button>
+        <button type="button" data-key="0" onclick="appendPin('0')" class="numpad-btn rounded-2xl py-3 text-xl font-bold">0</button>
+        <button type="button" data-key="backspace" onclick="backspacePin()" class="numpad-btn rounded-2xl py-3 text-sm font-bold flex items-center justify-center text-slate-300">
           <i data-lucide="delete" class="w-5 h-5"></i>
         </button>
       </div>
 
       <!-- Footer Info -->
-      <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-white/10 font-medium tracking-wide">
-        Autoryzacja • FOMO Engine
+      <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-white/10 font-medium tracking-wide flex items-center justify-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span>Autoryzacja • Ach! Workspace</span>
       </div>
 
     </div>
@@ -316,8 +374,24 @@
     let enteredPin = '';
     let isSubmitting = false;
 
+    // Interactive spotlight glow on login card
+    const loginCardEl = document.getElementById('login-card');
+    if (loginCardEl) {
+      loginCardEl.addEventListener('pointermove', (e) => {
+        const rect = loginCardEl.getBoundingClientRect();
+        loginCardEl.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        loginCardEl.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    }
 
-    function updateOtpBoxes() {
+    function flashNumpadKey(keyAttr) {
+      const btn = document.querySelector(`.numpad-btn[data-key="${keyAttr}"]`);
+      if (!btn) return;
+      btn.classList.add('key-pressed');
+      setTimeout(() => btn.classList.remove('key-pressed'), 160);
+    }
+
+    function updateOtpBoxes(lastChangedIndex = -1) {
       for (let i = 0; i < 4; i++) {
         const box = document.getElementById(`otp-box-${i}`);
         const charSpan = document.getElementById(`otp-char-${i}`);
@@ -325,9 +399,15 @@
 
         if (i < enteredPin.length) {
           charSpan.innerText = enteredPin[i];
+          if (i === lastChangedIndex) {
+            charSpan.className = 'digit-pop';
+          }
           box.classList.remove('focused');
+          box.classList.add('filled');
         } else {
           charSpan.innerText = '';
+          charSpan.className = '';
+          box.classList.remove('filled');
           if (i === enteredPin.length) {
             box.classList.add('focused');
           } else {
@@ -339,15 +419,18 @@
 
     function appendPin(digit) {
       if (isSubmitting || enteredPin.length >= 4) return;
+      flashNumpadKey(digit);
+      const idx = enteredPin.length;
       enteredPin += digit;
-      updateOtpBoxes();
+      updateOtpBoxes(idx);
       if (enteredPin.length === 4) {
         isSubmitting = true;
-        setTimeout(submitPinLogin, 150);
+        setTimeout(submitPinLogin, 140);
       }
     }
 
     function clearPin() {
+      flashNumpadKey('clear');
       enteredPin = '';
       isSubmitting = false;
       const wrapper = document.getElementById('otp-wrapper');
@@ -364,6 +447,7 @@
 
     function backspacePin() {
       if (isSubmitting || enteredPin.length === 0) return;
+      flashNumpadKey('backspace');
       enteredPin = enteredPin.slice(0, -1);
       updateOtpBoxes();
     }
@@ -371,10 +455,13 @@
     // Keyboard support for numpad & physical keys
     document.addEventListener('keydown', (e) => {
       if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
         appendPin(e.key);
       } else if (e.key === 'Backspace') {
+        e.preventDefault();
         backspacePin();
       } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
         clearPin();
       }
     });
@@ -390,6 +477,8 @@
       errBox.classList.add('hidden');
 
       let authenticatedUser = null;
+      let serverResponded = false;
+      let serverErrorMessage = 'Nieprawidłowy kod PIN. Brak dostępu.';
 
       try {
         const res = await fetch('/api/login', {
@@ -397,16 +486,19 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pin: enteredPin })
         });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.success && data.username) {
-            authenticatedUser = data.username;
-          }
+        serverResponded = true;
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data && data.success && data.username) {
+          authenticatedUser = data.username;
+        } else if (data && data.message) {
+          serverErrorMessage = data.message;
         }
-      } catch (err) {}
+      } catch (err) {
+        serverResponded = false;
+      }
 
-      // Fallback: If server is unavailable or 404, validate with local system PINs
-      if (!authenticatedUser) {
+      // Offline fallback ONLY when backend is unreachable
+      if (!authenticatedUser && !serverResponded) {
         const knownPins = {
           "8492": "Adrian",
           "4729": "Maciek",
@@ -434,6 +526,13 @@
       if (authenticatedUser) {
         const userCap = authenticatedUser.charAt(0).toUpperCase() + authenticatedUser.slice(1);
         try {
+          const prevUser = localStorage.getItem('fomo_username') || sessionStorage.getItem('fomo_username');
+          if (prevUser && prevUser.toLowerCase() !== userCap.toLowerCase()) {
+            localStorage.removeItem('fomo_user_profile');
+            localStorage.removeItem('fomo_user_perms');
+            sessionStorage.removeItem('fomo_user_profile');
+            sessionStorage.removeItem('fomo_user_perms');
+          }
           localStorage.setItem('fomo_username', userCap);
           sessionStorage.setItem('fomo_username', userCap);
         } catch (e) {}
@@ -454,30 +553,30 @@
             setTimeout(() => {
               liquidWelcome.classList.remove('opacity-0', 'scale-95');
               liquidWelcome.classList.add('opacity-100', 'scale-100');
-            }, 50);
+            }, 40);
 
             setTimeout(() => {
               liquidWelcome.classList.add('text-dissolve');
-            }, 900);
+            }, 820);
 
             setTimeout(() => {
               window.location.href = '/?t=' + Date.now();
-            }, 1700);
+            }, 1450);
 
-          }, 300);
-        }, 600);
+          }, 260);
+        }, 520);
 
       } else {
-        // 1. MOTION MERGE ERROR: Merge 4 boxes into 1 red cross square with shake
+        // MOTION MERGE ERROR: Merge 4 boxes into 1 red cross square with shake
         wrapper.className = 'otp-wrapper flex items-center justify-center gap-3.5 py-2 transition-all duration-500 merged merged-error';
         box0Span.innerHTML = '✕';
 
-        errBox.innerText = 'Nieprawidłowy kod PIN. Brak dostępu.';
+        errBox.innerText = serverErrorMessage;
         errBox.classList.remove('hidden');
 
         setTimeout(() => {
           clearPin();
-        }, 1000);
+        }, 1050);
       }
     }
 

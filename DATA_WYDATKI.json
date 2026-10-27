@@ -10,25 +10,9 @@
     "expenses": []
   },
   "PAIR_ADRIAN_PATRYCJA": {
-    "baseIncomes": [
-      {
-        "month": "2026-10",
-        "p1": 5000,
-        "p2": 4000
-      }
-    ],
+    "baseIncomes": [],
     "gigs": [],
-    "expenses": [
-      {
-        "id": "wyd-999",
-        "person": "Adrian",
-        "amount_pln": 250.0,
-        "title": "Paliwo test",
-        "category": "Paliwo",
-        "date": "2026-10-27",
-        "month": "2026-10"
-      }
-    ]
+    "expenses": []
   },
   "PAIR_MACIEK_KAROLINA": {
     "baseIncomes": [],

@@ -1,3 +1,4 @@
+import tests._bootstrap  # noqa: F401
 import unittest
 from monitors.auth_manager import auth_manager
 from monitors.user_data_manager import user_data_mgr
@@ -218,6 +219,90 @@ class TestUserManagementAndMonika(unittest.TestCase):
         # Clean up
         user_data_mgr.delete_user_crm_client("Karolina", c_karo["id"])
         user_data_mgr.delete_user_crm_client("Patrycja", c_pat["id"])
+
+    def test_user_settings_and_module_permissions_enforcement(self):
+        from fastapi.testclient import TestClient
+        from main import app
+
+        # 1. Monika saves custom settings (theme, emailSignature, passwordGen)
+        client_monika = TestClient(app)
+        client_monika.post("/api/login", json={"pin": "5274"})
+        res_save = client_monika.post("/api/user-settings", json={
+            "theme": "light",
+            "emailSignature": {"name": "Monika Nowak", "role": "Manager"},
+            "passwordGen": {"length": 24, "symbols": False}
+        })
+        self.assertEqual(res_save.status_code, 200)
+        self.assertEqual(res_save.json()["settings"]["theme"], "light")
+        self.assertEqual(res_save.json()["settings"]["emailSignature"]["name"], "Monika Nowak")
+
+        # 2. Adrian's settings remain completely isolated from Monika's
+        client_adrian = TestClient(app)
+        client_adrian.post("/api/login", json={"pin": "8492"})
+        res_adrian_settings = client_adrian.get("/api/user-settings")
+        self.assertEqual(res_adrian_settings.status_code, 200)
+        self.assertNotEqual(
+            res_adrian_settings.json().get("emailSignature", {}).get("name"),
+            "Monika Nowak"
+        )
+
+        # 3. Monika (only wydatki enabled by default) gets 403 on /api/wyceny but 200 on /api/wydatki
+        res_monika_wydatki = client_monika.get("/api/wydatki")
+        self.assertEqual(res_monika_wydatki.status_code, 200)
+        res_monika_wyceny = client_monika.get("/api/wyceny")
+        self.assertEqual(res_monika_wyceny.status_code, 403)
+
+    def test_wyceny_company_sync_and_history_quote_delete(self):
+        from fastapi.testclient import TestClient
+        from main import app
+
+        client = TestClient(app)
+        client.post("/api/login", json={"pin": "4729"})  # Maciek
+
+        # Save company via /api/company and verify /api/wyceny reflects it
+        client.post("/api/company", json={"name": "Maciek Bud Sp. z o.o.", "nip": "1234567890"})
+        wyc_data = client.get("/api/wyceny").json()
+        self.assertEqual(wyc_data["company"]["name"], "Maciek Bud Sp. z o.o.")
+
+        # Save a historical quote in wyceny and then delete it via DELETE /api/wyceny/{id}
+        wyc_data["historyQuotes"] = [{"id": "wyc-test-1", "number": "WYC/2026/10/100", "clientName": "Test Klient"}]
+        client.post("/api/wyceny", json=wyc_data)
+        self.assertEqual(len(client.get("/api/wyceny").json()["historyQuotes"]), 1)
+
+        del_res = client.delete("/api/wyceny/wyc-test-1")
+        self.assertEqual(del_res.status_code, 200)
+        self.assertEqual(len(client.get("/api/wyceny").json()["historyQuotes"]), 0)
+
+    def test_wydatki_optimistic_concurrency_merge(self):
+        from fastapi.testclient import TestClient
+        from main import app
+
+        c1 = TestClient(app)
+        c1.post("/api/login", json={"pin": "8492"})  # Adrian
+        c2 = TestClient(app)
+        c2.post("/api/login", json={"pin": "9351"})  # Patrycja (same household PAIR_ADRIAN_PATRYCJA)
+
+        # Both clients read initial state and revision
+        r1 = c1.get("/api/wydatki")
+        base_rev = r1.headers.get("X-Doc-Rev", "0")
+        state1 = r1.json()
+        state2 = c2.get("/api/wydatki").json()
+
+        # Client 1 saves an expense with current base_rev
+        state1["expenses"].append({"id": "exp-c1", "title": "Zakupy C1", "amount": 100, "date": "2026-10-01"})
+        res1 = c1.post("/api/wydatki", json=state1, headers={"X-Base-Rev": base_rev})
+        self.assertEqual(res1.status_code, 200)
+
+        # Client 2 tries to save using stale base_rev -> server refuses overwrite with 409 and returns exp-c1 intact
+        state2["expenses"].append({"id": "exp-c2", "title": "Zakupy C2", "amount": 200, "date": "2026-10-02"})
+        res2 = c2.post("/api/wydatki", json=state2, headers={"X-Base-Rev": base_rev})
+        self.assertEqual(res2.status_code, 409)
+        self.assertTrue(res2.json().get("conflict"))
+        server_ids = {e["id"] for e in res2.json()["data"]["expenses"]}
+        self.assertIn("exp-c1", server_ids)
+
+        # Clean up test expense exp-c1
+        c1.delete("/api/wydatki/exp-c1")
 
     @classmethod
     def tearDownClass(cls):
