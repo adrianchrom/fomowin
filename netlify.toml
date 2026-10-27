@@ -9,6 +9,11 @@
     Expires = "0"
 
 [[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "https://fomo-signal-engine.onrender.com/api/:splat"
   status = 200

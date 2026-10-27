@@ -59,8 +59,8 @@
     "kalendarz": false,
     "is_admin": false,
     "ai_chat": false,
-    "crm": false,
-    "tasks": false,
+    "crm": true,
+    "tasks": true,
     "password_gen": false,
     "currency_calc": false
   }

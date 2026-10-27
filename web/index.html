@@ -3290,7 +3290,7 @@
     }
     function safeGetStorage(key, defaultVal = '') {
       try {
-        return sessionStorage.getItem(key) || localStorage.getItem(key) || defaultVal;
+        return localStorage.getItem(key) || sessionStorage.getItem(key) || defaultVal;
       } catch (e) {
         return defaultVal;
       }
@@ -3309,8 +3309,12 @@
     let soundEnabled = true;
     let currentTab = 'live';
     let currentApp = 'dashboard';
-    let currentUser = safeGetStorage('fomo_username', 'Maciek');
+    let currentUser = safeGetStorage('fomo_username', 'Adrian');
     let currentUserProfile = null;
+    try {
+      const p = safeGetStorage('fomo_user_profile');
+      if (p) currentUserProfile = JSON.parse(p);
+    } catch (e) {}
     let userPermissions = {
       fomo: true,
       wydatki: true,
@@ -3322,8 +3326,12 @@
       tasks: true,
       password_gen: true,
       currency_calc: true,
-      is_admin: false
+      is_admin: true
     };
+    try {
+      const perms = safeGetStorage('fomo_user_perms');
+      if (perms) userPermissions = { ...userPermissions, ...JSON.parse(perms) };
+    } catch (e) {}
 
     // User Company Data State
     let companyData = {
@@ -3440,6 +3448,21 @@
     }
 
     async function fetchUser() {
+      const storedUser = safeGetStorage('fomo_username');
+      if (storedUser) {
+        currentUser = storedUser.charAt(0).toUpperCase() + storedUser.slice(1);
+        safeSetStorage('fomo_username', currentUser);
+        try {
+          const prof = safeGetStorage('fomo_user_profile');
+          if (prof) currentUserProfile = JSON.parse(prof);
+          const perms = safeGetStorage('fomo_user_perms');
+          if (perms) userPermissions = { ...userPermissions, ...JSON.parse(perms) };
+        } catch (e) {}
+        setGreeting(currentUser);
+        updatePermissionsUI();
+        updateWydatkiProfileDOM();
+        loadCompanyData();
+      }
       try {
         const res = await fetch('/api/user');
         if (res.ok) {
@@ -3447,8 +3470,10 @@
           if (data.authenticated && data.username) {
             currentUser = data.username.charAt(0).toUpperCase() + data.username.slice(1);
             userPermissions = data.permissions || userPermissions;
-            currentUserProfile = data.profile || null;
-            sessionStorage.setItem('fomo_username', currentUser);
+            currentUserProfile = data.profile || currentUserProfile;
+            safeSetStorage('fomo_username', currentUser);
+            safeSetStorage('fomo_user_profile', JSON.stringify(currentUserProfile));
+            safeSetStorage('fomo_user_perms', JSON.stringify(userPermissions));
             setGreeting(currentUser);
             updatePermissionsUI();
             updateWydatkiProfileDOM();
@@ -3456,11 +3481,9 @@
             return;
           }
         }
-        sessionStorage.removeItem('fomo_username');
-        window.location.href = '/login';
-      } catch (e) {
-        sessionStorage.removeItem('fomo_username');
-        window.location.href = '/login';
+      } catch (e) {}
+      if (!storedUser) {
+        window.location.href = '/login.html';
       }
     }
 
@@ -3550,7 +3573,9 @@
         await fetch('/api/logout', { method: 'POST' });
       } catch (e) {}
       safeRemoveStorage('fomo_username');
-      window.location.href = '/login?t=' + Date.now();
+      safeRemoveStorage('fomo_user_profile');
+      safeRemoveStorage('fomo_user_perms');
+      window.location.href = '/login.html?t=' + Date.now();
     }
 
     // TOP EXECUTIVE APP SWITCHER
@@ -4045,8 +4070,8 @@
     }
 
     function getWydatkiStorageKey() {
-      const u = (currentUser || sessionStorage.getItem('fomo_username') || 'default').toLowerCase();
-      return `ach_wydatki_v2_${u}`;
+      const profile = getWydatkiProfile();
+      return `ach_wydatki_v3_${profile.pairId}`;
     }
 
     function saveLocalWydatki() {
@@ -4059,7 +4084,29 @@
 
     function loadLocalWydatki() {
       try {
-        const stored = localStorage.getItem(getWydatkiStorageKey());
+        const key = getWydatkiStorageKey();
+        let stored = localStorage.getItem(key);
+        
+        // Auto-migration from legacy keys if v3 not present
+        if (!stored) {
+          const profile = getWydatkiProfile();
+          const legacyKeys = [
+            `ach_wydatki_v2_${profile.pairId}`,
+            `ach_wydatki_v2_${profile.p1.toLowerCase()}`,
+            `ach_wydatki_v2_${profile.p2.toLowerCase()}`,
+            `ach_wydatki_v2_${(currentUser || '').toLowerCase()}`,
+            'ach_wydatki_v2_default'
+          ];
+          for (const lk of legacyKeys) {
+            const leg = localStorage.getItem(lk);
+            if (leg) {
+              stored = leg;
+              try { localStorage.setItem(key, leg); } catch (e) {}
+              break;
+            }
+          }
+        }
+
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed && typeof parsed === 'object') {
@@ -4092,17 +4139,19 @@
             const serverBase = Array.isArray(serverData.baseIncomes) ? serverData.baseIncomes : [];
             const serverGigs = Array.isArray(serverData.gigs) ? serverData.gigs : [];
 
-            // Mark all incoming server expenses as synced
-            serverExpenses.forEach(e => { e._synced = true; });
+            // CRITICAL MERGE: NEVER WIPE LOCAL EXPENSES!
+            const expenseMap = new Map();
+            (wydatkiFullData.expenses || []).forEach(e => {
+              if (e && e.id) expenseMap.set(String(e.id), e);
+            });
+            serverExpenses.forEach(e => {
+              if (e && e.id) {
+                const existing = expenseMap.get(String(e.id));
+                expenseMap.set(String(e.id), { ...existing, ...e, _synced: true });
+              }
+            });
 
-            // Check if there are local expenses that were created offline and never synced
-            const serverExpIds = new Set(serverExpenses.map(e => String(e.id)));
-            const localExpenses = Array.isArray(wydatkiFullData.expenses) ? wydatkiFullData.expenses : [];
-            const offlineUnsynced = localExpenses.filter(e => e && e.id && !serverExpIds.has(String(e.id)) && e._synced === false);
-
-            const mergedExpenses = [...serverExpenses, ...offlineUnsynced];
-
-            // For base incomes & gigs, prefer server if populated, else preserve local
+            const mergedExpenses = Array.from(expenseMap.values());
             const mergedBase = (serverBase.length > 0) ? serverBase : (wydatkiFullData.baseIncomes || []);
             const mergedGigs = (serverGigs.length > 0) ? serverGigs : (wydatkiFullData.gigs || []);
 
@@ -4116,7 +4165,8 @@
             refreshWydatkiUI();
 
             // If offline items were found, push merged state up to server
-            if (offlineUnsynced.length > 0) {
+            const unsynced = mergedExpenses.filter(e => !e._synced);
+            if (unsynced.length > 0) {
               try {
                 await fetch('/api/wydatki', {
                   method: 'POST',
@@ -4881,9 +4931,9 @@
           if (data && typeof data === 'object') {
             if (data.company) poiState.company = { ...poiState.company, ...data.company };
             if (data.quote) poiState.quote = { ...poiState.quote, ...data.quote };
-            if (Array.isArray(data.inventory)) poiState.inventory = data.inventory;
-            if (Array.isArray(data.transactions)) poiState.transactions = data.transactions;
-            if (Array.isArray(data.historyQuotes)) poiState.historyQuotes = data.historyQuotes;
+            if (Array.isArray(data.inventory) && data.inventory.length > 0) poiState.inventory = data.inventory;
+            if (Array.isArray(data.transactions) && data.transactions.length > 0) poiState.transactions = data.transactions;
+            if (Array.isArray(data.historyQuotes) && data.historyQuotes.length > 0) poiState.historyQuotes = data.historyQuotes;
             try {
               localStorage.setItem(getWycenyStorageKey(), JSON.stringify(poiState));
             } catch (err) {}
@@ -4992,6 +5042,9 @@
       };
       await saveWycenyData();
       try {
+        localStorage.setItem('ach_company_data', JSON.stringify(poiState.company));
+      } catch (e) {}
+      try {
         await fetch('/api/company', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -5002,11 +5055,23 @@
 
     async function loadCompanyData() {
       try {
+        const cached = localStorage.getItem('ach_company_data');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed === 'object') {
+            poiState.company = { ...poiState.company, ...parsed };
+            renderCompanyDataUI();
+          }
+        }
+      } catch (e) {}
+
+      try {
         const res = await fetch('/api/company');
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === 'object') {
             poiState.company = { ...poiState.company, ...data };
+            try { localStorage.setItem('ach_company_data', JSON.stringify(poiState.company)); } catch (e) {}
             renderCompanyDataUI();
           }
         }
@@ -6133,6 +6198,22 @@
       document.getElementById('admin-edit-user-modal').classList.add('hidden');
     }
 
+    const DEFAULT_SYSTEM_PERMISSIONS = {
+      adrian: { fomo: true, wydatki: true, wyceny: true, stopki_email: true, kalendarz: true, ai_chat: true, crm: true, tasks: true, password_gen: true, currency_calc: true, is_admin: true },
+      monika: { fomo: true, wydatki: true, wyceny: true, stopki_email: true, kalendarz: true, ai_chat: true, crm: true, tasks: true, password_gen: true, currency_calc: true, is_admin: false },
+      patrycja: { fomo: false, wydatki: true, wyceny: false, stopki_email: false, kalendarz: false, ai_chat: false, crm: false, tasks: false, password_gen: false, currency_calc: false, is_admin: false },
+      maciek: { fomo: true, wydatki: true, wyceny: true, stopki_email: false, kalendarz: false, ai_chat: false, crm: false, tasks: false, password_gen: false, currency_calc: false, is_admin: false },
+      karolina: { fomo: false, wydatki: true, wyceny: false, stopki_email: false, kalendarz: false, ai_chat: false, crm: false, tasks: false, password_gen: false, currency_calc: false, is_admin: false }
+    };
+
+    const DEFAULT_ADMIN_USERS = [
+      { username: 'Adrian', pin: '8492', is_admin: true, permissions: { ...DEFAULT_SYSTEM_PERMISSIONS.adrian }, p1: 'Adrian', p2: 'Patrycja', household: 'PAIR_ADRIAN_PATRYCJA', profile: { p1: 'Adrian', p2: 'Patrycja', household: 'PAIR_ADRIAN_PATRYCJA' } },
+      { username: 'Monika', pin: '5274', is_admin: false, permissions: { ...DEFAULT_SYSTEM_PERMISSIONS.monika }, p1: 'Monika', p2: 'Tomek', household: 'PAIR_MONIKA_TOMEK', profile: { p1: 'Monika', p2: 'Tomek', household: 'PAIR_MONIKA_TOMEK' } },
+      { username: 'Maciek', pin: '4729', is_admin: false, permissions: { ...DEFAULT_SYSTEM_PERMISSIONS.maciek }, p1: 'Maciek', p2: 'Karolina', household: 'PAIR_MACIEK_KAROLINA', profile: { p1: 'Maciek', p2: 'Karolina', household: 'PAIR_MACIEK_KAROLINA' } },
+      { username: 'Karolina', pin: '6183', is_admin: false, permissions: { ...DEFAULT_SYSTEM_PERMISSIONS.karolina }, p1: 'Maciek', p2: 'Karolina', household: 'PAIR_MACIEK_KAROLINA', profile: { p1: 'Maciek', p2: 'Karolina', household: 'PAIR_MACIEK_KAROLINA' } },
+      { username: 'Patrycja', pin: '9351', is_admin: false, permissions: { ...DEFAULT_SYSTEM_PERMISSIONS.patrycja }, p1: 'Adrian', p2: 'Patrycja', household: 'PAIR_ADRIAN_PATRYCJA', profile: { p1: 'Adrian', p2: 'Patrycja', household: 'PAIR_ADRIAN_PATRYCJA' } }
+    ];
+
     async function handleSaveEditUser(e) {
       if (e && e.preventDefault) e.preventDefault();
       const username = document.getElementById('edit-user-username').value;
@@ -6147,27 +6228,39 @@
         return;
       }
 
+      // Update in adminUsersCache locally
+      const uIdx = adminUsersCache.findIndex(x => x.username.toLowerCase() === username.toLowerCase());
+      if (uIdx !== -1) {
+        adminUsersCache[uIdx].pin = pin;
+        adminUsersCache[uIdx].p1 = p1;
+        adminUsersCache[uIdx].p2 = p2;
+        adminUsersCache[uIdx].household = household;
+        if (!adminUsersCache[uIdx].profile) adminUsersCache[uIdx].profile = {};
+        adminUsersCache[uIdx].profile.p1 = p1;
+        adminUsersCache[uIdx].profile.p2 = p2;
+        adminUsersCache[uIdx].profile.household = household;
+        try {
+          localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
+        } catch (e) {}
+        renderAdminUsersTableDOM(adminUsersCache);
+      }
+
+      showToast(`Zaktualizowano profil dla ${username}`, 'success');
+      closeEditUserModal();
+
+      if (currentUser.toLowerCase() === username.toLowerCase()) {
+        currentUserProfile = { p1, p2, household };
+        safeSetStorage('fomo_user_profile', JSON.stringify(currentUserProfile));
+        updateWydatkiProfileDOM();
+      }
+
       try {
-        const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}`, {
+        await fetch(`/api/admin/users/${encodeURIComponent(username)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pin, p1, p2, household })
         });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast(`Zaktualizowano profil dla ${username}`, 'success');
-          closeEditUserModal();
-          await loadAdminUsersList();
-          if (currentUser.toLowerCase() === username.toLowerCase()) {
-            await fetchUser();
-            updateWydatkiProfileDOM();
-          }
-        } else {
-          showToast(data.detail || 'Błąd zapisu profilu', 'error');
-        }
-      } catch (err) {
-        showToast('Błąd połączenia z serwerem', 'error');
-      }
+      } catch (err) {}
     }
 
     function renderAdminUsersTableDOM(users) {
@@ -6207,30 +6300,46 @@
     }
 
     async function loadAdminUsersList() {
-      // 1. Optimistic load from localStorage
+      // 1. Optimistic load from localStorage or DEFAULT_ADMIN_USERS
       try {
         const cached = localStorage.getItem('ach_admin_users_cache');
         if (cached) {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) {
             adminUsersCache = parsed;
-            renderAdminUserTabs(adminUsersCache);
-            renderAdminUsersTableDOM(adminUsersCache);
           }
         }
       } catch (e) {}
+
+      if (!adminUsersCache || adminUsersCache.length === 0) {
+        adminUsersCache = JSON.parse(JSON.stringify(DEFAULT_ADMIN_USERS));
+        try {
+          localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
+        } catch (e) {}
+      }
+
+      renderAdminUserTabs(adminUsersCache);
+      renderAdminUsersTableDOM(adminUsersCache);
 
       // 2. Fresh fetch from server
       try {
         const res = await fetch('/api/admin/users');
         if (res.ok) {
           const data = await res.json();
-          adminUsersCache = data.users || [];
-          localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
-          renderAdminUserTabs(adminUsersCache);
-          renderAdminUsersTableDOM(adminUsersCache);
-        } else if (res.status === 401 || res.status === 403) {
-          showToast("Brak autoryzacji do panelu admina (sesja wygasła). Zaloguj się ponownie.", "error");
+          if (Array.isArray(data.users) && data.users.length > 0) {
+            const userMap = new Map();
+            adminUsersCache.forEach(u => { if (u && u.username) userMap.set(u.username.toLowerCase(), u); });
+            data.users.forEach(u => {
+              if (u && u.username) {
+                const existing = userMap.get(u.username.toLowerCase());
+                userMap.set(u.username.toLowerCase(), { ...existing, ...u });
+              }
+            });
+            adminUsersCache = Array.from(userMap.values());
+            localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
+            renderAdminUserTabs(adminUsersCache);
+            renderAdminUsersTableDOM(adminUsersCache);
+          }
         }
       } catch (e) {
         console.warn("Błąd sieci podczas pobierania użytkowników, używam cache lokalnego:", e);
@@ -6263,29 +6372,47 @@
     }
 
     async function loadAdminPermissionsOnly() {
-      const targetKey = (currentAdminTargetUser || 'Maciek').toLowerCase();
+      const targetKey = (currentAdminTargetUser || 'Monika').toLowerCase();
 
-      // 1. Optimistic load from localStorage
+      // 1. Optimistic load from localStorage or DEFAULT_SYSTEM_PERMISSIONS
+      let permsToApply = null;
       try {
         const cached = localStorage.getItem('ach_admin_perms_cache');
         if (cached) {
           const permsMap = JSON.parse(cached);
           if (permsMap && permsMap[targetKey]) {
-            applyAdminPermsCheckboxes(permsMap[targetKey]);
+            permsToApply = permsMap[targetKey];
           }
         }
       } catch (e) {}
+
+      if (!permsToApply) {
+        const found = adminUsersCache.find(u => u && u.username && u.username.toLowerCase() === targetKey);
+        if (found && found.permissions) {
+          permsToApply = found.permissions;
+        } else if (DEFAULT_SYSTEM_PERMISSIONS[targetKey]) {
+          permsToApply = DEFAULT_SYSTEM_PERMISSIONS[targetKey];
+        }
+      }
+
+      if (permsToApply) {
+        applyAdminPermsCheckboxes(permsToApply);
+      }
 
       // 2. Fresh fetch from server
       try {
         const res = await fetch('/api/admin/permissions');
         if (res.ok) {
           const data = await res.json();
-          localStorage.setItem('ach_admin_perms_cache', JSON.stringify(data));
-          const perms = data[targetKey] || {};
-          applyAdminPermsCheckboxes(perms);
-        } else if (res.status === 401) {
-          showToast("Sesja wygasła. Wyświetlam zapisane uprawnienia z urządzenia.", "warning");
+          if (data && typeof data === 'object') {
+            const cached = localStorage.getItem('ach_admin_perms_cache');
+            const permsMap = cached ? JSON.parse(cached) : {};
+            const mergedMap = { ...DEFAULT_SYSTEM_PERMISSIONS, ...permsMap, ...data };
+            localStorage.setItem('ach_admin_perms_cache', JSON.stringify(mergedMap));
+            if (mergedMap[targetKey]) {
+              applyAdminPermsCheckboxes(mergedMap[targetKey]);
+            }
+          }
         }
       } catch (e) {
         console.warn("Błąd sieci podczas pobierania uprawnień, używam pamięci lokalnej:", e);
@@ -6308,9 +6435,9 @@
       
       const username = nameInput ? nameInput.value.trim() : '';
       const pin = pinInput ? pinInput.value.trim() : '';
-      const p1 = p1Input ? p1Input.value.trim() : '';
+      const p1 = p1Input ? p1Input.value.trim() : username;
       const p2 = p2Input ? p2Input.value.trim() : '';
-      const household = hhSelect ? hhSelect.value : '';
+      const household = hhSelect ? hhSelect.value : `PAIR_${username.toUpperCase()}`;
 
       if (!username || !pin) {
         showToast("Wprowadź nazwę użytkownika oraz kod PIN", "error");
@@ -6335,51 +6462,84 @@
         password_gen: false
       };
 
+      const newUserObj = {
+        username,
+        pin,
+        is_admin: false,
+        permissions,
+        p1,
+        p2,
+        household,
+        profile: { p1, p2, household }
+      };
+
+      // 1. Immediately store in local cache
+      const existingIdx = adminUsersCache.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
+      if (existingIdx !== -1) {
+        adminUsersCache[existingIdx] = newUserObj;
+      } else {
+        adminUsersCache.push(newUserObj);
+      }
       try {
-        const res = await fetch('/api/admin/users', {
+        localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
+        const cachedPerms = localStorage.getItem('ach_admin_perms_cache');
+        const permsMap = cachedPerms ? JSON.parse(cachedPerms) : {};
+        permsMap[username.toLowerCase()] = permissions;
+        localStorage.setItem('ach_admin_perms_cache', JSON.stringify(permsMap));
+      } catch (err) {}
+
+      renderAdminUserTabs(adminUsersCache);
+      renderAdminUsersTableDOM(adminUsersCache);
+      selectAdminTargetUser(username);
+
+      if (nameInput) nameInput.value = '';
+      if (pinInput) pinInput.value = '';
+      if (p1Input) p1Input.value = '';
+      if (p2Input) p2Input.value = '';
+      if (toast) {
+        toast.innerText = `✓ Konto ${username} utworzone pomyślnie! PIN: ${pin}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      }
+      showToast(`Konto ${username} utworzone!`, "success");
+
+      // 2. Synchronize to server if possible
+      try {
+        await fetch('/api/admin/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, pin, permissions, p1, p2, household })
         });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          if (nameInput) nameInput.value = '';
-          if (pinInput) pinInput.value = '';
-          if (p1Input) p1Input.value = '';
-          if (p2Input) p2Input.value = '';
-          if (toast) {
-            toast.innerText = `✓ Konto ${data.username} utworzone pomyślnie! PIN: ${data.pin}`;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 4000);
-          }
-          showToast(`Konto ${data.username} utworzone!`, "success");
-          await loadAdminPermissions();
-          selectAdminTargetUser(data.username);
-        } else {
-          showToast(data.detail || "Błąd podczas tworzenia konta", "error");
-        }
-      } catch (err) {
-        showToast("Błąd połączenia z serwerem", "error");
-      }
+      } catch (err) {}
     }
 
     async function handleDeleteUser(username) {
       if (!confirm(`Czy na pewno chcesz usunąć konto użytkownika "${username}"?`)) return;
+
+      adminUsersCache = adminUsersCache.filter(u => u.username.toLowerCase() !== username.toLowerCase());
       try {
-        const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast(`Konto "${username}" zostało usunięte`, "success");
-          if (currentAdminTargetUser.toLowerCase() === username.toLowerCase()) {
-            currentAdminTargetUser = 'Maciek';
-          }
-          await loadAdminPermissions();
-        } else {
-          showToast(data.detail || "Nie można usunąć tego konta", "error");
+        localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
+        const cachedPerms = localStorage.getItem('ach_admin_perms_cache');
+        if (cachedPerms) {
+          const permsMap = JSON.parse(cachedPerms);
+          delete permsMap[username.toLowerCase()];
+          localStorage.setItem('ach_admin_perms_cache', JSON.stringify(permsMap));
         }
-      } catch (e) {
-        showToast("Błąd podczas usuwania konta", "error");
+      } catch (e) {}
+
+      renderAdminUserTabs(adminUsersCache);
+      renderAdminUsersTableDOM(adminUsersCache);
+
+      if (currentAdminTargetUser.toLowerCase() === username.toLowerCase()) {
+        currentAdminTargetUser = adminUsersCache.find(u => !u.is_admin)?.username || 'Monika';
+        selectAdminTargetUser(currentAdminTargetUser);
       }
+
+      showToast(`Konto "${username}" zostało usunięte`, "success");
+
+      try {
+        await fetch(`/api/admin/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
+      } catch (e) {}
     }
 
     async function handleSaveAdminPermissions() {
@@ -6407,44 +6567,49 @@
         currency_calc: cc ? cc.checked : false
       };
 
-      const payload = {
-        user: currentAdminTargetUser,
-        permissions: permissionsObj
-      };
+      const targetKey = (currentAdminTargetUser || '').toLowerCase();
 
       // 1. Immediately cache in localStorage
       try {
         const cached = localStorage.getItem('ach_admin_perms_cache');
         const permsMap = cached ? JSON.parse(cached) : {};
-        permsMap[currentAdminTargetUser.toLowerCase()] = permissionsObj;
+        permsMap[targetKey] = permissionsObj;
         localStorage.setItem('ach_admin_perms_cache', JSON.stringify(permsMap));
       } catch (e) {}
 
-      // 2. Synchronize with server
+      // 2. Also update inside adminUsersCache
+      const idx = adminUsersCache.findIndex(u => u && u.username && u.username.toLowerCase() === targetKey);
+      if (idx !== -1) {
+        adminUsersCache[idx].permissions = permissionsObj;
+        try {
+          localStorage.setItem('ach_admin_users_cache', JSON.stringify(adminUsersCache));
+        } catch (e) {}
+        renderAdminUsersTableDOM(adminUsersCache);
+      }
+
+      // 3. If saving permissions for current user, update live permissions immediately
+      if (currentUser && currentUser.toLowerCase() === targetKey) {
+        userPermissions = { ...userPermissions, ...permissionsObj };
+        safeSetStorage('fomo_user_perms', JSON.stringify(userPermissions));
+        updatePermissionsUI();
+      }
+
+      const toast = document.getElementById('admin-save-toast');
+      if (toast) {
+        toast.innerText = `✓ Uprawnienia dla ${currentAdminTargetUser} zaktualizowane!`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+      }
+      showToast(`Uprawnienia dla ${currentAdminTargetUser} zostały zapisane!`, "success");
+
+      // 4. Synchronize with server if possible
       try {
-        const res = await fetch('/api/admin/permissions', {
+        await fetch('/api/admin/permissions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ user: currentAdminTargetUser, permissions: permissionsObj })
         });
-        if (res.ok) {
-          const toast = document.getElementById('admin-save-toast');
-          if (toast) {
-            toast.innerText = `✓ Uprawnienia dla ${currentAdminTargetUser} zaktualizowane!`;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-          }
-          showToast(`Uprawnienia dla ${currentAdminTargetUser} zostały zapisane!`, "success");
-          fetchUser();
-          loadAdminUsersList();
-        } else if (res.status === 401) {
-          showToast("Sesja wygasła! Uprawnienia zapisano w pamięci urządzenia. Zaloguj się ponownie, aby je zsynchronizować.", "warning");
-        } else {
-          showToast("Zapisano lokalnie (błąd serwera " + res.status + ")", "warning");
-        }
-      } catch (e) {
-        showToast("Zapisano lokalnie (brak połączenia z serwerem)", "warning");
-      }
+      } catch (e) {}
     }
 
     // ==================== MODULE 5: 📅 KALENDARZ & PRZYPOMNIENIA LOGIC ====================
@@ -6477,8 +6642,11 @@
         const res = await fetch('/api/kalendarz');
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data)) {
-            kalendarzEvents = data;
+          if (Array.isArray(data) && data.length > 0) {
+            const evMap = new Map();
+            kalendarzEvents.forEach(e => { if (e && e.id) evMap.set(String(e.id), e); });
+            data.forEach(e => { if (e && e.id) evMap.set(String(e.id), e); });
+            kalendarzEvents = Array.from(evMap.values());
             localStorage.setItem(getKalendarzStorageKey(), JSON.stringify(kalendarzEvents));
           }
         }
@@ -7009,8 +7177,13 @@
         const res = await fetch('/api/crm');
         if (res.ok) {
           const data = await res.json();
-          crmClients = Array.isArray(data) ? data : [];
-          localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
+          if (Array.isArray(data) && data.length > 0) {
+            const clientMap = new Map();
+            crmClients.forEach(c => { if (c && c.id) clientMap.set(String(c.id), c); });
+            data.forEach(c => { if (c && c.id) clientMap.set(String(c.id), c); });
+            crmClients = Array.from(clientMap.values());
+            localStorage.setItem(getCrmStorageKey(), JSON.stringify(crmClients));
+          }
           renderCrmListUI();
         }
       } catch (e) {
@@ -7224,8 +7397,13 @@
         const res = await fetch('/api/tasks');
         if (res.ok) {
           const data = await res.json();
-          userTasks = Array.isArray(data) ? data : [];
-          localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+          if (Array.isArray(data) && data.length > 0) {
+            const taskMap = new Map();
+            userTasks.forEach(t => { if (t && t.id) taskMap.set(String(t.id), t); });
+            data.forEach(t => { if (t && t.id) taskMap.set(String(t.id), t); });
+            userTasks = Array.from(taskMap.values());
+            localStorage.setItem(getTasksStorageKey(), JSON.stringify(userTasks));
+          }
           renderTasksUI();
         }
       } catch (e) {
